@@ -20,12 +20,27 @@ GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does n
 
 %% Specify ascpects of functions and data for the fitting
 tau=[1 1 1 1 2]; % Specify a lag of all the factors that are integrated in the model
+% tau(1) - Past incidence
+% tau(2) - Product of incidence and attacks
+% tau(3) - Product of incidence and conflict
+% tau(4) - Product of incidence and rainfall
+% tau(5) - Product of incidence and environmental factors
 
-%Specify what you want to use in in the regression model
-
-XU=[0 1 1 1 0 1];
-f=find(XU(2:end)==0);
+%Specify what you want to use in in the regression model (1 = included, 0 =
+%excluded)
+XU=[0 1 1 1 0 1]; 
+% XU(1)- beta_0
+% XU(2) - Past incidence
+% XU(3) - Product of incidence and attacks
+% XU(4) - Product of incidence and conflict
+% XU(5) - Product of incidence and rainfall
+% XU(6) - Product of incidence and environmental factors
+f=find(XU(2:end)==0); % Find the variables not included so the lag can be set to zero
 tau(f)=0; % set the lag for components not included to zero
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The formation of the environmental function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Specify the environmental factors that you want to use in the model fitting
 A=1; % A=1 the effects of water related attacks will be used (A=0 not used)
