@@ -1,2 +1,2 @@
-# Cholera-Code
-Understanding the impact of conflict and environmental factors on Cholera epidemic in Yemen
+Understanding the impact of civil unrest, violence and environmental factors on spread of Cholera outbreak across Yemen.
+
