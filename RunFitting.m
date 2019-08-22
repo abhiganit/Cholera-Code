@@ -291,5 +291,5 @@ text(NW-14,52500,'Model fit','color','b','Fontsize',18);
 text(NW-14,50000,'Model projection','color','r','Fontsize',18);
 
 %% Plot data for the areas of interest
-G=[1 4 5 12 13]; % Specify the number area of interest ranges from 1-22
+G=[2 3 8 11 21]; % Specify the number area of interest ranges from 1-22
 GovFigureIncidence(G,Yt,WI(GNZI,:),GNZI)
