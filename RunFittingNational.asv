@@ -1,6 +1,5 @@
-function RunFitting (XU,tau,AF,CF,RF,G,PF,PE,PP,DT)
-% Runs the fitting for the specified criteria and saves files to folders
-% for what is specified
+function RunFittingNational(XU,tau,AF,CF,RF,G,PF,PE,PP,DT)
+% Runs the fitting for the national level data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,8 +31,8 @@ function RunFitting (XU,tau,AF,CF,RF,G,PF,PE,PP,DT)
     % RF=1 increased incidence for high rainfall;
     % RF=2 increased incidence for high and low rain fall
 % G- Specify the number area of interest ranges from 1-22
-% PF - Plot only the fit if , otherwise not plot fit
-% PE - Plot fucntions , otherwise not plot 
+% PF - Plot only the fit if, otherwise not plot fit
+% PE - Plot fucntions, otherwise not plot 
 % PP - Plot fit and projection, otherwise not plot 
 % DT - Display table/fitting projection results ro not 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
@@ -51,26 +50,23 @@ RFF=struct('N',{'None','Low','High','LowHigh'});
 CFF=struct('N',{'None','Linear','Hill(n=1)','Hill'});
 AFF=struct('N',{'None','Before','After','BeforeAfter'});
 if isfile([pwd '\Tables\ModelFitSummary.dat'])
-     fmf = fopen([pwd '\Tables\ModelFitSummary.dat'],'a'); % Writing to the file name
+     fmf = fopen([pwd '\Tables\ModelFitSummaryNational.dat'],'a'); % Writing to the file name
 else
-     fmf = fopen([pwd '\Tables\ModelFitSummary.dat'],'w'); % Writing to the file name
+     fmf = fopen([pwd '\Tables\ModelFitSummaryNational.dat'],'w'); % Writing to the file name
      fprintf(fmf, 'Intercept \t Incidence \t Attack \t Conflcit \t Rainfall \t Precipitation  \t AttackFunction \t ConflictFunction \t RainfallFunction \t ObjectiveValue \t AIC \t MeanErrorProejection \t R2Projection \n'); % The header for the table
 end
 %% Load the data
-load('Yemen_Gov_Incidence.mat'); % Incidence data
+load('Yemen_National_Incidence.mat'); % Incidence data
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 load('Conflict_Yemen_Time_Location_Project_Forward.mat'); %Conflict data
-WI=IData'; % Transpose the data set such that the number of areas is the row
-Ctv=GLevelConflict(ProC,S,length(WI(1,:))); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
+WI=NatIData'; % Transpose the data set such that the number of areas is the row
+Ctv=sum(GLevelConflict(ProC,S,length(WI))); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
 %% NEED TO ENSURE THAT THE ROWS ARE THE PROPER GOVERNORATES %%
 load('Precipitation_Gov_Project_Forward.mat'); % the perceipatiatino data for the differetn areas
-Rtv=Rtv(:,1:length(WI(1,:))); % truncate the railfall data to the time period spceified
+Rtv=sum(Rtv(:,1:length(NatIData))); % truncate the railfall data to the time period spceified
 load('Attack_Yemen_Time_Location_Project_Forward.mat');
-tA=GLevelConflict(ProA,S,length(WI(1,:)));% % Send attack data (time, latitude, longatude) and shapefile of area wanted to catagorize
+tA=sum(GLevelConflict(ProA,S,length(WI)));% % Send attack data (time, latitude, longatude) and shapefile of area wanted to catagorize
 tA(tA>1)=1; % Find the weeks where there are more than one attack that occurs and assume that there is only a single attack
-
-%Find areas where we have non-zero incidence over course of epidemic
-GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
 
 %% Adjust ascpects of functions and data for the fitting
 
@@ -102,7 +98,7 @@ ub=log10([inf inf inf inf inf inf 1 1 inf inf 10 10]); % specify the upperbound 
 %% Run the fitting algorithm
 NS=1000; % The number of initial starting points used in the fitting process
 opts= optimset('MaxIter',10^6,'MaxFunEvals',10^6,'TolFun',10^(-12),'TolX',10^(-12),'UseParallel',true,'Display','off');  % Specifies the conditions that will be used in the fitting processs
-problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,tau,maxtau,AF,CF,RF),'x0',log10(rand(12,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
+problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF),'x0',log10(rand(12,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
 ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm in parallel
 [par,fval] = run(ms,problem,NS); %starts at NS random initial points to thoroghly search the paramter space
 % Evaluate the number of paramters that are being used in the estimation 
@@ -111,7 +107,7 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
 % Computing the statistical of the bets estimates for the regresison model
     f=find(XU==1); %  fiind components that are included
     be=beta(f); % increase index by one as we do not remove the inital beta_0
-    [Yt,It,IAt,ICt,IRt,Rt]=LogisticModel(beta,WI(GNZI,:),tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,Rtv(GNZI,:),RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
+    [Yt,It,IAt,ICt,IRt,Rt]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
     resid=OFunc(par,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF); % Returns the vector of residulas for each of the data points
     X=[]; % Construct the input vector based on the variables used in the fitting
     twotail=[]; % for the two-tail or single tail p-value (1 - uses two-tail)
@@ -149,7 +145,7 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
     [SE,tStat,pValue] = LinRegressionStat(be,resid,k,X,twotail);   % We have specified the two-tail p-value as seen above
     
     % Constrcuts a table that is saved an can be viewed later
-    f1 = fopen([pwd '\Tables\Table-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.dat'],'w'); % Writing to the file name
+    f1 = fopen([pwd '\Tables\Table-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.dat'],'w'); % Writing to the file name
     CN=struct('N',{'Intercept ','Incidence ','Attack ','Conflcit ','Rainfall ','Precipitation '}); % The name of the variables that we can call
     fprintf(f1, 'Coefficient \t Value \t Stand._Error \t t-Stat \t p-value \n'); % The header for the table
     for ii=1:length(XU) % Go through all variables to see which are included
@@ -162,9 +158,9 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
     nData=length(Yt(:)); % The number of data points available for the model fitting
     AIC = AICScore(k,nData,fval); % Calculate the AIC score
     if(DT~=0)
-        readtable([pwd '\Tables\Table-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.dat']) % reads and prints the table to the command window
+        readtable([pwd '\Tables\Table-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.dat']) % reads and prints the table to the command window
     end
-    save([pwd '\Tables\Model-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','AIC'); % Saves the information for the specified model for can load and run model after
+    save([pwd '\Tables\Model-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','AIC'); % Saves the information for the specified model for can load and run model after
     
     if(DT~=0)
         fprintf('The objective value for the model fit: %5.4e \n',fval); % Outputs the AIC score
@@ -246,7 +242,7 @@ if(PE~=0)
     set(gca,'LineWidth',2,'tickdir','out','Fontsize',16,'Ytick',[0:0.2:1]);
     %y-axis limits
     ylim([0 1]);
-    print(gcf,[pwd '\Figures\Functions-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\Functions-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
 end
 
 %% Plot the national level incidence compared to the model predicted incidence
@@ -258,7 +254,7 @@ if(PF~=0) % Plot fit
     subplot('Position',[0.0708,0.163120567375887,0.897162184873949,0.793313069908819]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
     D=sum(IData,2); % Adds the incidence of all the governoantes together to provide the national level
-    M=sum(Yt,1); % sums across the different areas to produce the national level incidence
+    M=Yt; % sums across the different areas to produce the national level incidence
     NW=length(D); % Determine the number of weeks that we have for the Governorates IData is NWxNG in size
     scatter([1:NW],D,40,'k','filled'); hold on;
     plot([1+maxtau:NW],M,'b','LineWidth',2); hold off;
@@ -284,7 +280,7 @@ if(PF~=0) % Plot fit
     % ylable of the figure
     ylabel('Number of reported cases','Fontsize',24); 
     
-    print(gcf,[pwd '\Figures\Fit-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\Fit-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
 end
 
 %% Set up information for the projection
@@ -300,11 +296,11 @@ Rtv=Rtv(:,1:length(tA(1,:))); % truncate the railfall data to the time period sp
 
 %% Run the projection
 NW=length(NatIData); % number of week want to go out to
-[Yt,Pt]= ModelProjection(beta,WI(GNZI,:),tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,Rtv(GNZI,:),RF,rl,rh,tau,maxtau,CF,NW-length(WI(1,:))); % Run the projection
+[Yt,Pt]= ModelProjection(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF,NW-length(WI(1,:))); % Run the projection
 Mt=[Yt Pt]; % Combined the model fit with the model projection into one matrix
 %% Compute the R^2 value of the model projection
-RPro=corr(sum(Pt,1)',NatIData((length(WI(1,:))+1):end)).^2; % The R^2 value for the projection component of the model fit
-RFit=corr(sum(Yt,1)',NatIData(1+maxtau:length(WI(1,:)))).^2; % The R^2 value for the projection component of the model fit
+RPro=corr(Pt',NatIData((length(WI(1,:))+1):end)).^2; % The R^2 value for the projection component of the model fit
+RFit=corr(Yt,1)',NatIData(1+maxtau:length(WI(1,:)))).^2; % The R^2 value for the projection component of the model fit
 
 if(DT~=0)
     fprintf('R^2 value for the model fit: %3.2f \n',RFit);
@@ -315,11 +311,11 @@ if(DT~=0)
     fprintf('Mean Error in model projection: %3.0f \n',MSEP);
 end
 
-save([pwd '\Tables\Model-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'RPro','RFit','MSEP','-append'); % Saves the information for the specified model for can load and run model after
+save([pwd '\Tables\Model-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.mat'],'RPro','RFit','MSEP','-append'); % Saves the information for the specified model for can load and run model after
 
 % Save to model fit summary
 
-fprintf(fmf, [ '%d \t %d \t %d \t %d \t %d \t %d \t ' AFF((AF+1).*XU(3)+1).N '\t ' CFF((CF+1).*XU(4)+1).N ' \t ' RFF((RF+1).*XU(5)+1).N ' \t %8.0f \t %5.2f \t %8.0f \t %3.2f \n'],[XU(1) XU(2:end).*tau fval AIC MSEP RPro]); % The header for the table
+fprintf(fmf, [ '%d \t %d \t %d \t %d \t %d \t %d \t ' AFF((AF+1).*XU(3)+1).N '\t ' CFF((CF+1).*XU(4)+1).N ' \t ' RFF((RF+1).*XU(5)+1).N ' \t %8.0f \t %5.0f \t %8.0f \t %3.2f \n'],[XU(1) XU(2:end).*tau fval AIC MSEP RPro]); % The header for the table
 fclose(fmf);
 %% Produce the figure for the projection
 
@@ -362,11 +358,7 @@ if(PP~=0)
     % Puts text in the figure for labelling the fit and projection
     text(NW-14,52500,'Model fit','color','b','Fontsize',18); 
     text(NW-14,50000,'Model projection','color','r','Fontsize',18);
-    print(gcf,[pwd '\Figures\FitandProjection-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\FitandProjection-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
 end
 
-%% Plot data for the areas of interest
-    if(~isempty(G))
-         GovFigureIncidence(G,Yt,WI(GNZI,:),GNZI)
-    end
 end

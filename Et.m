@@ -1,4 +1,4 @@
-function Y = Et(A,tA,DB,DA,C,CF,Ct,K,n,R,Rt,H,rl,rh,ma,mc,mr,tau)
+function Y = Et(A,tA,DB,DA,C,CF,Ct,K,n,R,Rt,H,rl,rh,ma,mc,mr,tau,maxtau)
 % Environment function that will be used in the regression modell
 %===============================
 % Input
@@ -31,6 +31,8 @@ function Y = Et(A,tA,DB,DA,C,CF,Ct,K,n,R,Rt,H,rl,rh,ma,mc,mr,tau)
  % mr - the magnitdue of rainfall in the Envirmental factor compounded
  % effect
  % tau - the lag being used in the model for all variables
+ % maxtau - the maximum lag allowed in the model such that all models use
+ % the same amount of data
 %=================================
 % Output
 %=================================
@@ -40,7 +42,7 @@ function Y = Et(A,tA,DB,DA,C,CF,Ct,K,n,R,Rt,H,rl,rh,ma,mc,mr,tau)
 Y=1;
 
 if(A==1) % if attacks have an effect
-   Y=Y.*(1-ma.*ImpactAttack(tA,DB,DA,tau)); % The compunded effects of the attacks specified
+   Y=Y.*(1-ma.*ImpactAttack(tA,DB,DA,tau,maxtau)); % The compunded effects of the attacks specified
 end
 if(C==1) % if the daily level of conflict has an effect
     Y = Y.*(1-mc.*ImpactConflict(Ct,K,n,CF)); % The effects of the daily conflict levels specified

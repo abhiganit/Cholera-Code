@@ -1,4 +1,4 @@
-function Y = ImpactAttack(tA,DB,DA,tau)
+function Y = ImpactAttack(tA,DB,DA,tau,maxtau)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Y = ImpactAttack(t,tA,DB,W,DE,NR)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -12,6 +12,8 @@ function Y = ImpactAttack(tA,DB,DA,tau)
 % DA - the number of days after the attack that incidence is affected
 % tau- the lag being used in the regression model for all variables (Attack
 % is the in location 2)
+% maxtau- the maximum lag allowed to be used in the model such that all
+% models use the same amount of data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 % Output
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
@@ -57,6 +59,6 @@ end
 
 Y=1-Y; % 1- product to give the effect
 
-Y=Y(:,(1+max(tau)-tau(2)):(end-tau(2))); % truncate to integrate the lag of incidence
+Y=Y(:,(1+maxtau-tau(2)):(end-tau(2))); % truncate to integrate the lag of incidence
 end
 

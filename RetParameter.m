@@ -1,72 +1,43 @@
-function [k,beta,DB,DA,K,n,rl,rh,ma,mc,mr]=RetParameter(x,XU,A,C,R,AF,CF,RF)
+function [k,beta,DB,DA,K,n,rl,rh]=RetParameter(x,XU,AF,CF,RF)
 %Based on the input-x and functions used we return the proper paramters to
 %evalaute the regression model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% t - the single time of interest
-% It - The incidence for the different areas for the given week
-% beta- the coefficients for the regression model
-% A- A=1 effect of attacks included A=0 No effects of attack
-% tA- A  vector indicating the time of the attacks 
-% DB - the number of days before the attack that incidence is affected
-% DA - the number of days after the attack that incidence is affected
-% C- C=1 effect of conflict included C=0 No effects of conflict
-% Ct - the conflict at time t
-% K- the saturation function
-% n - the hill coefficient
-% R- R=1 effect of rainfall included R=0 No effects of rainfall
-% Rt - the rainfall at time t
-% RF - the indication of what function will be used
-    % RF=0 the increase in incidence when rainfall is low
-    % RF=1 the increase in incidence when rainfall is high
-    % RF=2 the increase in incidence when rainfall is low and high
-% rl - Rate the imapct in icidence decays from low rain fall
-% rh - Rate the imapct in icidence decays from high rain fall
-% tau - the lag to use for the incidence and enviromental factors
+% x - the log-10 parameters from the fitting process
+% XU - Specify the model being fit
+    % XU(1)- beta_0
+    % XU(2) - Past incidence
+    % XU(3) - Product of incidence and attacks
+    % XU(4) - Product of incidence and conflict
+    % XU(5) - Product of incidence and rainfall
+    % XU(6) - Rainfall only
+% AF - Specify the attack function to be used
+    % AF=0 attack only has effect before; 
+    % AF=1 Attack has effect only after; 
+    % AF=2; Attack has effect before and after
 % CF - what conflict function that is being used
         % CF=0 linear effect; 
         %CF=1 Hill function with n=1; 
         %CF=2; Full hill function
- % ma - the magnitdue of attacks in the Envirmental factor compounded
- % effect
- % mc - the magnitdue of conflict in the Envirmental factor compounded
- % effect
- % mr - the magnitdue of rainfall in the Envirmental factor compounded
- % effect
+% RF - the indication of what function will be used
+    % RF=0 the increase in incidence when rainfall is low
+    % RF=1 the increase in incidence when rainfall is high
+    % RF=2 the increase in incidence when rainfall is low and high
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Output
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % k- the numebr of estimated paramters in the model
 % beta- the coefficients for the regression model
-% A- A=1 effect of attacks included A=0 No effects of attack
-% tA- A  vector indicating the time of the attacks 
 % DB - the number of days before the attack that incidence is affected
 % DA - the number of days after the attack that incidence is affected
-% C- C=1 effect of conflict included C=0 No effects of conflict
-% Ct - the conflict at time t
 % K- the saturation function
 % n - the hill coefficient
-% R- R=1 effect of rainfall included R=0 No effects of rainfall
-% Rt - the rainfall at time t
-% RF - the indication of what function will be used
-    % RF=0 the increase in incidence when rainfall is low
-    % RF=1 the increase in incidence when rainfall is high
-    % RF=2 the increase in incidence when rainfall is low and high
 % rl - Rate the imapct in icidence decays from low rain fall
 % rh - Rate the imapct in icidence decays from high rain fall
-% tau - the lag to use for the incidence and enviromental factors
-% CF - what conflict function that is being used
-        % CF=0 linear effect; 
-        %CF=1 Hill function with n=1; 
-        %CF=2; Full hill function
- % ma - the magnitdue of attacks in the Envirmental factor compounded
- % effect
- % mc - the magnitdue of conflict in the Envirmental factor compounded
- % effect
- % mr - the magnitdue of rainfall in the Envirmental factor compounded
- % effect
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The parameters for the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +47,7 @@ beta=[x(1) 10.^x(2:6)'].*XU;
 k=sum(XU); % Count the number of coefficients being estimated
 
 %% Attack asscoaited paramters
-if(XU(3)+XU(6)*A>=1)  % See if attacks being used at all
+if(XU(3)>=1)  % See if attacks being used at all
     if(AF==1) % If only look after attack set DB=0
         DB=0; 
     else    
@@ -89,21 +60,14 @@ if(XU(3)+XU(6)*A>=1)  % See if attacks being used at all
         DA=10.^x(8);  %looking after the attack
         k=k+1; % Add estimated paramter
     end
-    if(XU(6)*A==1) % See if attack is included in the environmental component
-        ma=10.^x(13); % set magnitude of attack in environemental
-        k=k+1; % add paramrter
-    else
-       ma=0; % attack has no magnitude in environmental function
-    end
 else % Attack is not being used in the model
     DA=0;
     DB=0;
-    ma=0;
 end
 
 
 %% Conflict associated paramters
-if(XU(4)+XU(6)*C>=1) % See if conflict is being used at all
+if(XU(4)>=1) % See if conflict is being used at alls
     K=10.^x(9); % Set rate of change for the paramter of the effects of conflict
     k=k+1; % add a paramter
     if(CF==2) % If the full hill function is being used
@@ -112,21 +76,13 @@ if(XU(4)+XU(6)*C>=1) % See if conflict is being used at all
     else
         n=1; % Hill coefficient ot estimated
     end    
-    
-    if(XU(6)*C==1) % See if conflict is included in the environmental component
-        mc=10.^x(14); % set magnitude of conflict in environemental
-        k=k+1; % add paramrter
-    else
-       mc=0; % conflict has no magnitude in envrionemntal finction
-    end
 else % Conflict is not being used in the model
     K=1;
     n=1;
-    mc=0;
 end
 
  %% Rainfall assocaited paramters 
-if(XU(5)+XU(6)*R>=1) % See if rainfall is being used at all
+if(XU(5)>=1) % See if rainfall is being used at all
     rl=10.^x(11); % Esitmate for the low-rainfall heighted incidence
     if(RF~=1) % See if low-rainfall heighted incidence is being used
         k=k+1; % add paramrter
@@ -136,16 +92,9 @@ if(XU(5)+XU(6)*R>=1) % See if rainfall is being used at all
         k=k+1;% add paramrter
     end
     
-    if(XU(6)*R==1) % See if rainfall is included in the environmental component
-        mr=10.^x(15); % set magnitude of rainfall in environemental
-        k=k+1;% add paramrter
-    else
-       mr=0; %Conflict has no impact in enviromanetal fnction
-    end
 else % Rainfall is not being used at all
     rl=0;
     rh=0;
-    mr=0;
 end
 
 end
