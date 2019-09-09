@@ -9,7 +9,8 @@ clear;
 % XU(4) - Product of incidence and conflict
 % XU(5) - Product of incidence and rainfall
 % XU(6) - Rainfall only
-XU=[0 0 1 1 1 1]; 
+% XU(7) - Incidence in other govneroates
+XU=[0 0 0 1 0 1 1]; 
 
 % Specify the lag
 % tau(1) - Past incidence
@@ -17,8 +18,9 @@ XU=[0 0 1 1 1 1];
 % tau(3) - Product of incidence and conflict
 % tau(4) - Product of incidence and rainfall
 % tau(5) - Perciptiation only
+% tau(6) - Incidence in other govneroates
 
-tau=[1 1 2 3 2];
+tau=[1 1 1 3 2 2];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The formation of the environmental function
