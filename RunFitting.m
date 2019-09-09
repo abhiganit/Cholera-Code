@@ -84,27 +84,27 @@ tau(f)=0; % set the lag for components not included to zero
 
 
 % Specify the lower bounds for the estimated parameters
-% beta(1:6)=XU.*[x(1) 10.^(x(2:6))]
+% beta(1:7)=XU.*[x(1) 10.^(x(2:7))]
 % 
 % %Attack associated paramters
-% DB=10.^x(7);
-% DA=10.^x(8);
+% DB=10.^x(8);
+% DA=10.^x(9);
 % % Conflict associated paramters
-% K=10.^x(9);
-% n=10.^x(10);
+% K=10.^x(10);
+% n=10.^x(11);
 % % Rainfall assocaited paramters
-% rl=10.^x(11);
-% rh=10.^x(12);
+% rl=10.^x(12);
+% rh=10.^x(13);
 
 
-lb=[-inf.*ones(1,12)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-ub=log10([inf inf inf inf inf inf 1 1 inf inf 10 10]); % specify the upperbound for the parameters 
+lb=[-inf.*ones(1,13)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ub=log10([inf inf inf inf  inf inf inf 1 1 inf inf 10 10]); % specify the upperbound for the parameters 
 
 
 %% Run the fitting algorithm
 NS=1000; % The number of initial starting points used in the fitting process
 opts= optimset('MaxIter',10^6,'MaxFunEvals',10^6,'TolFun',10^(-12),'TolX',10^(-12),'UseParallel',true,'Display','off');  % Specifies the conditions that will be used in the fitting processs
-problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,tau,maxtau,AF,CF,RF),'x0',log10(rand(12,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
+problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,tau,maxtau,AF,CF,RF),'x0',log10(rand(13,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
 ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm in parallel
 [par,fval] = run(ms,problem,NS); %starts at NS random initial points to thoroghly search the paramter space
 % Evaluate the number of paramters that are being used in the estimation 
