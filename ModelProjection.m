@@ -26,6 +26,7 @@ function [Yt,Pt]= ModelProjection(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxt
     % tau(3) - Product of incidence and conflict
     % tau(4) - Product of incidence and rainfall
     % tau(5) - Perciptiation only
+    % tau(6) - Residual incidence
 % maxtau- the maximum lag allowed to be used in the model such that all
 % models use same information
 % CF - what conflict function that is being used
@@ -42,14 +43,14 @@ function [Yt,Pt]= ModelProjection(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxt
 % predicted incidence
 
 %% Run the logistic model with the data
-[Yt,~,~,~,~,~]= LogisticModel(beta,WI,tA(:,1:length(WI(1,:))),DB,DA,Ctv(:,1:length(WI(1,:))),K,n,Rtv(:,1:length(WI(1,:))),RF,rl,rh,tau,maxtau,CF);
+[Yt,~,~,~,~,~,~]= LogisticModel(beta,WI,tA(:,1:length(WI(1,:))),DB,DA,Ctv(:,1:length(WI(1,:))),K,n,Rtv(:,1:length(WI(1,:))),RF,rl,rh,tau,maxtau,CF);
 
 %% Run the projection
 temp=zeros(length(Yt(:,1)),1); % initialize the matrix for the projection
 Pt=zeros(length(Yt(:,1)),NWP); % used for the 
 for ii=1:NWP % Loop through the number of weeks that are to be projected
     WT=[WI temp]; % Need to append data to the end for the projection of incidence
-    [temp2,~,~,~,~,~]= LogisticModel(beta,WT,tA(:,1:length(WT(1,:))),DB,DA,Ctv(:,1:length(WT(1,:))),K,n,Rtv(:,1:length(WT(1,:))),RF,rl,rh,tau,maxtau,CF); % Run model with appendend data
+    [temp2,~,~,~,~,~,~]= LogisticModel(beta,WT,tA(:,1:length(WT(1,:))),DB,DA,Ctv(:,1:length(WT(1,:))),K,n,Rtv(:,1:length(WT(1,:))),RF,rl,rh,tau,maxtau,CF); % Run model with appendend data
     Pt(:,ii)=temp2(:,end); % Record the projection of incidence
     temp=[Pt(:,1:ii) zeros(length(Yt(:,1)),1)];  % temporary variable to be appended
 end

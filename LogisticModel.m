@@ -1,4 +1,4 @@
-function [Yt,It,IAt,ICt,IRt,Rt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF)
+function [Yt,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF)
 % Produces the predicted incicence in matrix form for the diffrent areas
 % and weeks
 %===============================
@@ -26,6 +26,7 @@ function [Yt,It,IAt,ICt,IRt,Rt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,r
     % tau(3) - Product of incidence and conflict
     % tau(4) - Product of incidence and rainfall
     % tau(5) - Perciptiation only
+    % tau(6) - Residual incidence
 % maxtau- the maximum lag allowed for all the models such that they return
 % the same amount of data
 % CF - what conflict function that is being used
@@ -41,6 +42,7 @@ function [Yt,It,IAt,ICt,IRt,Rt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,r
 % ICt - Product of incidence and conflict 
 % IRt - Product of incidence and rainfall 
 % Rt- Rainfall
+% Gt - Inicedence in the other govnorates
 
 %% Input for regression model
 
@@ -49,8 +51,9 @@ IAt=WI(:,(1+maxtau-tau(2)):(end-tau(2))).*ImpactAttack(tA,DB,DA,tau,maxtau); % P
 ICt=WI(:,(1+maxtau-tau(3)):(end-tau(3))).*ImpactConflict(Ctv(:,(1+maxtau-tau(3)):(end-tau(3))),K,n,CF); %Product of incidence and conflict
 IRt=WI(:,(1+maxtau-tau(4)):(end-tau(4))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(4)):(end-tau(4))),RF,rl,rh); %Product of incidence and rainfall
 Rt=Rtv(:,(1+maxtau-tau(5)):(end-tau(5))); %rainfall
+Gt=repmat(sum(WI(:,(1+maxtau-tau(6)):(end-tau(6))),1),length(It(:,1)),1)-WI(:,(1+maxtau-tau(6)):(end-tau(6))); % Residual incidence (i.e. incdeicne in other govnorates)
 %% Output of regression model: the predicted weekly incidence of the model
-Yt=beta(1)+beta(2).*It+beta(3).*IAt+beta(4).*ICt+beta(5).*IRt+beta(6).*Rt; 
+Yt=beta(1)+beta(2).*It+beta(3).*IAt+beta(4).*ICt+beta(5).*IRt+beta(6).*Rt+beta(7).*Gt; 
 
 end
 

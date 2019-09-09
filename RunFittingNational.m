@@ -11,6 +11,9 @@ function RunFittingNational(XU,tau,AF,CF,RF,PF,PE,DT)
         % XU(4) - Product of incidence and conflict
         % XU(5) - Product of incidence and rainfall
         % XU(6) - Rainfall only
+        % XU(7)- For Govnoerate level (external force of infection from
+        % other govnoertaes)
+        XU(7)=0; % Set to zero as this variable is not used in the national fitting
 % tau -Specify a lag of all the factors that are integrated in the model
 % (1X6)
     % tau(1) - Past incidence
@@ -18,6 +21,7 @@ function RunFittingNational(XU,tau,AF,CF,RF,PF,PE,DT)
     % tau(3) - Product of incidence and conflict
     % tau(4) - Product of incidence and rainfall
     % tau(5) - Perciptiation only
+    % tau(6) - Residual incidence (Not used here)
 % AF -Specify the attack function to be used
         % AF=0 attack only has effect before;
         %AF=1 Attack has effect only after; 
@@ -107,7 +111,7 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
 % Computing the statistical of the bets estimates for the regresison model
     f=find(XU==1); %  fiind components that are included
     be=beta(f); % increase index by one as we do not remove the inital beta_0
-    [Yt,It,IAt,ICt,IRt,Rt]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
+    [Yt,It,IAt,ICt,IRt,Rt,~]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
     resid=OFunc(par,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF); % Returns the vector of residulas for each of the data points
     X=[]; % Construct the input vector based on the variables used in the fitting
     twotail=[]; % for the two-tail or single tail p-value (1 - uses two-tail)
