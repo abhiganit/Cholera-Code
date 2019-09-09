@@ -25,13 +25,13 @@ tau=[1 1 1 1 1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Specify the attack function to be used
-AF=2; % AF=0 attack only has effect before; AF=1 Attack has effect only after; AF=2; Attack has effect before and after
+AF=1; % AF=0 attack only has effect before; AF=1 Attack has effect only after; AF=2; Attack has effect before and after
 
 %Specify the conflict function to be used
-CF=2; % CF=0 linear effect; CF=1 Hill function with n=1; CF=2; Full hill function; 
+CF=0; % CF=0 linear effect; CF=1 Hill function with n=1; CF=2; Full hill function; 
 
 % Specify the rainfall function to be used
-RF=2; % RF=0 Increased incidence for low-rainfall; RF=1 increased incidence for high rainfall; RF=2 increased incidence for high and low rain fall
+RF=0; % RF=0 Increased incidence for low-rainfall; RF=1 increased incidence for high rainfall; RF=2 increased incidence for high and low rain fall
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 % Specify plots generated
@@ -49,15 +49,20 @@ PE=1; %PE=0 does not produce plot
 DT=1; % DT=0; does not display this information
 
 % Run the fitting
-for ii=0:1
-    for ind=2:6
-        for tt=1:4
-            tau=[1 1 1 1 1];
-            XU=zeros(1,6);
-            XU(1)=ii;
-            XU(ind)=1;
-            tau(ind-1)=tt;
-            RunFittingNational(XU,tau,AF,CF,RF,PF,PE,DT);
+
+    for ii=0:1
+        for ind=4:5
+            for tt=1:4
+                tau=[1 1 1 1 1];
+                XU=zeros(1,6);
+                XU(1)=ii;
+                XU(3)=1;
+                XU(6)=1;
+                XU(ind)=1;
+                tau(2)=1;
+                tau(5)=2;
+                tau(ind-1)=tt;
+                RunFittingNational(XU,tau,AF,CF,RF,PF,PE,DT);
+            end
         end
     end
-end
