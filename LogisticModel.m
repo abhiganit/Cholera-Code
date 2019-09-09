@@ -1,4 +1,4 @@
-function [Yt,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF)
+function [Yt,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF,P,H)
 % Produces the predicted incicence in matrix form for the diffrent areas
 % and weeks
 %===============================
@@ -33,10 +33,14 @@ function [Yt,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,R
         % CF=0 linear effect; 
         %CF=1 Hill function with n=1; 
         %CF=2; Full hill function
+ % P - population density for the different govenorates
+ % H - The number of health facilities for the different govenorates
 %=================================
 % Output
 %=================================
 % Yt - the predicted incidence of the model in matrix form
+% PDG - population density for the govenrate
+% HFG- Health facilities in the govnorates
 % It - Incidence last week
 % IAt - Product of incidence and attacks 
 % ICt - Product of incidence and conflict 
@@ -45,15 +49,17 @@ function [Yt,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,R
 % Gt - Inicedence in the other govnorates
 
 %% Input for regression model
-
+PDG=repmat(P,1,length(WI(1,(1+maxtau-tau(1)):(end-tau(1)))));
+HFG=repmat(H,1,length(WI(1,(1+maxtau-tau(1)):(end-tau(1)))));
 It=WI(:,(1+maxtau-tau(1)):(end-tau(1))); % Using the past incidence with a lag of tau weeks
 IAt=WI(:,(1+maxtau-tau(2)):(end-tau(2))).*ImpactAttack(tA,DB,DA,tau,maxtau); % Product of incidence and attacks 
 ICt=WI(:,(1+maxtau-tau(3)):(end-tau(3))).*ImpactConflict(Ctv(:,(1+maxtau-tau(3)):(end-tau(3))),K,n,CF); %Product of incidence and conflict
 IRt=WI(:,(1+maxtau-tau(4)):(end-tau(4))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(4)):(end-tau(4))),RF,rl,rh); %Product of incidence and rainfall
 Rt=Rtv(:,(1+maxtau-tau(5)):(end-tau(5))); %rainfall
 Gt=repmat(sum(WI(:,(1+maxtau-tau(6)):(end-tau(6))),1),length(It(:,1)),1)-WI(:,(1+maxtau-tau(6)):(end-tau(6))); % Residual incidence (i.e. incdeicne in other govnorates)
+
 %% Output of regression model: the predicted weekly incidence of the model
-Yt=beta(1)+beta(2).*It+beta(3).*IAt+beta(4).*ICt+beta(5).*IRt+beta(6).*Rt+beta(7).*Gt; 
+Yt=beta(1)+beta(2).*PDG+beta(3).*HFG+beta(4).*It+beta(5).*IAt+beta(6).*ICt+beta(7).*IRt+beta(8).*Rt+beta(9).*Gt; 
 
 end
 

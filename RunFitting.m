@@ -1,4 +1,4 @@
-function RunFitting(XU,tau,AF,CF,RF,G,PF,PE,PP,DT)
+function RunFitting(XU,tau,AF,CF,RF,P,H,G,PF,PE,PP,DT)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,12 +7,14 @@ function RunFitting(XU,tau,AF,CF,RF,G,PF,PE,PP,DT)
 % XU - Specify what you want to use in in the regression model (1 = included, 0 =
 %excluded) (1X7)
         % XU(1)- beta_0
-        % XU(2) - Past incidence
-        % XU(3) - Product of incidence and attacks
-        % XU(4) - Product of incidence and conflict
-        % XU(5) - Product of incidence and rainfall
-        % XU(6) - Rainfall only        
-        % XU(7) - Incidence in other govnorates
+        % XU(2) - population density
+        % XU(3) - number of health facilities 
+        % XU(4) - Past incidence
+        % XU(5) - Product of incidence and attacks
+        % XU(6) - Product of incidence and conflict
+        % XU(7) - Product of incidence and rainfall
+        % XU(8) - Rainfall only        
+        % XU(9) - Incidence in other govnorates
 % tau -Specify a lag of all the factors that are integrated in the model
 % (1X6)
     % tau(1) - Past incidence
@@ -33,6 +35,8 @@ function RunFitting(XU,tau,AF,CF,RF,G,PF,PE,PP,DT)
     % RF=0 Increased incidence for low-rainfall; 
     % RF=1 increased incidence for high rainfall;
     % RF=2 increased incidence for high and low rain fall
+% P - the population density for the govenroates
+% H - the density of health facilties in the govenrorate 
 % G- Specify the number area of interest ranges from 1-22
 % PF - Plot only the fit if , otherwise not plot fit
 % PE - Plot fucntions , otherwise not plot 
@@ -104,7 +108,7 @@ ub=log10([inf inf inf inf inf inf 1 1 inf inf 10 10]); % specify the upperbound 
 %% Run the fitting algorithm
 NS=1000; % The number of initial starting points used in the fitting process
 opts= optimset('MaxIter',10^6,'MaxFunEvals',10^6,'TolFun',10^(-12),'TolX',10^(-12),'UseParallel',true,'Display','off');  % Specifies the conditions that will be used in the fitting processs
-problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,tau,maxtau,AF,CF,RF),'x0',log10(rand(12,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
+problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,tau,maxtau,AF,CF,RF,P(GNZI),H(GNZI)),'x0',log10(rand(12,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
 ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm in parallel
 [par,fval] = run(ms,problem,NS); %starts at NS random initial points to thoroghly search the paramter space
 % Evaluate the number of paramters that are being used in the estimation 
