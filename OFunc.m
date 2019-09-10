@@ -1,4 +1,4 @@
-function F= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF)
+function F= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF,P,H)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -37,6 +37,8 @@ function F= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF)
     % RF=0 the increase in incidence when rainfall is low
     % RF=1 the increase in incidence when rainfall is high
     % RF=2 the increase in incidence when rainfall is low and high
+% P - population density for the governorates
+% H - the density of health facililities in the govnorates
 %=================================
 % Output
 %=================================
@@ -62,7 +64,7 @@ XU(f(g))=1; % set non-zero and non-one to one
 % Determine model predicted incidence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-[Yt,~,~,~,~,~]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
+[Yt,~,~,~,~,~,~,~]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF,P,H); % Returns the incidence in matrix form of size Ng X (NW-tau)
 
 F=WI(:,(maxtau+1):end)-Yt; % Compute the difference for the times and the locations that is tau weeks ahead
 F=F(:); % convert the matrix into a vector for the use of lsqnonlin

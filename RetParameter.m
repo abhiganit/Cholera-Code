@@ -6,14 +6,16 @@ function [k,beta,DB,DA,K,n,rl,rh]=RetParameter(x,XU,AF,CF,RF)
 %% Input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % x - the log-10 parameters from the fitting process
-% XU - Specify the model being fit
-    % XU(1)- beta_0
-    % XU(2) - Past incidence
-    % XU(3) - Product of incidence and attacks
-    % XU(4) - Product of incidence and conflict
-    % XU(5) - Product of incidence and rainfall
-    % XU(6) - Rainfall only
-    % XU(7) - Incidence in other govnorates
+% XU - Specify the model being fit    
+        % XU(1)- beta_0
+        % XU(2) - population density
+        % XU(3) - number of health facilities 
+        % XU(4) - Past incidence
+        % XU(5) - Product of incidence and attacks
+        % XU(6) - Product of incidence and conflict
+        % XU(7) - Product of incidence and rainfall
+        % XU(8) - Rainfall only        
+        % XU(9) - Incidence in other govnorates
 % AF - Specify the attack function to be used
     % AF=0 attack only has effect before; 
     % AF=1 Attack has effect only after; 
@@ -43,22 +45,22 @@ function [k,beta,DB,DA,K,n,rl,rh]=RetParameter(x,XU,AF,CF,RF)
 % The parameters for the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the coefficients fo rthe regression model
-beta=[x(1) 10.^x(2:7)'].*XU;
+beta=[x(1) 10.^x(2) x(3) 10.^x(4:9)'].*XU;
 
 k=sum(XU); % Count the number of coefficients being estimated
 
 %% Attack asscoaited paramters
-if(XU(3)>=1)  % See if attacks being used at all
+if(XU(5)>=1)  % See if attacks being used at all
     if(AF==1) % If only look after attack set DB=0
         DB=0; 
     else    
-        DB=10.^x(8); %looking befroe the attack
+        DB=10.^x(10); %looking befroe the attack
         k=k+1; % Add estimated paramter
     end
     if(AF==0) % % If only look before attack set DA=0
         DA=0;
     else
-        DA=10.^x(9);  %looking after the attack
+        DA=10.^x(11);  %looking after the attack
         k=k+1; % Add estimated paramter
     end
 else % Attack is not being used in the model
@@ -68,11 +70,11 @@ end
 
 
 %% Conflict associated paramters
-if(XU(4)>=1) % See if conflict is being used at alls
-    K=10.^x(10); % Set rate of change for the paramter of the effects of conflict
+if(XU(6)>=1) % See if conflict is being used at alls
+    K=10.^x(12); % Set rate of change for the paramter of the effects of conflict
     k=k+1; % add a paramter
     if(CF==2) % If the full hill function is being used
-        n=10.^x(11); % Hill coefficient estimate
+        n=10.^x(13); % Hill coefficient estimate
         k=k+1; % add to estimated paramters
     else
         n=1; % Hill coefficient ot estimated
@@ -83,12 +85,12 @@ else % Conflict is not being used in the model
 end
 
  %% Rainfall assocaited paramters 
-if(XU(5)>=1) % See if rainfall is being used at all
-    rl=10.^x(12); % Esitmate for the low-rainfall heighted incidence
+if(XU(7)>=1) % See if rainfall is being used at all
+    rl=10.^x(14); % Esitmate for the low-rainfall heighted incidence
     if(RF~=1) % See if low-rainfall heighted incidence is being used
         k=k+1; % add paramrter
     end
-    rh=10.^x(13); % Esitmate for the high-rainfall heighted incidence
+    rh=10.^x(15); % Esitmate for the high-rainfall heighted incidence
     if(RF~=0) % See if high-rainfall heighted incidence is being used
         k=k+1;% add paramrter
     end

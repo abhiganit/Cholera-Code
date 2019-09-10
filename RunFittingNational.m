@@ -4,16 +4,20 @@ function RunFittingNational(XU,tau,AF,CF,RF,PF,PE,DT)
 % Input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % XU - Specify what you want to use in in the regression model (1 = included, 0 =
-%excluded) (1X7)
-        % XU(1)- beta_0
-        % XU(2) - Past incidence
-        % XU(3) - Product of incidence and attacks
-        % XU(4) - Product of incidence and conflict
-        % XU(5) - Product of incidence and rainfall
-        % XU(6) - Rainfall only
-        % XU(7)- For Govnoerate level (external force of infection from
+%excluded) (1X9)
+        % XU(1)- beta_0        
+        % XU(2)- population density
+        XU(2)=0; % Does not include population density as will not alter national (i.e. absorbed into beta_0)    
+        % XU(3)- health facilities
+        XU(3)=0; % Does not include health facilities as will not alter national trend (i.e. absorbed into beta_0)
+        % XU(4) - Past incidence
+        % XU(5) - Product of incidence and attacks
+        % XU(6) - Product of incidence and conflict
+        % XU(7) - Product of incidence and rainfall
+        % XU(8) - Rainfall only
+        % XU(9)- For Govnoerate level (external force of infection from
         % other govnoertaes)
-        XU(7)=0; % Set to zero as this variable is not used in the national fitting
+        XU(9)=0; % Set to zero as this variable is not used in the national fitting
 % tau -Specify a lag of all the factors that are integrated in the model
 % (1X6)
     % tau(1) - Past incidence
@@ -57,7 +61,7 @@ if isfile([pwd '\Tables\ModelFitSummaryNational.dat'])
      fmf = fopen([pwd '\Tables\ModelFitSummaryNational.dat'],'a'); % Writing to the file name
 else
      fmf = fopen([pwd '\Tables\ModelFitSummaryNational.dat'],'w'); % Writing to the file name
-     fprintf(fmf, 'Intercept \t Incidence \t Attack \t Conflcit \t Rainfall \t Precipitation  \t AttackFunction \t ConflictFunction \t RainfallFunction \t ObjectiveValue \t AIC \n'); % The header for the table
+     fprintf(fmf, 'Intercept \t Population \t HealthFacilities \t Incidence \t Attack \t Conflcit \t Rainfall \t Precipitation  \t AttackFunction \t ConflictFunction \t RainfallFunction \t ObjectiveValue \t AIC \n'); % The header for the table
 end
 %% Load the data
 load('Yemen_National_Incidence.mat'); % Incidence data
@@ -80,29 +84,28 @@ f=find(XU(2:end)==0); % Find the variables not included so the lag can be set to
 tau(f)=0; % set the lag for components not included to zero
 
 
-
 % Specify the lower bounds for the estimated parameters
-% beta(1:6)=XU.*[x(1) 10.^(x(2:6))]
+% beta(1:9)=XU.*[x(1) 10.^(x(2:9))]
 % 
 % %Attack associated paramters
-% DB=10.^x(7);
-% DA=10.^x(8);
+% DB=10.^x(10);
+% DA=10.^x(11);
 % % Conflict associated paramters
-% K=10.^x(9);
-% n=10.^x(10);
+% K=10.^x(12);
+% n=10.^x(13);
 % % Rainfall assocaited paramters
-% rl=10.^x(11);
-% rh=10.^x(12);
+% rl=10.^x(14);
+% rh=10.^x(15);
 
 
-lb=[-inf.*ones(1,12)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-ub=log10([inf inf inf inf inf inf 1 1 inf inf 10 10]); % specify the upperbound for the parameters 
+lb=[-inf.*ones(1,15)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ub=log10([inf inf inf inf inf inf inf inf inf 1 1 inf inf 10 10]); % specify the upperbound for the parameters 
 
 
 %% Run the fitting algorithm
 NS=1000; % The number of initial starting points used in the fitting process
 opts= optimset('MaxIter',10^6,'MaxFunEvals',10^6,'TolFun',10^(-12),'TolX',10^(-12),'UseParallel',true,'Display','off');  % Specifies the conditions that will be used in the fitting processs
-problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF),'x0',log10(rand(12,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
+problem = createOptimProblem('lsqnonlin','objective',@(x)OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF,0,0),'x0',log10(rand(15,1)),'lb',lb,'ub',ub,'Aineq',[],'bineq',[],'Aeq',[],'beq',[],'options',opts);
 ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm in parallel
 [par,fval] = run(ms,problem,NS); %starts at NS random initial points to thoroghly search the paramter space
 % Evaluate the number of paramters that are being used in the estimation 
@@ -111,8 +114,8 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
 % Computing the statistical of the bets estimates for the regresison model
     f=find(XU==1); %  fiind components that are included
     be=beta(f); % increase index by one as we do not remove the inital beta_0
-    [Yt,It,IAt,ICt,IRt,Rt,~]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
-    resid=OFunc(par,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF); % Returns the vector of residulas for each of the data points
+    [Yt,It,~,~,IAt,ICt,IRt,Rt,~]=LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF,0,0); % Returns the incidence in matrix form of size Ng X (NW-tau)
+    resid=OFunc(par,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF,0,0); % Returns the vector of residulas for each of the data points
     X=[]; % Construct the input vector based on the variables used in the fitting
     twotail=[]; % for the two-tail or single tail p-value (1 - uses two-tail)
     % If the constant is used
@@ -121,35 +124,36 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
         twotail=[twotail 1]; % Specify whether want two tail or not
     end
     %If past incidence is used
-    if(XU(2)==1)
+    if(XU(4)==1)
         X=[X It(:)]; % add the past incidence
         twotail=[twotail 1]; % Specify whether want two tail or not
     end
     %If attacks are used
-    if(XU(3)==1)
+    if(XU(5)==1)
         X=[X IAt(:) ]; % add product of past incidence and attacks
         twotail=[twotail 1]; % Specify whether want two tail or not
     end
     % If confclit is used
-    if(XU(4)==1)
+    if(XU(6)==1)
         X=[X ICt(:)]; % add product of past incidence and conflict
         twotail=[twotail 1]; % Specify whether want two tail or not
     end
     % If rainfall is used
-    if(XU(5)==1)
+    if(XU(7)==1)
         X=[X IRt(:)]; % add product of past incidence and rainfall
         twotail=[twotail 1]; % Specify whether want two tail or not
     end
-    % If environmental factors are used
-    if(XU(6)==1)
-        X=[X Rt(:)]; % add product of past incidence and environmental factors
+    % If precipitation factors are used
+    if(XU(8)==1)
+        X=[X Rt(:)]; % add precipitation
         twotail=[twotail 1]; % Specify whether want two tail or not
     end
+    
     % Calculate the statistics for for the coefficients of the model
     [SE,tStat,pValue] = LinRegressionStat(be,resid,k,X,twotail);   % We have specified the two-tail p-value as seen above
     
     % Constrcuts a table that is saved an can be viewed later
-    f1 = fopen([pwd '\Tables\Table-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.dat'],'w'); % Writing to the file name
+    f1 = fopen([pwd '\Tables\Table-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.dat'],'w'); % Writing to the file name
     CN=struct('N',{'Intercept ','Incidence ','Attack ','Conflcit ','Rainfall ','Precipitation '}); % The name of the variables that we can call
     fprintf(f1, 'Coefficient \t Value \t Stand._Error \t t-Stat \t p-value \n'); % The header for the table
     for ii=1:length(XU) % Go through all variables to see which are included
@@ -162,15 +166,15 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
     nData=length(Yt(:)); % The number of data points available for the model fitting
     AIC = AICScore(k,nData,fval); % Calculate the AIC score
     if(DT~=0)
-        readtable([pwd '\Tables\Table-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.dat']) % reads and prints the table to the command window
+        readtable([pwd '\Tables\Table-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.dat']) % reads and prints the table to the command window
     end
-    save([pwd '\Tables\Model-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','AIC'); % Saves the information for the specified model for can load and run model after
+    save([pwd '\Tables\Model-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','AIC'); % Saves the information for the specified model for can load and run model after
     
     if(DT~=0)
         fprintf('The objective value for the model fit: %5.4e \n',fval); % Outputs the AIC score
         fprintf('The AIC score for the model fit: %4.1f \n',AIC); % Outputs the AIC score
     end
-fprintf(fmf, [ '%d \t %d \t %d \t %d \t %d \t %d \t ' AFF((AF+1).*XU(3)+1).N '\t ' CFF((CF+1).*XU(4)+1).N ' \t ' RFF((RF+1).*XU(5)+1).N ' \t %8.0f \t %5.2f \n'],[XU(1) XU(2:end).*tau fval AIC]); % The header for the table
+fprintf(fmf, [ '%d \t %d \t %d \t %d \t %d \t %d \t %d \t %d \t %d \t ' AFF((AF+1).*XU(3)+1).N '\t ' CFF((CF+1).*XU(4)+1).N ' \t ' RFF((RF+1).*XU(5)+1).N ' \t %8.0f \t %5.2f \n'],[XU(1:3) XU(4:end).*tau fval AIC]); % The header for the table
 fclose(fmf);
 %% Plot the enviromental functions for the model
 
@@ -248,7 +252,7 @@ if(PE~=0)
     set(gca,'LineWidth',2,'tickdir','out','Fontsize',16,'Ytick',[0:0.2:1]);
     %y-axis limits
     ylim([0 1]);
-    print(gcf,[pwd '\Figures\Functions-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\Functions-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
 end
 
 %% Plot the national level incidence compared to the model predicted incidence
@@ -285,7 +289,7 @@ if(PF~=0) % Plot fit
     % ylable of the figure
     ylabel('Number of reported cases','Fontsize',24); 
     
-    print(gcf,[pwd '\Figures\Fit-XU=' num2str(XU(1)+2.*XU(2)+4.*XU(3)+8.*XU(4)+16.*XU(5)+32.*XU(6)) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\Fit-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF) '-AF=' num2str(AF) '-RF=' num2str(RF) '-tau=' num2str(tau(XU(2:end)>0)) '-National.png'],'-dpng','-r600');
 end
 
 end

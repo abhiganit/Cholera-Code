@@ -1,4 +1,4 @@
-function [Yt,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF,P,H)
+function [Yt,PDG,HFG,It,IAt,ICt,IRt,Rt,Gt]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,Rtv,RF,rl,rh,tau,maxtau,CF,P,H)
 % Produces the predicted incicence in matrix form for the diffrent areas
 % and weeks
 %===============================

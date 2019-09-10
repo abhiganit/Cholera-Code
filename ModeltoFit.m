@@ -3,14 +3,20 @@ clear;
 % General model specifications
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Specify XU the model being fit
-% XU(1)- beta_0
-% XU(2) - Past incidence
-% XU(3) - Product of incidence and attacks
-% XU(4) - Product of incidence and conflict
-% XU(5) - Product of incidence and rainfall
-% XU(6) - Rainfall only
-% XU(7) - Incidence in other govneroates
-XU=[0 0 0 1 0 1 1]; 
+        % XU(1)- beta_0
+        % XU(2) - population density
+        % XU(3) - number of health facilities 
+        % XU(4) - Past incidence
+        % XU(5) - Product of incidence and attacks
+        % XU(6) - Product of incidence and conflict
+        % XU(7) - Product of incidence and rainfall
+        % XU(8) - Rainfall only        
+        % XU(9) - Incidence in other govnorates
+XU=zeros(1,9); 
+XU(2)=1;
+XU(5)=1;
+XU(8)=1;
+XU(9)=1;
 
 % Specify the lag
 % tau(1) - Past incidence
