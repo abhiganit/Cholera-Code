@@ -13,10 +13,15 @@ clear;
         % XU(8) - Rainfall only        
         % XU(9) - Incidence in other govnorates
 XU=zeros(1,9); 
-XU(2)=1;
+XU(1)=0;
+XU(2)=0;
+XU(3)=0;
+XU(4)=0;
 XU(5)=1;
+XU(6)=0;
+XU(7)=0;
 XU(8)=1;
-XU(9)=1;
+XU(9)=0;
 
 % Specify the lag
 % tau(1) - Past incidence
@@ -71,7 +76,7 @@ RF=2; % RF=0 Increased incidence for low-rainfall; RF=1 increased incidence for 
 G=[]; 
 
 % Specify if want plot of fit
-PF=0; %PF=0 does not produce plot
+PF=1; %PF=0 does not produce plot
 
 % Specify if want plot of function
 PE=1; %PE=0 does not produce plot

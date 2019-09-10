@@ -86,7 +86,7 @@ GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does n
 
 maxtau=4; % The maximum lag allowed for the model
 tau(tau>maxtau)=maxtau; % Set to ensure that the lag does not exceed the maximum lag specified
-f=find(XU(2:end)==0); % Find the variables not included so the lag can be set to zero
+f=find(XU(4:end)==0); % Find the variables not included so the lag can be set to zero
 tau(f)=0; % set the lag for components not included to zero
 
 
@@ -209,7 +209,7 @@ if(PE~=0)
     subplot('Position',[xxs(1) yys(1) wid hei]); 
 
     testA=[zeros(21,1); 1; zeros(21,1)]'; % the days we want to plot
-    if(XU(3)~=0) % See if the function is present
+    if(XU(5)~=0) % See if the function is present
         Y = ImpactAttack(testA,DB,DA,[0 0 0 0 0],0); % evalautae function the function for the days (do not need lag here as we are interested in the function)
     else
         Y=0.*testA; % the function is absent so set to zero
@@ -232,7 +232,7 @@ if(PE~=0)
     %Function for conflict
     subplot('Position',[xxs(1) yys(2) wid hei]);
     Ct=linspace(0,450,501); % the values where the function will be evalauted
-    if(XU(4)~=0) % See if the function is present
+    if(XU(6)~=0) % See if the function is present
         Y = ImpactConflict(Ct,K,n,CF); % evalautae function the function for the values
     else
         Y=0.*Ct; % functino not present
@@ -253,7 +253,7 @@ if(PE~=0)
     % plot rain fall function
     subplot('Position',[xxs(1) yys(3) wid hei]);
     Rt=linspace(0,10,101); % the values where the function will be evalauted
-    if(XU(5)~=0) % See if the function is present
+    if(XU(7)~=0) % See if the function is present
         Y = ImpactRainfall(Rt,RF,rl,rh); % evalautae function the function for the values
     else
         Y=0.*Rt; % functino not present
