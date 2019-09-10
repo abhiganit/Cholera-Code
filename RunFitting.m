@@ -114,7 +114,7 @@ ms = MultiStart('UseParallel','always'); % specifies that we run the algorithm i
     f=find(XU==1); %  fiind components that are included
     be=beta(f); % increase index by one as we do not remove the inital beta_0
     [Yt,It,IAt,ICt,IRt,Rt,Gt]=LogisticModel(beta,WI(GNZI,:),tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,Rtv(GNZI,:),RF,rl,rh,tau,maxtau,CF); % Returns the incidence in matrix form of size Ng X (NW-tau)
-    resid=OFunc(par,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RF); % Returns the vector of residulas for each of the data points
+    resid=OFunc(par,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,tau,maxtau,AF,CF,RF); % Returns the vector of residulas for each of the data points
     X=[]; % Construct the input vector based on the variables used in the fitting
     twotail=[]; % for the two-tail or single tail p-value (1 - uses two-tail)
     % If the constant is used
