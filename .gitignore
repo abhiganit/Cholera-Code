@@ -1,16 +1,13 @@
 
 *.png
-Figures/Fit-XU=2-CF=2-AF=2-RF=2-tau=3-National.png
-Figures/Fit-XU=2-CF=2-AF=2-RF=2-tau=3-National.png
-Figures/Fit-XU=2-CF=2-AF=2-RF=2-tau=3-National.png
-Figures/Functions-XU=2-CF=2-AF=2-RF=2-tau=3-National.png
 *.dat
 Summary/CholeraYemenSummary.log
 Summary/CholeraYemenSummary.log
 Summary/CholeraYemenSummary.pdf
-Figures/Functions-XU=2-CF=2-AF=2-RF=2-tau=3-National.png
 Summary/CholeraYemenSummary.tex
 Summary/CholeraYemenSummary.synctex.gz
 Summary/SummaryTable.pdf
 Summary/SummaryTable.synctex.gz
 Summary/SummaryTable.tex
+Tables/*.dat
+Tables/*.mat
