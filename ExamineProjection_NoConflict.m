@@ -29,7 +29,11 @@ P=log(P)';
 load('RebelControl_Yemen.mat');
 RC=RC';
 % Load Health facility density
-H=zeros(size(P));
+% Load Health facility density
+HS = shaperead([ pwd '\ShapeFile\healthsites.shp']); % Shape file for Yemen
+load('PopulationSize_Yemen.mat');
+H= GLevelHealthSites(HS,S);
+H=10000.*H./AP';
 
 %Find areas where we have non-zero incidence over course of epidemic
 GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
@@ -57,8 +61,8 @@ maxtau=4; % The maximum lag allowed for the model
 % Evaluate the number of paramters that are being used in the estimation 
 AF=2;
     XU=ones(1,11);
-    load([pwd '\Tables\ProjectionModelGA-XU=2047-CF=1-RIF=1-PF=1-tau=1  1  1  3  3  4  1  1  2  1.mat'],'par');
-[k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(par,XU);
+      load([pwd '\Tables\TestProjectionModelGA-XU=2047-CF=2-RIF=0-PF=1-tau=1  1  1  2  1  4  1  1  3  1.mat'],'par');
+[k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
 %% Run the projection
 
 

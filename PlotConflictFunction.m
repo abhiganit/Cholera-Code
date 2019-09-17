@@ -9,7 +9,7 @@ load('Yemen_National_Incidence.mat'); % Load the national incidence data for the
 
 AF=2;
 XU=ones(1,11);
-load([pwd '\Tables\ProjectionModelGA-XU=2047-CF=1-RIF=1-PF=1-tau=1  1  1  3  3  4  1  1  2  1.mat'],'par');
+load([pwd '\Tables\TestProjectionModelGA-XU=2047-CF=2-RIF=0-PF=1-tau=1  1  1  2  1  4  1  1  3  1.mat'],'par');
 
 
 %Find areas where we have non-zero incidence over course of epidemic
@@ -18,23 +18,19 @@ GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does n
     maxtau=4; % The maximum lag allowed for the model
 
     % Evaluate the number of paramters that are being used in the estimation 
-    [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(par,XU);
+    [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
     
-C=ImpactConflict(Ctv(GNZI,(1+maxtau-tau(5)):(end-tau(5))),K,n,CF);
-subplot(3,1,1);plot((1+maxtau):(131),sum(C))
-ylabel('Conflict function');
-load('Attack_Yemen_Time_Location_Project_Forward.mat'); % Load the attacks in the area for the projection
-tA=GLevelConflict(ProA,S,131);% % Send attack data (time, latitude, longatude) and shapefile of area wanted to 
-A=ImpactAttack(tA(GNZI,:),0,DAE,tau(9),maxtau);
-AF=[zeros(1,maxtau) sum(A)];
-ST=sum(tA(GNZI,:));
-A=ImpactAttack(tA(GNZI,:),DB,DA,tau(4),maxtau);
+    C=ImpactConflict([0:10],K,n,CF);
+subplot(3,2,1);bar([0:10],C)
+A=ImpactAttack([zeros(1,21) 1 zeros(1,21)],0,DAE,0,0);
+subplot(3,2,2);bar([-21:21],A); 
 
-AF2=[zeros(1,maxtau) sum(A)];
-ST=sum(tA);
-subplot(3,1,2);bar([1:131],[ST]); 
-ylabel('Number of attacks');
+A=ImpactAttack([zeros(1,21) 1 zeros(1,21)],DB,DA,0,0);
+subplot(3,2,3);bar([-21:21],A); 
 
-subplot(3,1,3);bar([1:131],[AF;AF2]','stacked'); 
-ylabel('Attack functions');
-legend({'Attack','Attack and Incidence'})
+R=ImpactRainfall(linspace(0,16,10001),RIF,rl);
+subplot(3,2,4);plot(linspace(0,16,10001),R); 
+
+
+R=ImpactRainfall(linspace(0,16,10001),RF,rh);
+subplot(3,2,5);plot(linspace(0,16,10001),R); 

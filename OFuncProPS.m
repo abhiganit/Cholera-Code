@@ -1,4 +1,4 @@
-function [F]= OFuncProGA(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,NWP,NatData)
+function [F]= OFuncProPS(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,NWP,NatData)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -73,7 +73,7 @@ XU(f(g))=1; % set non-zero and non-one to one
 
 %Returns the paramters for the specified functions based on the
 %transformation from the bounds
-[~,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU);
+[~,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU);
 
 %%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
 % Determine model predicted incidence

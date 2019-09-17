@@ -1,4 +1,4 @@
-function ProFittingGA(XU,G,PE,PP,DT)
+function [par,fval]=ProFittingGA(XU,G,PE,PP,DT)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,6 +56,8 @@ function ProFittingGA(XU,G,PE,PP,DT)
 % Output
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Saves files to specified folders
+% par - the vector of log_10 estimated parameters from the fitting
+% fval - the residual sum of squares
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
 % Run alorithm
@@ -113,20 +115,28 @@ maxtau=4; % The maximum lag allowed for the model
 % DAE=10.^x(18);
 NW=length(NatIData);
 NWP=NW-length(WI(1,:));
+lbps=[-16.*ones(1,11) zeros(1,5) 0 0 0 -16.*ones(1,7)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ubps=[ log10([10^3  10^3 10^3 10 10 10 10 10^3 1 10^4 10]) ones(1,5) 1 1 1 log10([1 1 113 10 12 12 1])]; % specify the upperbound for the parameters 
+
 lb=[-16.*ones(1,11) ones(1,5) 0 0 0 -16.*ones(1,7)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
 ub=[ log10([10^3  10^3 10^3 10 10 10 10 10^3 1 10^4 10]) 4.*ones(1,5) 2 2 2 log10([1 1 113 10 12 12 1])]; % specify the upperbound for the parameters 
+
 IntC=[12:19];
 
 %% Run the fitting algorithm
-options = optimoptions('ga','PlotFcn', @gaplotbestf,'MaxGenerations',5000,'MaxStallGenerations',100,'UseParallel',true,'FunctionTolerance',10^(-8));
+options = optimoptions('ga','MaxGenerations',5000,'MaxStallGenerations',100,'UseParallel',true); %
+optionsps = optimoptions('patternsearch','UseParallel',true,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-8));
 
-[par,fval] = ga(@(x)OFuncProGA(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),NWP,NatIData),length(lb),[],[],[],[],lb,ub,[],IntC,options);
-
+[par] =ga(@(x)OFuncProGA(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),NWP,NatIData),length(lb),[],[],[],[],lb,ub,[],IntC,options); 
+par(12:16)=par(12:16)./4-0.01; % such that they do not push on the boundary
+par(17:19)= (par(17:19)+1)./3-0.01; % such that they do not push on the boundary
+[par,fval] =patternsearch(@(x)OFuncProPS(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),NWP,NatIData),par,[],[],[],[],lbps,ubps,[],optionsps); 
+fval=10^fval; % transform to residula sum of squares as the objective function taked the log_10 transform of the objective function
 % Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(par,XU);
+[k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
 
     % Calculate the AIC score for the model fit
-    save([pwd '\Tables\TestProjectionModelGA-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','par'); % Saves the information for the specified model for can load and run model after
+    save([pwd '\Tables\BackSelectModel-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','par'); % Saves the information for the specified model for can load and run model after
     
 %% Plot the enviromental functions for the model
 
@@ -263,7 +273,7 @@ if(DT~=0)
     fprintf('Mean Error in model projection: %3.0f \n',MSEP);
 end
 
-save([pwd '\Tables\TestProjectionModelGA-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'RPro','RFit','MSEP','-append'); % Saves the information for the specified model for can load and run model after
+save([pwd '\Tables\BackSelectModel-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'RPro','RFit','MSEP','-append'); % Saves the information for the specified model for can load and run model after
 
 
 %% Produce the figure for the projection

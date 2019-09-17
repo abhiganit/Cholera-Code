@@ -1,4 +1,4 @@
-function [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
+function [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU)
 %Based on the input-x and functions used we return the proper paramters to
 %evalaute the regression model
 
@@ -63,10 +63,10 @@ function [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the coefficients fo rthe regression model
 beta=[10.^x(1:11)].*XU;
-tau=[1 1 1 x(12) x(13) x(14) x(15) 1 x(16) 1];
-CF=x(17);
-RF=x(18);
-RIF=x(19);
+tau=[1 1 1 ceil(4.*x(12)) ceil(4.*x(13)) ceil(4.*x(14)) ceil(4.*x(15)) 1 ceil(4.*x(16)) 1];
+CF=ceil(3.*x(17))-1;
+RF=ceil(3.*x(18))-1;
+RIF=ceil(3.*x(19))-1;
 lenbeta=19;
 k=sum(XU)+ sum(XU([5 6 7 8 10])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
