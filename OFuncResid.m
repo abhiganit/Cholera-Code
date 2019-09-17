@@ -1,4 +1,4 @@
-function [FM]= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RIF,RF,P,H)
+function [F]= OFuncResid(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RIF,RF,P,H)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -72,6 +72,5 @@ XU(f(g))=1; % set non-zero and non-one to one
 
 F=WI(:,(maxtau+1):end)-Yt; % Compute the difference for the times and the locations that is tau weeks ahead
 F=F(:); % convert the matrix into a vector for the use of lsqnonlin
-FM=F'*F;
 end
 

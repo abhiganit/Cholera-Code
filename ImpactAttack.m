@@ -23,10 +23,11 @@ function Y = ImpactAttack(tA,DB,DA,tau,maxtau)
 %% Function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Y=1-tA; % day of the attack has full effect
+Y=tA; % day of the attack has full effect
+MM=max(tA(:));
 % See if we are examing days before or not
 if(DB>0)
-    WB=ceil(log(10^(-3))/log(DB)); % Look to see how many days vefore we need to go
+    WB=ceil((log(10^(-3))-log(MM))/log(DB)); % Look to see how many days vefore we need to go
     if(WB+1>length(tA(1,:))) % Ensure we do not exceed the length of the vector
        WB=length(tA(1,:))-1; % Set length based on the maximum otherwise
     end
@@ -36,7 +37,7 @@ end
 
 % See if we are examing days after attack or not
 if(DA>0)
-    WA=ceil(log(10^(-3))/log(DA)); % Look to see how many days after we need to go
+    WA=ceil((log(10^(-3))-log(MM))/log(DA)); % Look to see how many days after we need to go
     if(WA+1>length(tA(1,:))) % Ensure we do not exceed the length of the vector
        WA=length(tA(1,:))-1; % Set length based on the maximum otherwise
     end
@@ -47,18 +48,17 @@ end
 % Calcualte impact based on days before
 for ii=1:WB % Number of days we need to go back
    temp=[tA(:,(ii+1):end) zeros(length(tA(:,1)),ii)]; % shift the matrix tA back to induce impact before the event occurrs
-   Y=Y.*(1-(DB.^ii).*temp); % the level of impact decreases the further you go back as DB<1
+   Y=Y+(DB.^ii).*temp; % the level of impact decreases the further you go back as DB<1
 end
 
 
 % Calcualte impact based on days after the attack
 for ii=1:WA
    temp=[zeros(length(tA(:,1)),ii) tA(:,1:(end-ii)) ]; % shift the matrix tA forward to induce impact after the event occurrs
-   Y=Y.*(1-(DA.^ii).*temp); % the level of impact decreases the further ahead you go as DA<1
+   Y=Y+(DA.^ii).*temp; % the level of impact decreases the further ahead you go as DA<1
 end
 
-Y=1-Y; % 1- product to give the effect
 
-Y=Y(:,(1+maxtau-tau(2)):(end-tau(2))); % truncate to integrate the lag of incidence
+Y=Y(:,(1+maxtau-tau):(end-tau)); % truncate to integrate the lag of incidence
 end
 

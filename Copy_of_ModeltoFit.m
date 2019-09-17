@@ -14,8 +14,8 @@ clear;
                     % XU(9) - Incidence in other govnorates
                     % XU(10) - Attacks only
                     % XU(11) - Rebel control
-            XU=zeros(1,11);
-            XU([1 2 4 7 8 9])=1;
+            XU=ones(1,11);
+            
             % Specify the lag
             % tau(1) - population density incidence
             % tau(2) - health zone incidence

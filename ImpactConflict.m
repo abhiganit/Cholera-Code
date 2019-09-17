@@ -20,9 +20,10 @@ function Y = ImpactConflict(Ct,K,n,CF)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if(CF==0) % Conduct linear growth of the effect of conflict
-    Y=Ct./K;
+    Y=Ct;
 else
-   Y=(Ct.^n)./(Ct.^n +K.^n); % The Hill function for the effects of conflict become saturated 
+   Y=Ct-K; % The Hill function for the effects of conflict become saturated 
+   Y(Y<0)=0;
+   Y=Y.^n;
 end
-Y(Y>1)=1; % Make sure that the measure does not exceed 100%
 end

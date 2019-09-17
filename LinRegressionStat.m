@@ -20,7 +20,7 @@ function [SE,tStat,pValue] = LinRegressionStat(be,resid,DF,X,twotail)
 % pValue - The one sided p-value
 
 %% Run computation
-V=(sum(resid.^2)./(length(X(:,1))-DF)).*inv(X'*X); % The covariance matrix for the estimates
+V=(sum(resid.^2)./(length(X(:,1))-DF)).*pinv(X'*X); % The covariance matrix for the estimates
 SE=sqrt(diag(V))'; % the standard error for the coefficients
 tStat=be./SE; % The t-statistic for eahc coefficient
 pValue=1-tcdf(tStat,length(X(:,1))-DF); % One-tail t-test value

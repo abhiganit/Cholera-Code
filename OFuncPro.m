@@ -1,4 +1,4 @@
-function [FM]= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RIF,RF,P,H)
+function [F]= OFuncPro(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RIF,RF,P,RC,H,NWP,NatData)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -10,19 +10,29 @@ function [FM]= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RIF,RF,P,H)
 % Ctv - the vector for the conflict
 % Rtv - the vector rainfall at time t
  % XU - the X input that will be used in the fitting process. Will be zeros
- % or one (1 x 6)
+ % or one (1 x 11)
     % XU(1)- beta_0
-    % XU(2) - Past incidence
-    % XU(3) - Product of incidence and attacks
-    % XU(4) - Product of incidence and conflict
-    % XU(5) - Product of incidence and rainfall
-    % XU(6) - Rainfall only
+    % XU(2) - population density
+    % XU(3) - number of health facilities 
+    % XU(4) - Past incidence
+    % XU(5) - Product of incidence and attacks
+    % XU(6) - Product of incidence and conflict
+    % XU(7) - Product of incidence and rainfall
+    % XU(8) - Rainfall only        
+    % XU(9) - Incidence in other govnorates
+    % XU(10) - Attacks only
+    % XU(11) - Rebel control
 % tau - the lag
-    % tau(1) - Past incidence
-    % tau(2) - Product of incidence and attacks
-    % tau(3) - Product of incidence and conflict
-    % tau(4) - Product of incidence and rainfall
-    % tau(5) - Perciptiation only
+    % tau(1) - population density incidence
+    % tau(2) - health zone incidence
+    % tau(3) - Past incidence
+    % tau(4) - Product of incidence and attacks
+    % tau(5) - Product of incidence and conflict
+    % tau(6) - Product of incidence and rainfall
+    % tau(7) - Perciptiation only
+    % tau(8) - Incidence in other govneroates
+    % tau(9)- Attack only
+    % tau(10)- Rebel control
 % maxtau - maximum lag allowed for the model (used in the truncation of the
 % data set
 % AF - Specify the attack function to be used
@@ -42,6 +52,7 @@ function [FM]= OFunc(x,WI,tA,Ctv,Rtv,XU,tau,maxtau,AF,CF,RIF,RF,P,H)
     % RF=1 the increase in incidence when rainfall is high
     % RF=2 the increase in incidence when rainfall is low and high
 % P - population density for the governorates
+% RC - rebel control
 % H - the density of health facililities in the govnorates
 %=================================
 % Output
@@ -68,10 +79,11 @@ XU(f(g))=1; % set non-zero and non-one to one
 % Determine model predicted incidence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-[Yt,~,~,~,~,~,~,~]=LogisticModel(beta,WI,tA,DB,DA,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,H); % Returns the incidence in matrix form of size Ng X (NW-tau)
+[Yt,Pt]= ModelProjection(beta,WI,tA,DB,DA,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,NWP);
 
-F=WI(:,(maxtau+1):end)-Yt; % Compute the difference for the times and the locations that is tau weeks ahead
-F=F(:); % convert the matrix into a vector for the use of lsqnonlin
-FM=F'*F;
+FP=NatData((length(WI(1,:))+1):end)'-sum(Pt,1); % Compute the difference for the times and the locations that is tau weeks ahead
+FF=WI(:,(maxtau+1):end)-Yt; % Compute the difference for the times and the locations that is tau weeks ahead
+NG=length(P); % Number of govneroatres used in the fitting
+F=[FP(:);FF(:)./sqrt(NG)]; % convert the matrix into a vector for the use of lsqnonlin
 end
 

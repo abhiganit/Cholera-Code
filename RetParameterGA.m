@@ -1,4 +1,4 @@
-function [k,beta,DB,DA,DAE,K,n,rl,rh]=RetParameter(x,XU,AF,CF)
+function [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
 %Based on the input-x and functions used we return the proper paramters to
 %evalaute the regression model
 
@@ -51,24 +51,30 @@ function [k,beta,DB,DA,DAE,K,n,rl,rh]=RetParameter(x,XU,AF,CF)
 % The parameters for the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the coefficients fo rthe regression model
-beta=[10.^x(1:11)'].*XU;
-lenbeta=length(beta);
+beta=[10.^x(1:11)].*XU;
+tau=[1 1 1 x(12) x(13) x(14) x(15) 1 x(16) 1];
+CF=x(17);
+RF=x(18);
+RIF=x(19);
+lenbeta=19;
 k=sum(XU); % Count the number of coefficients being estimated
+
+
 
 %% Attack asscoaited paramters
 if(XU(5)>=1)  % See if attacks being used at all
-    if(AF==1) % If only look after attack set DB=0
-        DB=0; 
-    else    
+%     if(AF==1) % If only look after attack set DB=0
+%         DB=0; 
+%     else    
         DB=10.^x(lenbeta+1); %looking befroe the attack
         k=k+1; % Add estimated paramter
-    end
-    if(AF==0) % % If only look before attack set DA=0
-        DA=0;
-    else
+%     end
+%     if(AF==0) % % If only look before attack set DA=0
+%         DA=0;
+%     else
         DA=10.^x(lenbeta+2);  %looking after the attack
         k=k+1; % Add estimated paramter
-    end
+%     end
 else % Attack is not being used in the model
     DA=0;
     DB=0;

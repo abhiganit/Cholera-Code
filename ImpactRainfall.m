@@ -1,4 +1,4 @@
-function Y = ImpactRainfall(Rt,RF,rl,rh)
+function Y = ImpactRainfall(Rt,RF,r0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Y = ImpactRainfall(Rt,H,rl,rh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,8 +11,7 @@ function Y = ImpactRainfall(Rt,RF,rl,rh)
     % RF=0 the increase in incidence when rainfall is low
     % RF=1 the increase in incidence when rainfall is high
     % RF=2 the increase in incidence when rainfall is low and high
-% rl - Rate the imapct in icidence decays from low rain fall
-% rh - Rate the imapct in icidence decays from high rain fall
+% r0 - Threshold for the effect of rainfall
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 % Output
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
@@ -24,14 +23,16 @@ function Y = ImpactRainfall(Rt,RF,rl,rh)
 
 switch RF
     case 0 % the increase in incidence when rainfall is low
-        Y=exp(-rl.*Rt);
+        Y=r0-Rt;
+        Y(Y<0)=0;
     case 1 % the increase in incidence when rainfall is high
-        Y=exp(rh.*Rt)-1;
+        Y=Rt-r0;
+        Y(Y<0)=0;
     case 2 % the increase in incidence when rainfall is high
-        Y=exp(-rl.*Rt)+exp(rh.*Rt)-1;
+        Y=abs(Rt-r0);
     otherwise
         warning('Error: Appropriate function not selected');
         return;
 end
-Y(Y>1)=1; % Make sure that the measure does not exceed 100%
+
 end

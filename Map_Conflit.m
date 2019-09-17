@@ -24,7 +24,7 @@ figure('units','normalized','outerposition',[0 0 1 1]); % Crat a new figure
  
 
 set(gca,'visible','off') % remove the asix from the figures
-print(gcf,'Conflict_Map_Yemen.png','-dpng','-r600'); % saves the conflict map
+%print(gcf,'Conflict_Map_Yemen.png','-dpng','-r600'); % saves the conflict map
 
 %% Produces the map with a cross-hatch in the specified areas
 figure('units','normalized','outerposition',[0 0 1 1]); % opens a new figure
@@ -54,4 +54,4 @@ for ii=1:NG % go through the governorates
     end
 end
 set(gca,'visible','off') % removes the axis
- print(gcf,'Conflict_Map_Yemen_Primary_Outbreak.png','-dpng','-r600'); % saves the figure
+% print(gcf,'Conflict_Map_Yemen_Primary_Outbreak.png','-dpng','-r600'); % saves the figure
