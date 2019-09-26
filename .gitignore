@@ -15,3 +15,183 @@ Summary/SummaryTable.pdf
 Summary/SummaryTable.synctex.gz
 Summary/SummaryTable.tex
 Table/*.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=10-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1024-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1028-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1032-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=104-CF=2-RIF=1-PF=0-tau=1  2  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1064-CF=2-RIF=0-PF=0-tau=1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=12-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=128-CF=0-RIF=0-PF=0-tau=4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=128-CF=0-RIF=0-PF=1-tau=2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=128-CF=0-RIF=0-PF=1-tau=3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=128-CF=0-RIF=0-PF=2-tau=2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=132-CF=0-RIF=0-PF=0-tau=1  4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1320-CF=2-RIF=0-PF=0-tau=1  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=136-CF=0-RIF=0-PF=1-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=136-CF=0-RIF=0-PF=2-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1384-CF=2-RIF=1-PF=0-tau=1  2  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1400-CF=2-RIF=1-PF=0-tau=1  2  2  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1400-CF=2-RIF=2-PF=0-tau=1  2  2  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1404-CF=2-RIF=1-PF=0-tau=1  1  2  2  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1404-CF=2-RIF=2-PF=0-tau=1  1  3  2  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1406-CF=2-RIF=2-PF=0-tau=1  1  1  3  2  2  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=16-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=16-CF=0-RIF=0-PF=0-tau=3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=168-CF=2-RIF=0-PF=1-tau=1  2  3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=168-CF=2-RIF=0-PF=2-tau=1  2  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=168-CF=2-RIF=0-PF=2-tau=1  2  3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=1983-CF=2-RIF=0-PF=2-tau=1  1  1  2  4  2  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=20-CF=0-RIF=0-PF=0-tau=1  3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2015-CF=0-RIF=2-PF=2-tau=1  1  1  2  2  3  1  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2031-CF=0-RIF=1-PF=1-tau=1  1  1  4  2  3  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2031-CF=0-RIF=1-PF=2-tau=1  1  1  4  2  3  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2039-CF=0-RIF=1-PF=0-tau=1  1  3  4  2  2  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2039-CF=1-RIF=1-PF=2-tau=1  1  2  4  2  3  1  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2043-CF=1-RIF=2-PF=1-tau=1  1  2  4  2  2  1  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2043-CF=1-RIF=2-PF=1-tau=1  1  2  4  2  3  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2045-CF=0-RIF=0-PF=1-tau=1  1  4  1  4  4  1  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2045-CF=0-RIF=1-PF=1-tau=1  1  2  4  2  3  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2045-CF=1-RIF=1-PF=0-tau=1  1  2  4  2  2  1  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2046-CF=1-RIF=1-PF=1-tau=1  1  1  2  4  2  3  1  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2046-CF=2-RIF=0-PF=1-tau=1  1  1  2  1  4  4  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2047-CF=0-RIF=0-PF=0-tau=1  1  1  3  1  4  4  1  1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2047-CF=0-RIF=1-PF=1-tau=1  1  1  2  4  2  3  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2047-CF=1-RIF=0-PF=2-tau=1  1  1  1  1  3  4  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2047-CF=1-RIF=1-PF=1-tau=1  1  1  4  3  2  2  1  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2047-CF=1-RIF=2-PF=1-tau=1  1  1  2  4  2  3  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=2047-CF=2-RIF=1-PF=1-tau=1  1  1  2  2  2  3  1  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=24-CF=0-RIF=0-PF=0-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=256-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=260-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=264-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=296-CF=2-RIF=0-PF=0-tau=1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=297-CF=2-RIF=0-PF=0-tau=1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=298-CF=2-RIF=0-PF=0-tau=1  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=300-CF=2-RIF=0-PF=0-tau=1  1  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=312-CF=2-RIF=0-PF=0-tau=1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=312-CF=2-RIF=0-PF=0-tau=1  3  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=313-CF=2-RIF=0-PF=0-tau=1  3  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=314-CF=2-RIF=0-PF=0-tau=1  1  3  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=32-CF=0-RIF=0-PF=0-tau=3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=32-CF=0-RIF=0-PF=0-tau=4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=32-CF=1-RIF=0-PF=0-tau=4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=32-CF=2-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=36-CF=2-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=360-CF=2-RIF=1-PF=0-tau=1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=360-CF=2-RIF=2-PF=0-tau=1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=361-CF=2-RIF=1-PF=0-tau=1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=362-CF=2-RIF=1-PF=0-tau=1  1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=362-CF=2-RIF=2-PF=0-tau=1  1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=364-CF=2-RIF=1-PF=0-tau=1  1  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=376-CF=2-RIF=1-PF=0-tau=1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=376-CF=2-RIF=2-PF=0-tau=1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=377-CF=2-RIF=1-PF=0-tau=1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=377-CF=2-RIF=2-PF=0-tau=1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=378-CF=2-RIF=1-PF=0-tau=1  1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=378-CF=2-RIF=2-PF=0-tau=1  1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=380-CF=2-RIF=1-PF=0-tau=1  1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=380-CF=2-RIF=2-PF=0-tau=1  1  3  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=381-CF=2-RIF=1-PF=0-tau=1  1  2  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=381-CF=2-RIF=2-PF=0-tau=1  1  3  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=382-CF=2-RIF=2-PF=0-tau=1  1  1  3  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=383-CF=2-RIF=2-PF=0-tau=1  1  1  3  2  2  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=4-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=40-CF=0-RIF=0-PF=0-tau=1  4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=40-CF=1-RIF=0-PF=0-tau=1  4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=40-CF=2-RIF=0-PF=0-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=41-CF=2-RIF=0-PF=0-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=42-CF=2-RIF=0-PF=0-tau=1  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=424-CF=2-RIF=0-PF=1-tau=1  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=424-CF=2-RIF=0-PF=2-tau=1  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=44-CF=2-RIF=0-PF=0-tau=1  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=455-CF=0-RIF=0-PF=1-tau=1  1  4  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=459-CF=0-RIF=0-PF=0-tau=1  1  4  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=461-CF=0-RIF=0-PF=1-tau=1  1  4  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=462-CF=0-RIF=0-PF=2-tau=1  1  1  4  4  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=463-CF=0-RIF=0-PF=1-tau=1  1  1  4  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=488-CF=2-RIF=1-PF=1-tau=1  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=5-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=504-CF=2-RIF=1-PF=1-tau=1  2  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=504-CF=2-RIF=2-PF=1-tau=1  2  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=508-CF=2-RIF=1-PF=1-tau=1  1  2  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=508-CF=2-RIF=2-PF=1-tau=1  1  3  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=510-CF=2-RIF=2-PF=1-tau=1  1  1  3  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=510-CF=2-RIF=2-PF=2-tau=1  1  1  3  2  2  3  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=512-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=512-CF=0-RIF=0-PF=0-tau=2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=512-CF=0-RIF=0-PF=0-tau=3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=512-CF=0-RIF=0-PF=0-tau=4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=516-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=520-CF=0-RIF=0-PF=0-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=552-CF=2-RIF=0-PF=0-tau=1  2  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=56-CF=2-RIF=0-PF=0-tau=1  2  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=6-CF=0-RIF=0-PF=0-tau=1  1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=64-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=64-CF=0-RIF=1-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=64-CF=0-RIF=1-PF=0-tau=3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=64-CF=0-RIF=1-PF=0-tau=4.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=64-CF=0-RIF=2-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=68-CF=0-RIF=1-PF=0-tau=1  3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=72-CF=0-RIF=1-PF=0-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=72-CF=0-RIF=2-PF=0-tau=1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=8-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=808-CF=2-RIF=0-PF=0-tau=1  2  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=872-CF=2-RIF=1-PF=0-tau=1  2  2  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=888-CF=2-RIF=2-PF=0-tau=1  2  2  2  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=888-CF=2-RIF=2-PF=0-tau=1  2  2  2  1  3.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=892-CF=2-RIF=1-PF=0-tau=1  1  3  2  2  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=892-CF=2-RIF=2-PF=0-tau=1  1  3  2  2  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=894-CF=2-RIF=2-PF=0-tau=1  1  1  3  2  2  1  2.mat
+Tables/BackSelectModel-PercentDataSet=100-XU=9-CF=0-RIF=0-PF=0-tau=1.mat
+Tables/Model-XU=2-CF=2-AF=2-RF=2-tau=3-National.mat
+Tables/ShapeFile/healthsites.dbf
+Tables/ShapeFile/healthsites.prj
+Tables/ShapeFile/healthsites.shp
+Tables/ShapeFile/healthsites.shx
+Tables/ShapeFile/YEM COD-AB 2018 11 12.pdf
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.cpg
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.dbf
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.prj
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.sbn
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.sbx
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.shp
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.shp.xml
+Tables/ShapeFile/yem_admbnda_adm0_govyem_mola_20181102.shx
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.cpg
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.dbf
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.prj
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.sbn
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.sbx
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.shp
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.shp.xml
+Tables/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.shx
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.cpg
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.dbf
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.prj
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.sbn
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.sbx
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.shp
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.shp.xml
+Tables/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.shx
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.cpg
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.dbf
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.prj
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.sbn
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.sbx
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.shp
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.shp.xml
+Tables/ShapeFile/yem_admbndl_admALL_govyem_mola_itos_20181102.shx
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.cpg
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.dbf
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.prj
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.sbn
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.sbx
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.shp
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.shp.xml
+Tables/ShapeFile/yem_admbndp_admALL_govyem_mola_itos_20181102.shx
+Tables/ShapeFile/yem_admbndt_adminUnitLookup.cpg
+Tables/ShapeFile/yem_admbndt_adminUnitLookup.dbf
+Tables/ShapeFile/yem_admbndt_adminUnitLookup.dbf.xml
+Tables/Table-XU=2-CF=2-AF=2-RF=2-tau=3-National.dat

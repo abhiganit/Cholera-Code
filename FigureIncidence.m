@@ -96,7 +96,7 @@ end
 mapshow(S,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',1); hold on % plots the lines of the borders
 for ii=1:NG % shade the area of the govneroate
     ff=find(contains(Sm,G(OG(ii)).Name)); % see if the name is in the shape file based on the ordering OG
-    mapshow(S(ff),'FaceColor',C(ii,:),'Edgecolor',[0 0 0],'LineWidth',1);hold on % shape the area in with color C(ii,:)
+    mapshow(S(ff),'FaceColor',C(ii,:),'Edgecolor','k','LineWidth',1);hold on % shape the area in with color C(ii,:)
 end
 xl=xlim; % saves the xlim to xl
 yl=ylim;% saves the ylim to yl

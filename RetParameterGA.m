@@ -1,4 +1,4 @@
-function [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
+function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
 %Based on the input-x and functions used we return the proper paramters to
 %evalaute the regression model
 
@@ -52,6 +52,7 @@ function [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
     % tau(10)- Rebel control
 % DB - the number of days before the attack that incidence is affected
 % DA - the number of days after the attack that incidence is affected
+% DBE - the number of days before the attack 
 % DAE - the number of days after the attack that environment impacted
 % K- the saturation function
 % n - the hill coefficient
@@ -133,8 +134,11 @@ if(XU(10)>=1) % See if attack only being used
     DAE=10.^x(lenbeta+7);
     k=k+1; % add paramrter
     
+    DBE=10.^x(lenbeta+8);
+    k=k+1; % add paramrter
 else % Rainfall is not being used at all
     DAE=0;
+    DBE=0;
 end
 
 end

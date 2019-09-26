@@ -1,4 +1,4 @@
-function [F]= OFuncProGA(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,NWP,NatData)
+function [F]= OFuncProGA(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,WPIN)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -54,6 +54,7 @@ function [F]= OFuncProGA(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,NWP,NatData)
 % P - population density for the governorates
 % RC - rebel control
 % H - the density of health facililities in the govnorates
+% WPIN - wash people in need
 %=================================
 % Output
 %=================================
@@ -73,16 +74,15 @@ XU(f(g))=1; % set non-zero and non-one to one
 
 %Returns the paramters for the specified functions based on the
 %transformation from the bounds
-[~,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU);
+[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU);
 
 %%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
 % Determine model predicted incidence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-[Yt,Pt]= ModelProjection(beta,WI,tA,DB,DA,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,NWP);
+[Yt,~]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN);
 
-FP=NatData((length(WI(1,:))+1):end)'-sum(Pt,1); % Compute the difference for the times and the locations that is tau weeks ahead
-FF=WI(:,(maxtau+1):end)-Yt; % Compute the difference for the times and the locations that is tau weeks ahead
-F=log10(sum([FP(:);FF(:)].^2)); % convert the matrix into a vector for the use of lsqnonlin
+FF=(WI(:,(maxtau+1):end))-(Yt); % Compute the difference for the times and the locations that is tau weeks ahead
+F=log10(sum(FF(:).^2)); % convert the matrix into a vector for the use of lsqnonlin
 end
 

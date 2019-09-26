@@ -1,4 +1,4 @@
-function [par,fval]=ProFittingGA(XU,G,PE,PP,DT)
+function [par,fvalfit,RRS]=ProFittingGA(XU,PDS,G,PE,PP,DT,pars)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,40 +18,13 @@ function [par,fval]=ProFittingGA(XU,G,PE,PP,DT)
         % XU(9) - Incidence in other govnorates
         % XU(10) - Attacks only
         % XU(11) - Rebel control
-% tau -Specify a lag of all the factors that are integrated in the model
-% (1X10)
-    % tau(1) - population density incidence
-    % tau(2) - health zone incidence
-    % tau(3) - Past incidence
-    % tau(4) - Product of incidence and attacks
-    % tau(5) - Product of incidence and conflict
-    % tau(6) - Product of incidence and rainfall
-    % tau(7) - Perciptiation only
-    % tau(8) - Incidence in other govneroates
-    % tau(9)- Attack only
-    % tau(10)- Rebel control
-% AF -Specify the attack function to be used
-        % AF=0 attack only has effect before;
-        %AF=1 Attack has effect only after; 
-        %AF=2; Attack has effect before and after
-% CF - Specify the conflict function to be used
-    % CF=0 linear effect; 
-    % CF=1 Hill function with n=1;
-    % CF=2; Full hill function; 
-% RIF- Specify the rainfall function to be used for rainfall*incidence
-% covariate
-    % RIF=0 Increased incidence for low-rainfall; 
-    % RIF=1 increased incidence for high rainfall;
-    % RIF=2 increased incidence for high and low rain fall
-% RF- Specify the rainfall function to be used for rainfall covariate
-    % RF=0 Increased incidence for low-rainfall; 
-    % RF=1 increased incidence for high rainfall;
-    % RF=2 increased incidence for high and low rain fall
+% PDS - Percentage of the data set to be used in the fitting of the model (0<=PDS<=1)
 % G- Specify the number area of interest ranges from 1-22
 % PF - Plot only the fit if , otherwise not plot fit
 % PE - Plot fucntions , otherwise not plot 
 % PP - Plot fit and projection, otherwise not plot 
 % DT - Display table/fitting projection results ro not 
+% pars - starting point for the pattern search algorithm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 % Output
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,14 +41,13 @@ clc;
 
 %% Load the data
 load('Yemen_Gov_Incidence.mat'); % Incidence data
-load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 load('Conflict_Yemen_Time_Location_Project_Forward.mat'); %Conflict data
 WI=IData'; % Transpose the data set such that the number of areas is the row
 load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
-Ctv=GLevelConflict(ProC,S,131); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
+Ctv=GLevelConflict(ProC,S,153); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
 load('Attack_Yemen_Time_Location_Project_Forward.mat'); % Load the attacks in the area for the projection
-tA=GLevelConflict(ProA,S,131);% % Send attack data (time, latitude, longatude) and shapefile of area wanted to 
+tA=GLevelConflict(ProA,S,153);% % Send attack data (time, latitude, longatude) and shapefile of area wanted to 
 load('Precipitation_Gov_Project_Forward.mat'); % the perceipatiatino data for the differetn areas %Load the rainfall for the projection
 Rtv=Rtv(:,1:length(tA(1,:))); % truncate the railfall data to the time period spceified
 
@@ -90,7 +62,9 @@ HS = shaperead([ pwd '\ShapeFile\healthsites.shp']); % Shape file for Yemen
 load('PopulationSize_Yemen.mat');
 H= GLevelHealthSites(HS,S);
 H=10000.*H./AP';
-
+% WASH People in Need Desnity
+load('WASH_PeopleinNeed_Density_Yemen.mat');
+WPIN=log(1+WPIN)';
 %Find areas where we have non-zero incidence over course of epidemic
 GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
 
@@ -113,30 +87,33 @@ maxtau=4; % The maximum lag allowed for the model
 % rl=10.^x(16);
 % rh=10.^x(17);
 % DAE=10.^x(18);
-NW=length(NatIData);
-NWP=NW-length(WI(1,:));
-lbps=[-16.*ones(1,11) zeros(1,5) 0 0 0 -16.*ones(1,7)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-ubps=[ log10([10^3  10^3 10^3 10 10 10 10 10^3 1 10^4 10]) ones(1,5) 1 1 1 log10([1 1 113 10 12 12 1])]; % specify the upperbound for the parameters 
+NW=floor(153*PDS);
+lbps=[-16.*ones(1,11) zeros(1,5) 0 0 0 -16.*ones(1,8)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ubps=[ 5.*ones(1,11) ones(1,5) 1 1 1 log10([1 1 113 10 12 12 1 1])]; % specify the upperbound for the parameters 
 
-lb=[-16.*ones(1,11) ones(1,5) 0 0 0 -16.*ones(1,7)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-ub=[ log10([10^3  10^3 10^3 10 10 10 10 10^3 1 10^4 10]) 4.*ones(1,5) 2 2 2 log10([1 1 113 10 12 12 1])]; % specify the upperbound for the parameters 
+lb=[-16.*ones(1,11) ones(1,5) 0 0 0 -16.*ones(1,8)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ub=[ 5.*ones(1,11) 4.*ones(1,5) 2 2 2 log10([1 1 113 10 12 12 1 1])]; % specify the upperbound for the parameters 
 
 IntC=[12:19];
 
 %% Run the fitting algorithm
-options = optimoptions('ga','MaxGenerations',5000,'MaxStallGenerations',100,'UseParallel',true); %
-optionsps = optimoptions('patternsearch','UseParallel',true,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-8));
+pars(12:16)=ceil(4.*pars(12:16));
+pars(17:19)=ceil(3.*pars(17:19))-1;
+options = optimoptions('ga','MaxGenerations',10000,'MaxStallGenerations',100,'UseParallel',true,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
+optionsps = optimoptions('patternsearch','UseParallel',true,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
 
-[par] =ga(@(x)OFuncProGA(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),NWP,NatIData),length(lb),[],[],[],[],lb,ub,[],IntC,options); 
+[par] =ga(@(x)OFuncProGA(x,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),Rtv(GNZI,1:NW),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),WPIN(GNZI)),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
+par(XU==0)=-15.99; % for the recursive componetnt
 par(12:16)=par(12:16)./4-0.01; % such that they do not push on the boundary
 par(17:19)= (par(17:19)+1)./3-0.01; % such that they do not push on the boundary
-[par,fval] =patternsearch(@(x)OFuncProPS(x,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),NWP,NatIData),par,[],[],[],[],lbps,ubps,[],optionsps); 
-fval=10^fval; % transform to residula sum of squares as the objective function taked the log_10 transform of the objective function
+[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),Rtv(GNZI,1:NW),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),WPIN(GNZI)),par,[],[],[],[],lbps,ubps,[],optionsps); 
+fvalfit=10.^fvalfit;
+par(XU==0)=-15.99; % for the recursive componetnt
 % Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
+[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
 
     % Calculate the AIC score for the model fit
-    save([pwd '\Tables\BackSelectModel-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'k','beta','DB','DA','K','n','rl','rh','fval','tau','par'); % Saves the information for the specified model for can load and run model after
+    save([pwd '\Tables\BackSelectModel-PercentDataSet=' num2str(PDS*100) '-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'k','beta','DB','DA','K','n','rl','rh','fvalfit','tau','par'); % Saves the information for the specified model for can load and run model after
     
 %% Plot the enviromental functions for the model
 
@@ -243,37 +220,14 @@ if(PE~=0)
     %y-axis limits
     ylim([0 max(Y)+1]);    
     xlim([0 16]);
-    print(gcf,[pwd '\Figures\TestFunctions-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\Functions-PercentDataSet=' num2str(PDS*100) '-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
 end
 
 %% Set up information for the projection
 
-load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
-load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
-Ctv=GLevelConflict(ProC,S,131); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
-load('Attack_Yemen_Time_Location_Project_Forward.mat'); % Load the attacks in the area for the projection
-tA=GLevelConflict(ProA,S,131);% % Send attack data (time, latitude, longatude) and shapefile of area wanted to 
-load('Precipitation_Gov_Project_Forward.mat'); % the perceipatiatino data for the differetn areas %Load the rainfall for the projection
-Rtv=Rtv(:,1:length(tA(1,:))); % truncate the railfall data to the time period spceified
+RRS=10.^OFuncProPS(par,WI(GNZI,:),tA(GNZI,:),Ctv(GNZI,:),Rtv(GNZI,:),XU,maxtau,P(GNZI),RC(GNZI),H(GNZI),WPIN(GNZI));
 
-%% Run the projection
-NW=length(NatIData); % number of week want to go out to
-[Yt,Pt]= ModelProjection(beta,WI(GNZI,:),tA(GNZI,:),DB,DA,DAE,Ctv(GNZI,:),K,n,Rtv(GNZI,:),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI),RC(GNZI),H(GNZI),NW-length(WI(1,:))); % Run the projection
-Mt=[Yt Pt]; % Combined the model fit with the model projection into one matrix
-%% Compute the R^2 value of the model projection
-RPro=corr(sum(Pt,1)',NatIData((length(WI(1,:))+1):end)).^2; % The R^2 value for the projection component of the model fit
-RFit=corr(sum(Yt,1)',NatIData(1+maxtau:length(WI(1,:)))).^2; % The R^2 value for the projection component of the model fit
-
-if(DT~=0)
-    fprintf('R^2 value for the model fit: %3.2f \n',RFit);
-    fprintf('R^2 value for the model projection: %3.2f \n',RPro);
-end
-MSEP=mean((sum(Pt,1)'-NatIData((length(WI(1,:))+1):end)).^2);
-if(DT~=0)
-    fprintf('Mean Error in model projection: %3.0f \n',MSEP);
-end
-
-save([pwd '\Tables\BackSelectModel-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'RPro','RFit','MSEP','-append'); % Saves the information for the specified model for can load and run model after
+save([pwd '\Tables\BackSelectModel-PercentDataSet=' num2str(PDS*100) '-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.mat'],'RRS','-append'); % Saves the information for the specified model for can load and run model after
 
 
 %% Produce the figure for the projection
@@ -317,7 +271,7 @@ if(PP~=0)
     % Puts text in the figure for labelling the fit and projection
     text(NW-14,52500,'Model fit','color','b','Fontsize',18); 
     text(NW-14,50000,'Model projection','color','r','Fontsize',18);
-    print(gcf,[pwd '\Figures\TestProjectionFit-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
+    print(gcf,[pwd '\Figures\ProjectionFit-PercentDataSet=' num2str(PDS*100) '-XU=' num2str(XU*((2.^[0:(length(XU)-1)])')) '-CF=' num2str(CF*XU(6)) '-RIF=' num2str(RIF*XU(7)) '-PF=' num2str(RF*XU(8)) '-tau=' num2str(tau(XU(2:end)>0)) '.png'],'-dpng','-r600');
 end
 
 %% Plot data for the areas of interest
