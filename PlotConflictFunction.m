@@ -1,82 +1,9 @@
 close all;
 clear;
 clc;
-load('Yemen_Gov_Incidence.mat'); % Incidence data
-S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
-load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
-Ctv=GLevelConflict(ProC,S,153); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
-
-WI=IData'; % Transpose the data set such that the number of areas is the row
-load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
-
-AF=2;
-XU=ones(1,11);
-load([pwd '\Tables\BackSelectModel-PercentDataSet=100-XU=2047-CF=1-RIF=0-PF=1-tau=1  1  1  3  1  4  4  1  2  1.mat'],'par');
-
-
-%Find areas where we have non-zero incidence over course of epidemic
-GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-
-    maxtau=4; % The maximum lag allowed for the model
-
-    % Evaluate the number of paramters that are being used in the estimation 
-    [k,beta,tau,DB,DA,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
-    
- 
-figure('units','normalized','outerposition',[0 0 1 1]);
-    
-subplot('Position',[0.042,0.163120567375887,0.29,0.4]);
-
-R=ImpactRainfall(linspace(0,3,10001),RF,rh);
-
-plot(linspace(0,3,10001),R,'color',hex2rgb('9ecae1'),'LineWidth',2); hold on;
-    R=ImpactRainfall(linspace(0,1,10001),RIF,rl);
-plot(linspace(0,3,10001),R,'color',hex2rgb('2171b5'),'LineWidth',2); hold off;
-
-yh=ylabel('Rainfall function','Fontsize',18);
-xlabel('Average rainfall per week','Fontsize',18);
-
-legend({'Rainfall','Rainfall and Incidence'},'location','northwest');
-legend boxoff;
-box off;
-set(gca,'Fontsize',16,'tickdir','out','LineWidth',2,'XTick',[0:0.2:3],'Xminortick','on','YTick',[0:0.2:3],'Yminortick','on');
-text(yh.Extent(1),0.98*max(ylim),'A','Fontsize',32,'FontWeight','bold');
-   C=ImpactConflict([0:75],K,n,CF);
-
-subplot('Position',[0.3696,0.163120567375887,0.29,0.4]);
-plot([0:75],C,'color',hex2rgb('67000d'),'LineWidth',2)
-yh=ylabel('Conflit function','Fontsize',18);
-xlabel('Number of conflict events per week','Fontsize',18);
-set(gca,'Fontsize',16,'tickdir','out','LineWidth',2,'XTick',[0:5:75],'Xminortick','on','YTick',[0:2:20],'Yminortick','on');
-box off;
-ylim([0 20])
-xlim([0 20])
-text(yh.Extent(1),0.98*max(ylim),'B','Fontsize',32,'FontWeight','bold');
-A=ImpactAttack([zeros(1,21) 1 zeros(1,21)],0,DAE,0,0);
-At=ImpactAttack([zeros(1,21) 1 zeros(1,21)],DB,DA,0,0);
-subplot('Position',[0.7,0.163120567375887,0.29,0.4]);
-h=bar([-21:21],[A; At]','LineStyle','none'); 
-xlim([-3.5 6.5]);
-ylim([0 1.01])
-h(2).FaceColor = 'flat';
-    h(2).CData = hex2rgb('ef3b2c');
-    h(1).FaceColor = 'flat';
-    h(1).CData = hex2rgb('fc9272');
-yh=ylabel('Attack function','Fontsize',18);
-xlabel('Weeks from an attack','Fontsize',18);
-legend({'Attack','Attack and Incidence'});
-legend boxoff;
-box off;
-set(gca,'Fontsize',16,'tickdir','out','LineWidth',2,'XTick',[-3:9],'YTick',[0:0.1:1],'Yminortick','on');
-
-text(yh.Extent(1),0.98*max(ylim),'C','Fontsize',32,'FontWeight','bold');
-
-%% Plot temporal components
-%% Set up information for the projection
 %% Load the data
 load('Yemen_Gov_Incidence.mat'); % Incidence data
-load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
-NatIData=NatIData(1:end-1);
+NatIData=sum(IData,2);
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 load('Conflict_Yemen_Time_Location_Project_Forward.mat'); %Conflict data
 WI=IData'; % Transpose the data set such that the number of areas is the row
@@ -99,22 +26,104 @@ load('PopulationSize_Yemen.mat');
 H= GLevelHealthSites(HS,S);
 H=10000.*H./AP';
 
+load('WASH_PeopleinNeed_Density_Yemen.mat');
+WPIN=log(1+WPIN)';
 %Find areas where we have non-zero incidence over course of epidemic
 GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
 
+    AF=2;
+    %% Forward selection
+    load('ForwardSelection-PercentDataSet=100.mat');
+    XU=XUv(end,:);
+    par=parv(end,:);
+    %% Adjust ascpects of functions and data for the fitting
 
+    %% Adjust ascpects of functions and data for the fitting
 
-load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
-NatIData=NatIData(1:end-1);
-load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
-Ctv=GLevelConflict(ProC,S,153); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
-load('Attack_Yemen_Time_Location_Project_Forward.mat'); % Load the attacks in the area for the projection
-tA=GLevelConflict(ProA,S,153);% % Send attack data (time, latitude, longatude) and shapefile of area wanted to 
-load('Precipitation_Gov_Project_Forward.mat'); % the perceipatiatino data for the differetn areas %Load the rainfall for the projection
-Rtv=Rtv(:,1:length(tA(1,:))); % truncate the railfall data to the time period spceified
+    maxtau=4; % The maximum lag allowed for the model
 
-NW=length(NatIData); % number of week want to go out to
-NWP=NW-length(WI(1,:));
+    % Evaluate the number of paramters that are being used in the estimation 
+    [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
+    
+    %% Run the projection
+    
+    %% Run the logistic model with the data
+
+    [Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI),RC(GNZI),H(GNZI),WPIN(GNZI));
+    
+figure('units','normalized','outerposition',[0 0 1 1]);
+    
+subplot('Position',[0.042,0.163120567375887,0.29,0.4]);
+ if(XU(8)==1)
+R=ImpactRainfall(linspace(0,3,10001),RF,rh);
+
+plot(linspace(0,3,10001),R,'color',hex2rgb('9ecae1'),'LineWidth',2); hold on;
+ end
+ if(XU(7)==1)
+    R=ImpactRainfall(linspace(0,1,10001),RIF,rl);
+plot(linspace(0,3,10001),R,'color',hex2rgb('2171b5'),'LineWidth',2); 
+ end
+hold off;
+yh=ylabel('Rainfall function','Fontsize',18);
+xlabel('Average rainfall per week','Fontsize',18);
+if(XU(8)+XU(7)==2)
+legend({'Rainfall','Rainfall and Incidence'},'location','northwest');
+legend boxoff;
+end
+box off;
+set(gca,'Fontsize',16,'tickdir','out','LineWidth',2,'XTick',[0:0.2:3],'Xminortick','on','YTick',[0:0.2:3],'Yminortick','on');
+text(yh.Extent(1),0.98*max(ylim),'A','Fontsize',32,'FontWeight','bold');
+   C=ImpactConflict([0:75],K,n,CF);
+if(XU(6)==1)
+subplot('Position',[0.3696,0.163120567375887,0.29,0.4]);
+plot([0:75],C,'color',hex2rgb('67000d'),'LineWidth',2)
+yh=ylabel('Conflit function','Fontsize',18);
+xlabel('Number of conflict events per week','Fontsize',18);
+set(gca,'Fontsize',16,'tickdir','out','LineWidth',2,'XTick',[0:5:75],'Xminortick','on','YTick',[0:2:20],'Yminortick','on');
+box off;
+ylim([0 20])
+xlim([0 20])
+text(yh.Extent(1),0.98*max(ylim),'B','Fontsize',32,'FontWeight','bold');
+end
+AA=[];
+if(XU(10)==1)
+AA=ImpactAttack([zeros(1,21) 1 zeros(1,21)],DBE,DAE,0,0);
+end
+if(XU(5)==1)
+AA=[AA; ImpactAttack([zeros(1,21) 1 zeros(1,21)],DB,DA,0,0)];
+end
+if(sum(XU([5 10]))>0)
+    subplot('Position',[0.7,0.163120567375887,0.29,0.4]);
+    h=bar([-21:21],AA','LineStyle','none'); 
+    xlim([-3.5 6.5]);
+    ylim([0 1.01])
+    if(sum(XU([5 10]))==2)
+    h(2).FaceColor = 'flat';
+        h(2).CData = hex2rgb('ef3b2c');
+        h(1).FaceColor = 'flat';
+        h(1).CData = hex2rgb('fc9272');
+        
+    legend({'Attack','Attack and Incidence'});
+    legend boxoff;
+    elseif(XU(5)==1)
+
+    h.FaceColor = 'flat';
+        h.CData = hex2rgb('ef3b2c');
+    elseif(XU(10)==1)
+        
+        h.FaceColor = 'flat';
+        h.CData = hex2rgb('fc9272');
+    end
+    yh=ylabel('Attack function','Fontsize',18);
+    xlabel('Weeks from an attack','Fontsize',18);
+    box off;
+    set(gca,'Fontsize',16,'tickdir','out','LineWidth',2,'XTick',[-3:9],'YTick',[0:0.1:1],'Yminortick','on');
+
+    text(yh.Extent(1),0.98*max(ylim),'C','Fontsize',32,'FontWeight','bold');
+    
+end
+%% Plot temporal components
+NW=153; % number of week want to go out to
 
 % The size to separate the weeks in the x-label
     dW=4;
@@ -132,43 +141,29 @@ NWP=NW-length(WI(1,:));
     
     %% Run the projection
     
-    %% Run the logistic model with the data
-
-    [Yt,~,~,~,~,~,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI),RC(GNZI),H(GNZI));
-
-    %% Run the projection
+    CRain=(beta(7).*squeeze(X(7,:,:))+beta(8).*squeeze(X(8,:,:)));
+    CConflict=(beta(5).*squeeze(X(5,:,:))+beta(6).*squeeze(X(6,:,:))+beta(10).*squeeze(X(10,:,:)));
     
-    temp=zeros(length(Yt(:,1)),1); % initialize the matrix for the projection
-    Pt=zeros(length(Yt(:,1)),NWP); % used for the 
-    for ii=1:NWP % Loop through the number of weeks that are to be projected
-        WT=[WI(GNZI,:) temp]; % Need to append data to the end for the projection of incidence
-        [temp2,PDG,HFG,It,IAt,ICt,IRt,Rt,Gt,At,RCt]= LogisticModel(beta,WT,tA(GNZI,1:length(WT(1,:))),DB,DA,DAE,Ctv(GNZI,1:length(WT(1,:))),K,n,Rtv(GNZI,1:length(WT(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI),RC(GNZI),H(GNZI)); % Run model with appendend data
-        Pt(:,ii)=temp2(:,end); % Record the projection of incidence
-        temp=[Pt(:,1:ii) zeros(length(Yt(:,1)),1)];  % temporary variable to be appended
-    end
-COther=(beta(2).*PDG+beta(3).*HFG+beta(4).*It+beta(9).*Gt+beta(11).*RCt);
-    CRain=(beta(7).*IRt+beta(8).*Rt);
-    CConflict=(beta(5).*IAt+beta(6).*ICt+beta(10).*At);
 print(gcf,[pwd '\Figures\Figure2ABC.png'],'-dpng','-r600');
 figure('units','normalized','outerposition',[0 0 1 1]);
 
 subplot('Position',[0.0488,0.575,0.9422,0.4]);
-h=bar([(1+maxtau):152],[beta(8).*sum(Rt);beta(7).*sum(IRt)]','stacked','LineStyle','none'); 
+h=bar([(1+maxtau):153],[sum(beta(8).*squeeze(X(8,:,:)));sum(beta(7).*squeeze(X(7,:,:)))]','stacked','LineStyle','none'); 
 h(2).FaceColor = 'flat';
     h(2).CData = hex2rgb('2171b5');
     h(1).FaceColor = 'flat';
     h(1).CData = hex2rgb('9ecae1');
 box off;
-ylabel({'Suspected cholera cases'});
+yh=ylabel({'Suspected cholera cases'});
 legend({'Rainfall','Rainfall and Incidence'},'location','northwest');
 legend boxoff;
 set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'YTick',10.^[0:5],'Fontsize',16,'XTickLabel',{''},'yscale','log');
 ylim([1 100000]);
-    xlim([1 NW]); % sets the x-limits of our x -axis
+    xlim([1 NW+0.5]); % sets the x-limits of our x -axis
     xtickangle(45);
-text(-5.536789293933579,82276.6933228582,'D','Fontsize',32,'FontWeight','bold');
+text(yh.Extent(1),82276.6933228582,'D','Fontsize',32,'FontWeight','bold');
 subplot('Position',[0.0488,0.15,0.9422,0.4]);
-h=bar([(1+maxtau):152],[beta(10).*sum(At);beta(5).*sum(IAt);beta(6).*sum(ICt)]','stacked','LineStyle','none'); 
+h=bar([(1+maxtau):153],[beta(10).*sum(squeeze(X(10,:,:)));beta(5).*sum(squeeze(X(5,:,:)));beta(6).*sum(squeeze(X(6,:,:)))]','stacked','LineStyle','none'); 
 h(3).FaceColor = 'flat';
     h(3).CData = hex2rgb('67000d');
 h(2).FaceColor = 'flat';
@@ -176,22 +171,23 @@ h(2).FaceColor = 'flat';
     h(1).FaceColor = 'flat';
     h(1).CData = hex2rgb('fc9272');
 box off;
-ylabel({'Suspected cholera cases'});
+yh=ylabel({'Suspected cholera cases'});
 legend({'Attack','Attack and Incidence','Conflict and Incidence'},'location','northwest');
 legend boxoff;
 set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'YTick',10.^[0:5],'Fontsize',16,'XTickLabel',XTL,'yscale','log');
 ylim([1 100000]);
-    xlim([1 NW]); % sets the x-limits of our x -axis
+    xlim([1 NW+0.5]); % sets the x-limits of our x -axis
     xlabel('Week of report','Fontsize',24);
     xtickangle(45);
-    text(-5.536789293933579,82276.6933228582,'E','Fontsize',32,'FontWeight','bold');
+    text(yh.Extent(1),82276.6933228582,'E','Fontsize',32,'FontWeight','bold');
     print(gcf,[pwd '\Figures\Figure2DE.png'],'-dpng','-r600');
     
  %% Plot maps for rainfall and conflict/attacks
  
 R=log10([sum(CRain,2)]+1);
 CM=log10([sum(CConflict,2)]+1);
-%MM=max([max(R) max(CM)]);
+MM=max([max(R) max(CM)]);
+mm=min([min(R) min(CM)]);
 R=(R-min(R))./(max(R)-min(R));
 CM=(CM-min(CM))./(max(CM)-min(CM));
 

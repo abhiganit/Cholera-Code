@@ -45,7 +45,7 @@ function [XUr,RSSr,parr,kr] = BackwardsSelection(XU,RSS,k,atest,PDS)
 NMR=sum(XU);
 frindx=find(XU==1);
 XUm=repmat(XU,NMR,1);
-par=zeros(NMR,27);
+par=zeros(NMR,31);
 RSSv=zeros(NMR,1);
 kr=zeros(NMR,1);
 for ii=1:NMR
@@ -58,7 +58,9 @@ WI=IData'; % Transpose the data set such that the number of areas is the row
 
 %Find areas where we have non-zero incidence over course of epidemic
 GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-WI=WI(GNZI,(1+maxtau):end);
+maxtau=4;
+NWF=floor(153*PDS);
+WI=WI(GNZI,(NWF+1):end);
 N=length(WI(:));
 Fstatistic=((N-k)./(k-kr)).*((RSSv-RSS)./(RSS));
 CrC=1-fcdf(Fstatistic,kr-k,kr);

@@ -50,6 +50,7 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU)
     % tau(8) - Incidence in other govneroates
     % tau(9)- Attack only
     % tau(10)- Rebel control
+    % tau(11)- WASH status and incidence
 % DB - the number of days before the attack that incidence is affected
 % DA - the number of days after the attack that incidence is affected
 % DBE - the number of days before the attack 
@@ -63,18 +64,19 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU)
 % The parameters for the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the coefficients fo rthe regression model
-beta=[10.^x(1:11)].*XU;
-tau=[1 1 1 ceil(4.*x(12)) ceil(4.*x(13)) ceil(4.*x(14)) ceil(4.*x(15)) 1 ceil(4.*x(16)) 1];
-CF=ceil(3.*x(17))-1;
-RF=ceil(3.*x(18))-1;
-RIF=ceil(3.*x(19))-1;
-lenbeta=19;
-k=sum(XU)+ sum(XU([5 6 7 8 10])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
+beta=[10.^x(1:length(XU))].*XU;
+nob=length(XU);
+tau=[1 1 1 ceil(4.*x(nob+1)) ceil(4.*x(nob+2)) ceil(4.*x(nob+3)) ceil(4.*x(nob+4)) 1 ceil(4.*x(nob+5)) 1 ceil(4.*x(nob+6)) ceil(4.*x(nob+7))];
+CF=ceil(3.*x(nob+8))-1;
+RF=ceil(3.*x(nob+9))-1;
+RIF=ceil(3.*x(nob+10))-1;
+lenbeta=length(XU)+10;
+k=sum(XU)+ sum(XU([5 6 7 8 10 12 13])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
 
 
 %% Attack asscoaited paramters
-if(XU(5)>=1)  % See if attacks being used at all
+if(sum(XU([5 13]))>=1)  % See if attacks being used at all
 %     if(AF==1) % If only look after attack set DB=0
 %         DB=0; 
 %     else    
@@ -94,7 +96,7 @@ end
 
 
 %% Conflict associated paramters
-if(XU(6)>=1) % See if conflict is being used at alls
+if(sum(XU([6 12]))>=1) % See if conflict is being used at alls
     if(CF~=0)
         K=10.^x(lenbeta+3); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter

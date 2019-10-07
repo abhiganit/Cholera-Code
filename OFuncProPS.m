@@ -1,4 +1,4 @@
-function [F]= OFuncProPS(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,WPIN)
+function [F]= OFuncProPS(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,WPIN,Mt)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -17,22 +17,25 @@ function [F]= OFuncProPS(x,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,WPIN)
     % XU(4) - Past incidence
     % XU(5) - Product of incidence and attacks
     % XU(6) - Product of incidence and conflict
-    % XU(7) - Product of incidence and rainfall
-    % XU(8) - Rainfall only        
+    % XU(7) - Product of cumulative attacks, incidence and rainfall
+    % XU(8) - cumulative attacks, Rainfall only        
     % XU(9) - Incidence in other govnorates
     % XU(10) - Attacks only
     % XU(11) - Rebel control
+    % XU(12) - WASH
+    % XU(13) - WASH and incidence
 % tau - the lag
     % tau(1) - population density incidence
     % tau(2) - health zone incidence
     % tau(3) - Past incidence
     % tau(4) - Product of incidence and attacks
     % tau(5) - Product of incidence and conflict
-    % tau(6) - Product of incidence and rainfall
-    % tau(7) - Perciptiation only
+    % tau(6) - Product of cumulative attacks,incidence and rainfall
+    % tau(7) - cumulative attacks and Perciptiation
     % tau(8) - Incidence in other govneroates
     % tau(9)- Attack only
     % tau(10)- Rebel control
+    %tau(11)- Wash and incidence
 % maxtau - maximum lag allowed for the model (used in the truncation of the
 % data set
 % AF - Specify the attack function to be used
@@ -80,7 +83,7 @@ XU(f(g))=1; % set non-zero and non-one to one
 % Determine model predicted incidence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-[Yt,~]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN);
+[Yt,~]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,Mt);
 
 FF=(WI(:,(maxtau+1):end))-(Yt); % Compute the difference for the times and the locations that is tau weeks ahead
 F=log10(sum(FF(:).^2)); % convert the matrix into a vector for the use of lsqnonlin

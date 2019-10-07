@@ -4,11 +4,12 @@ clc;
 close all;
 % 
 %% Cumulative Cases
-IW=[1 21; 22 74; 75 87;1 87];
+
+IW=[1 21; 22 74; 75 116; 117 153; 1 153];
 PNS=10000;
-TES=PNS.*[0.0005 0.01 0.001 0.025];
-PT=zeros(4,6);
-for Wv=1:4
+TES=PNS.*[0.0005 0.01 0.001 0.005 0.025];
+PT=zeros(5,6);
+for Wv=1:5
     load('Yemen_Gov_Incidence.mat'); % Incidence data
     load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
     S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
@@ -348,7 +349,8 @@ fmf = fopen([pwd '\Tables\Pvalue-SA_Cumulative.dat'],'w'); % Writing to the file
     fprintf(fmf, 'First \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t  %5.4f \t \n',[PT(1,:)]); % The header for the table
     fprintf(fmf, 'Second \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t  %5.4f \t \n',[PT(2,:)]); % The header for the table
     fprintf(fmf, 'Third \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t  %5.4f \t \n',[PT(3,:)]); % The header for the table
-    fprintf(fmf, 'All \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t  %5.4f \t ',[PT(4,:)]); % The header for the table
+    fprintf(fmf, 'Fourth \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t  %5.4f \t ',[PT(4,:)]); % The header for the table
+    fprintf(fmf, 'All \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t %5.4f \t  %5.4f \t ',[PT(5,:)]); % The header for the table
     fclose(fmf);
     
  readtable([pwd '\Tables\Pvalue-SA_Cumulative.dat'])
@@ -356,11 +358,12 @@ fmf = fopen([pwd '\Tables\Pvalue-SA_Cumulative.dat'],'w'); % Writing to the file
 
 
 %% Weekly Cases
-IW=[1 21; 22 74; 75 87;1 87];
+
+IW=[1 21; 22 74; 75 116; 117 153; 1 153];
 PNS=10000;
-TES=PNS.*[0.00007 0.0015 0.000015 0.0015];
-PT=zeros(4,6);
-for Wv=1:4
+TES=PNS.*[0.00007 0.0015 0.000015 0.00075 0.0015];
+PT=zeros(5,6);
+for Wv=1:5
     load('Yemen_Gov_Incidence.mat'); % Incidence data
     load('Yemen_National_Incidence.mat'); % Load the national incidence data for the comparison in the projection
     S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen

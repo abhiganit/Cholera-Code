@@ -1,4 +1,4 @@
-function [XUr,RSSr,parr,kr] = ForwardSelectionNoRain(XU,RSS,k,atest,PDS,pars)
+function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoRain(XU,RSS,k,atest,PDS,pars)
 %BACKWARDSSELECTION Takes the comblex model XU and determines if a simplier
 %model is more suitble
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,14 +48,19 @@ frindnr=find(frindx~=7);
 frindx=frindx(frindnr);
 frindnr=find(frindx~=8);
 frindx=frindx(frindnr);
+frindnr=find(frindx~=12);
+frindx=frindx(frindnr);
+frindnr=find(frindx~=13);
+frindx=frindx(frindnr);
 NMR=length(frindx);
 XUm=repmat(XU,NMR,1);
-par=zeros(NMR,27);
+par=zeros(NMR,length(pars));
 RSSv=zeros(NMR,1);
 kr=zeros(NMR,1);
+CVEv=zeros(NMR,1);
 for ii=1:NMR
     XUm(ii,frindx(ii))=1; % Remove the covariate from the model
-    [par(ii,:),~,RSSv(ii)] = ProFittingGA(XUm(ii,:),PDS,[],0,0,0,pars);    
+    [par(ii,:),RSSv(ii),CVEv(ii)] = ProFittingGA(XUm(ii,:),PDS,pars);    
     [kr(ii)]=RetParameterPS(par(ii,:),XUm(ii,:));
 end
 load('Yemen_Gov_Incidence.mat'); % Incidence data
@@ -63,7 +68,8 @@ WI=IData'; % Transpose the data set such that the number of areas is the row
 maxtau=4;
 %Find areas where we have non-zero incidence over course of epidemic
 GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-WI=WI(GNZI,(1+maxtau):end);
+NWF=floor(153*PDS);
+WI=WI(GNZI,(1+maxtau):NWF);
 N=length(WI(:));
 Fstatistic=((N-kr)./(kr-k)).*((RSS-RSSv)./(RSSv));
 CrC=1-fcdf(Fstatistic,kr-k,kr);
@@ -71,12 +77,15 @@ f=find(CrC==min(CrC)); % choose minimium p-value as we want to increase the size
 if(min(CrC)<=atest) % Larger model accpeted if 
     XUr=XUm(f,:);
     RSSr=RSSv(f);
-    parr=par(f,:); 
+    parr=par(f,:);      
+    kr=kr(f);
+    CVEr=CVEv(f);
 else
     XUr=[];
     RSSr=[];
     parr=[];
     kr=[];
+    CVEr=[];
 end
     
 end

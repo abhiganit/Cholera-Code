@@ -1,4 +1,4 @@
-function [Yt,X]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN)
+function [Yt,X]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,Mt)
 % Produces the predicted incicence in matrix form for the diffrent areas
 % and weeks
 %===============================
@@ -57,15 +57,17 @@ function [Yt,X]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh
 % It - Incidence last week
 % IAt - Product of incidence and attacks 
 % ICt - Product of incidence and conflict 
-% IRt - Product of incidence and rainfall 
-% Rt- Rainfall
+% IRt - Product of cumulative attacks incidence and rainfall 
+% Rt- cumulative attacks and Rainfall
 % Gt - Inicedence in the other govnorates
 % At- Attack only
 % RCt - Rebel control
+% WPt - WASH Status
+% WPIt - Wash status and incidence
 
 %% Input for regression model
 
-[X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN);
+[X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,Mt);
 
 %% Output of regression model: the predicted weekly incidence of the model
 Yt=zeros(size(squeeze(X(1,:,:))));

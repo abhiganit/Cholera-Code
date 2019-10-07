@@ -1,4 +1,4 @@
-function [X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN)
+function [X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,Mt)
 %CALCCOVARIATES Claculates the covariates for the regression model
 % WI - The incidence for the different areas for the given week
 % tA- A  vector indicating the time of the attacks 
@@ -39,7 +39,7 @@ function [X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,m
  % P - population density for the different govenorates
  % RC - Rebel control
  % H - The number of health facilities for the different govenorates
- % WPIN - Wash people in need
+ % Mt - Contact matrix for the watercourse
 %=================================
 % Output
 %=================================
@@ -50,24 +50,28 @@ function [X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,m
 % It - Incidence last week
 % IAt - Product of incidence and attacks 
 % ICt - Product of incidence and conflict 
-% IRt - Product of incidence and rainfall 
-% Rt- Rainfall
+% IRt - Product of cumulative attacks incidence and rainfall 
+% Rt- cumulative attacks and Rainfall
 % Gt - Inicedence in the other govnorates
 % At- Attack only
 % RCt - Rebel control
+% WPt - WASH Status
+% WPIt - Wash status and incidence
 
-PDG=repmat(P,1,length(WI(1,(1+maxtau-tau(1)):(end-tau(1))))).*WI(:,(1+maxtau-tau(1)):(end-tau(1)));
-HFG=repmat(H,1,length(WI(1,(1+maxtau-tau(2)):(end-tau(2))))).*WI(:,(1+maxtau-tau(2)):(end-tau(2)));
-It=WI(:,(1+maxtau-tau(3)):(end-tau(3))); % Using the past incidence with a lag of tau weeks
+PDG=P(:,(1+maxtau-tau(1)):(end-tau(1))).*WI(:,(1+maxtau-tau(1)):(end-tau(1)));
+HFG=H(:,(1+maxtau-tau(2)):(end-tau(2))).*WI(:,(1+maxtau-tau(2)):(end-tau(2)));
+It=WPIN(:,(1+maxtau-tau(3)):(end-tau(3))).*WI(:,(1+maxtau-tau(3)):(end-tau(3))); % Using the past incidence with a lag of tau weeks
 IAt=WI(:,(1+maxtau-tau(4)):(end-tau(4))).*ImpactAttack(tA,DB,DA,tau(4),maxtau); % Product of incidence and attacks 
 ICt=WI(:,(1+maxtau-tau(5)):(end-tau(5))).*ImpactConflict(Ctv(:,(1+maxtau-tau(5)):(end-tau(5))),K,n,CF); %Product of incidence and conflict
-IRt=repmat(WPIN,1,length(WI(1,(1+maxtau-tau(6)):(end-tau(6))))).*WI(:,(1+maxtau-tau(6)):(end-tau(6))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(6)):(end-tau(6))),RIF,rl); %Product of incidence and rainfall
-Rt=repmat(WPIN,1,length(WI(1,(1+maxtau-tau(7)):(end-tau(7))))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(7)):(end-tau(7))),RF,rh); %rainfall
-Gt=repmat(sum(WI(:,(1+maxtau-tau(8)):(end-tau(8))),1),length(It(:,1)),1)-WI(:,(1+maxtau-tau(8)):(end-tau(8))); % Residual incidence (i.e. incdeicne in other govnorates)
-At=ImpactAttack(tA,DBE,DAE,tau(9),maxtau);
+IRt=WPIN(:,(1+maxtau-tau(6)):(end-tau(6))).*WI(:,(1+maxtau-tau(6)):(end-tau(6))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(6)):(end-tau(6))),RIF,rl); %Product of incidence and rainfall
+Rt=WI(:,(1+maxtau-tau(7)):(end-tau(7))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(7)):(end-tau(7))),RF,rh); %rainfall
+Gt=Mt*WI(:,(1+maxtau-tau(8)):(end-tau(8))); % Residual incidence based on contact matrix Mt
+At=WPIN(:,(1+maxtau-tau(9)):(end-tau(9))).*ImpactAttack(tA,DBE,DAE,tau(9),maxtau);
 RCt=repmat(RC,1,length(WI(1,(1+maxtau-tau(10)):(end-tau(10))))).*WI(:,(1+maxtau-tau(10)):(end-tau(10)));
+WPt=ImpactConflict(Ctv(:,(1+maxtau-tau(11)):(end-tau(11))),K,n,CF).*ImpactRainfall(Rtv(:,(1+maxtau-tau(11)):(end-tau(11))),RIF,rl).*WI(:,(1+maxtau-tau(11)):(end-tau(11))); %Product of incidence and conflict
+WPIt=ImpactAttack(tA,DB,DA,tau(12),maxtau).*ImpactRainfall(Rtv(:,(1+maxtau-tau(12)):(end-tau(12))),RIF,rl).*WI(:,(1+maxtau-tau(12)):(end-tau(12))); % Product of incidence and attacks 
 
-X=zeros(11,length(PDG(:,1)),length(PDG(1,:)));
+X=zeros(13,length(PDG(:,1)),length(PDG(1,:)));
 
 % Constant
 X(1,:,:)=ones(size(PDG));
@@ -81,5 +85,7 @@ X(8,:,:)=Rt;
 X(9,:,:)=Gt;
 X(10,:,:)=At;
 X(11,:,:)=RCt;
+X(12,:,:)=WPt;
+X(13,:,:)=WPIt;
 end
 

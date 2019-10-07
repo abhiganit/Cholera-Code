@@ -50,6 +50,7 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
     % tau(8) - Incidence in other govneroates
     % tau(9)- Attack only
     % tau(10)- Rebel control
+    % tau(11)- WASH status and incidence
 % DB - the number of days before the attack that incidence is affected
 % DA - the number of days after the attack that incidence is affected
 % DBE - the number of days before the attack 
@@ -63,18 +64,19 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterGA(x,XU)
 % The parameters for the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the coefficients fo rthe regression model
-beta=[10.^x(1:11)].*XU;
-tau=[1 1 1 x(12) x(13) x(14) x(15) 1 x(16) 1];
-CF=x(17);
-RF=x(18);
-RIF=x(19);
-lenbeta=19;
-k=sum(XU)+ sum(XU([5 6 7 8 10])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
+beta=[10.^x(1:length(XU))].*XU;
+nob=length(XU);
+tau=[1 1 1 x(nob+1) x(nob+2) x(nob+3) x(nob+4) 1 x(nob+5) 1 x(nob+6) x(nob+7)];
+CF=x(nob+8);
+RF=x(nob+9);
+RIF=x(nob+10);
+lenbeta=length(XU)+10;
+k=sum(XU)+ sum(XU([5 6 7 8 10 12 13])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
 
 %% Attack asscoaited paramters
-if(XU(5)>=1)  % See if attacks being used at all
+if(sum(XU([5 13]))>=1)  % See if attacks being used at all
 %     if(AF==1) % If only look after attack set DB=0
 %         DB=0; 
 %     else    
@@ -94,7 +96,7 @@ end
 
 
 %% Conflict associated paramters
-if(XU(6)>=1) % See if conflict is being used at alls
+if(sum(XU([6 12]))>=1) % See if conflict is being used at alls
     if(CF~=0)
         K=10.^x(lenbeta+3); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
@@ -133,7 +135,6 @@ end
 if(XU(10)>=1) % See if attack only being used
     DAE=10.^x(lenbeta+7);
     k=k+1; % add paramrter
-    
     DBE=10.^x(lenbeta+8);
     k=k+1; % add paramrter
 else % Rainfall is not being used at all
