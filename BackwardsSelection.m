@@ -1,4 +1,4 @@
-function [XUr,RSSr,parr,kr] = BackwardsSelection(XU,RSS,k,atest,PDS)
+function [XUr,RSSr,CVEr,parr,kr,par] = BackwardsSelection(XU,RSS,CVE,k,atest,PDS,pars)
 %BACKWARDSSELECTION Takes the comblex model XU and determines if a simplier
 %model is more suitble
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,36 +45,72 @@ function [XUr,RSSr,parr,kr] = BackwardsSelection(XU,RSS,k,atest,PDS)
 NMR=sum(XU);
 frindx=find(XU==1);
 XUm=repmat(XU,NMR,1);
-par=zeros(NMR,31);
+par=zeros(NMR,length(pars(1,:)));
 RSSv=zeros(NMR,1);
 kr=zeros(NMR,1);
+CVEv=zeros(NMR,1);
 for ii=1:NMR
     XUm(ii,frindx(ii))=0; % Remove the covariate from the model
-    [par(ii,:),~,RSSv(ii)] = ProFittingGA(XUm(ii,:),PDS,[],0,0,0,[-16.*ones(1,11) ones(1,5) 0 0 0 -16.*ones(1,8)]);
+    [par(ii,:),RSSv(ii),CVEv(ii)] = ProFittingGA(XUm(ii,:),PDS,pars);
     [kr(ii)]=RetParameterPS(par(ii,:),XUm(ii,:));
 end
-load('Yemen_Gov_Incidence.mat'); % Incidence data
-WI=IData'; % Transpose the data set such that the number of areas is the row
-
-%Find areas where we have non-zero incidence over course of epidemic
-GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-maxtau=4;
-NWF=floor(153*PDS);
-WI=WI(GNZI,(NWF+1):end);
-N=length(WI(:));
-Fstatistic=((N-k)./(k-kr)).*((RSSv-RSS)./(RSS));
-CrC=1-fcdf(Fstatistic,kr-k,kr);
-f=find(CrC==max(CrC)); % choose maximum p-value as we want to decrease the size of the model
-if(max(CrC)>=atest) % smaller model accpeted if does not meet the criteria
-    XUr=XUm(f,:);
-    RSSr=RSSv(f);
-    parr=par(f,:);  
+if(atest~=0)
+    load('Yemen_Gov_Incidence.mat'); % Incidence data
+    WI=IData'; % Transpose the data set such that the number of areas is the row
+    maxtau=4;
+    %Find areas where we have non-zero incidence over course of epidemic
+    GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
+    NWF=153;
+    NGS=floor(length(GNZI)*PDS);
+    Itemp=sum(WI(GNZI,:),2);
+    GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
+    % Find the top max
+    for ii=1:ceil(NGS/2)
+       f=find(Itemp==max(Itemp)); % Find the maximum
+       Itemp(f)=0; % set maximum to zero for it is no longer selected
+       GTF(ii)=f; % Record index
+    end
+    Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
+    % Find the minimum contributors
+    for ii=(ceil(NGS/2)+1):NGS
+       f=find(Itemp==min(Itemp)); % Select minimum
+       Itemp(f)=max(Itemp); % Set to maximum for not selected again
+       GTF(ii)=f; % Record index
+    end
+    GTF=sort(GTF)';
+    WI=WI(GNZI(GTF),(1+maxtau):NWF);
+    N=length(WI(:));
+    Fstatistic=((N-k)./(k-kr)).*((RSSv-RSS)./(RSS));
+    CrC=1-fcdf(Fstatistic,kr-k,kr);
+    f=find(CrC==max(CrC)); % choose maximum p-value as we want to decrease the size of the model
+    if(max(CrC)>=atest) % smaller model accpeted if does not meet the criteria
+        XUr=XUm(f,:);
+        RSSr=RSSv(f);
+        parr=par(f,:);      
+        kr=kr(f);
+        CVEr=CVEv(f);
+    else
+        XUr=[];
+        RSSr=[];
+        parr=[];
+        kr=[];
+        CVEr=[];
+    end
 else
-    XUr=[];
-    RSSr=[];
-    parr=[];
-    kr=[];
+    f=find(CVEv==max(CVEv)); % choose maximum p-value as we want to decrease the size of the model
+    if(min(CVEv)<=CVE) % smaller model accpeted if does not meet the criteria
+        XUr=XUm(f,:);
+        RSSr=RSSv(f);
+        parr=par(f,:);      
+        kr=kr(f);
+        CVEr=CVEv(f);
+    else
+        XUr=[];
+        RSSr=[];
+        parr=[];
+        kr=[];
+        CVEr=[];
+    end    
 end
-    
 end
 

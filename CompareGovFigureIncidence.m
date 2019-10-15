@@ -1,4 +1,4 @@
-function CompareGovFigureIncidence(Yt,Yt2,WID,GNZI)
+function CompareGovFigureIncidence(Yt,Yt2,WID,GNZI,GTF)
 % Plots the incidence data and model prediction for the area of interest
 %%%%%%%%%%%%%%%%%%%%%%5
 % Input
@@ -7,7 +7,7 @@ function CompareGovFigureIncidence(Yt,Yt2,WID,GNZI)
 % Yt - Model output data for all governoates with non-zero incidence
 % WID - incidence data for the governoates with non-zero incidence
 % GNZI - the areas with non-zero incidence
-
+% GTF - Gov in GNZI used in the fitting
 %% Plot the figures
 
 % Structure of the names of the gover
@@ -25,8 +25,13 @@ for ii=1:NG
             FF=ceil(max(D)./10^MI);
             NW=length(D); % Number of weeks
             scatter([1:NW],D,40,'k','filled'); hold on; % Plot data
-            plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt(jj+4*(ii-1),:),'k','LineWidth',2);  % Plot model predictions            
-            plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt2(jj+4*(ii-1),:),'r','LineWidth',2); hold on; % Plot model predictions
+            if(~isempty(find(GNZI(jj+4*(ii-1))==GNZI(GTF)))) % if included in the fitting
+                plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt(jj+4*(ii-1),:),'k','LineWidth',2);  % Plot model predictions            
+                plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt2(jj+4*(ii-1),:),'r','LineWidth',2); hold on; % Plot model predictions
+            else
+                plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt(jj+4*(ii-1),:),'-.','color',[0.5 0.5 0.5],'LineWidth',2);  % Plot model predictions            
+                plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt2(jj+4*(ii-1),:),'-.','color',[0.7 0.2 0],'LineWidth',2); hold on; % Plot model predictions                
+            end
             box off; % removes the outside box on the figure
             xlim([1 NW]); % sets the x-limits of our x -axis
             ylim([0 FF*10^MI]); %sets the y-limts of the y-axis

@@ -1,4 +1,4 @@
-function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoC(XU,RSS,k,atest,PDS,pars)
+function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoC(XU,RSS,CVE,k,atest,PDS,pars)
 %BACKWARDSSELECTION Takes the comblex model XU and determines if a simplier
 %model is more suitble
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -44,13 +44,13 @@ function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoC(XU,RSS,k,atest,PDS,pa
 
 %% Start the backwards selection 
 frindx=find(XU==0);
-frindnr=find(frindx~=5);
-frindx=frindx(frindnr);
 frindnr=find(frindx~=6);
 frindx=frindx(frindnr);
-frindnr=find(frindx~=10);
+frindnr=find(frindx~=7);
 frindx=frindx(frindnr);
-frindnr=find(frindx~=11);
+frindnr=find(frindx~=8);
+frindx=frindx(frindnr);
+frindnr=find(frindx~=9);
 frindx=frindx(frindnr);
 frindnr=find(frindx~=12);
 frindx=frindx(frindnr);
@@ -67,30 +67,61 @@ for ii=1:NMR
     [par(ii,:),RSSv(ii),CVEv(ii)] = ProFittingGA(XUm(ii,:),PDS,pars);    
     [kr(ii)]=RetParameterPS(par(ii,:),XUm(ii,:));
 end
-load('Yemen_Gov_Incidence.mat'); % Incidence data
-WI=IData'; % Transpose the data set such that the number of areas is the row
-maxtau=4;
-%Find areas where we have non-zero incidence over course of epidemic
-GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-NWF=floor(153*PDS);
-WI=WI(GNZI,(1+maxtau):NWF);
-N=length(WI(:));
-Fstatistic=((N-kr)./(kr-k)).*((RSS-RSSv)./(RSSv));
-CrC=1-fcdf(Fstatistic,kr-k,kr);
-f=find(CrC==min(CrC)); % choose minimium p-value as we want to increase the size of the model
-if(min(CrC)<=atest) % Larger model accpeted if 
-    XUr=XUm(f,:);
-    RSSr=RSSv(f);
-    parr=par(f,:); 
-    kr=kr(f);    
-    CVEr=CVEv(f);
-else
-    XUr=[];
-    RSSr=[];
-    parr=[];
-    kr=[];
-    CVEr=[];
+if(atest~=0)
+    load('Yemen_Gov_Incidence.mat'); % Incidence data
+    WI=IData'; % Transpose the data set such that the number of areas is the row
+    maxtau=4;
+    %Find areas where we have non-zero incidence over course of epidemic
+    GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
+    NWF=153;
+    NGS=floor(length(GNZI)*PDS);
+    Itemp=sum(WI(GNZI,:),2);
+    GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
+    % Find the top max
+    for ii=1:ceil(NGS/2)
+       f=find(Itemp==max(Itemp)); % Find the maximum
+       Itemp(f)=0; % set maximum to zero for it is no longer selected
+       GTF(ii)=f; % Record index
+    end
+    Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
+    % Find the minimum contributors
+    for ii=(ceil(NGS/2)+1):NGS
+       f=find(Itemp==min(Itemp)); % Select minimum
+       Itemp(f)=max(Itemp); % Set to maximum for not selected again
+       GTF(ii)=f; % Record index
+    end
+    GTF=sort(GTF)';
+    WI=WI(GNZI(GTF),(1+maxtau):NWF);
+    N=length(WI(:));
+    Fstatistic=((N-kr)./(kr-k)).*((RSS-RSSv)./(RSSv));
+    CrC=1-fcdf(Fstatistic,kr-k,kr);
+    f=find(CrC==min(CrC)); % choose minimium p-value as we want to increase the size of the model
+    if(min(CrC)<=atest) % Larger model accpeted if 
+        XUr=XUm(f,:);
+        RSSr=RSSv(f);
+        parr=par(f,:);      
+        kr=kr(f);
+        CVEr=CVEv(f);
+    else
+        XUr=[];
+        RSSr=[];
+        parr=[];
+        kr=[];
+        CVEr=[];
+    end
+else % Does the model comparison based on the cross validation error
+    f=find(CVEv==min(CVEv)); % choose minimium p-value as we want to increase the size of the model
+    if(min(CVEv)<CVE) % Larger model accpeted if 
+        XUr=XUm(f,:);
+        RSSr=RSSv(f);
+        parr=par(f,:);      
+        kr=kr(f);
+        CVEr=CVEv(f);
+    else
+        XUr=[];
+        RSSr=[];
+        parr=[];
+        kr=[];
+        CVEr=[];
+    end
 end
-    
-end
-

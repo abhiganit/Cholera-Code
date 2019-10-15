@@ -8,16 +8,18 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU)
 % x - the log-10 parameters from the fitting process
 % XU - Specify the model being fit    
         % XU(1)- beta_0
-        % XU(2) - population density
-        % XU(3) - number of health facilities 
-        % XU(4) - Past incidence
-        % XU(5) - Product of incidence and attacks
-        % XU(6) - Product of incidence and conflict
-        % XU(7) - Product of incidence and rainfall
-        % XU(8) - Rainfall only        
-        % XU(9) - Incidence in other govnorates
-        % XU(10) - Attacks only
-        % XU(11) - Rebel control
+        % XU(2) - population density for the govenrate
+        % XU(3)- Health facilities in the govnorates
+        % XU(4) - Incidence last week
+        % XU(5) - Inicedence in the other govnorates
+        % XU(6) - Internally displaced people
+        % XU(7) - Rebel control
+        % XU(8) - Product of incidence and attacks 
+        % XU(9) - Product of incidence and conflict 
+        % XU(10) - Product of cumulative attacks incidence and rainfall 
+        % XU(11)- cumulative attacks and Rainfall
+        % XU(12) - Conflict, rianfall incidence
+        % XU(13) - Attack, rianfall, incidence
 % AF - Specify the attack function to be used
     % AF=0 attack only has effect before; 
     % AF=1 Attack has effect only after; 
@@ -39,18 +41,20 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % k- the numebr of estimated paramters in the model
 % beta- the coefficients for the regression model
-% tau - the lag
-    % tau(1) - population density incidence
-    % tau(2) - health zone incidence
-    % tau(3) - Past incidence
-    % tau(4) - Product of incidence and attacks
-    % tau(5) - Product of incidence and conflict
-    % tau(6) - Product of incidence and rainfall
-    % tau(7) - Perciptiation only
-    % tau(8) - Incidence in other govneroates
-    % tau(9)- Attack only
-    % tau(10)- Rebel control
-    % tau(11)- WASH status and incidence
+% tau - the lag  
+    % tau(1) - Bias (not applicable)
+    % tau(2) - population density incidence
+    % tau(3) - health zone incidence
+    % tau(4) - Past incidence
+    % tau(5) - Incidence other governorates
+    % tau(6) - Internally displaced
+    % tau(7) - Rebel control
+    % tau(8) - Product of incidence and attacks 
+    % tau(9) - Product of incidence and conflict 
+    % tau(10) - Product of cumulative attacks incidence and rainfall 
+    % tau(11)- cumulative attacks and Rainfall
+    % tau(12) - Conflict, rianfall incidence
+    % tau(13) - Attack, rianfall, incidence
 % DB - the number of days before the attack that incidence is affected
 % DA - the number of days after the attack that incidence is affected
 % DBE - the number of days before the attack 
@@ -66,17 +70,16 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(x,XU)
 % Set the coefficients fo rthe regression model
 beta=[10.^x(1:length(XU))].*XU;
 nob=length(XU);
-tau=[1 1 1 ceil(4.*x(nob+1)) ceil(4.*x(nob+2)) ceil(4.*x(nob+3)) ceil(4.*x(nob+4)) 1 ceil(4.*x(nob+5)) 1 ceil(4.*x(nob+6)) ceil(4.*x(nob+7))];
-CF=ceil(3.*x(nob+8))-1;
-RF=ceil(3.*x(nob+9))-1;
-RIF=ceil(3.*x(nob+10))-1;
-lenbeta=length(XU)+10;
-k=sum(XU)+ sum(XU([5 6 7 8 10 12 13])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
-
+tau=[1 1 1 1 1 1 1 ceil(4.*x(nob+[1:6]))];
+CF=ceil(3.*x(nob+7))-1;
+RF=ceil(3.*x(nob+8))-1;
+RIF=ceil(3.*x(nob+9))-1;
+lenbeta=length(XU)+9;
+k=sum(XU)+ sum(XU([8:13])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
 
 %% Attack asscoaited paramters
-if(sum(XU([5 13]))>=1)  % See if attacks being used at all
+if(XU(8)==1)  % See if attacks being used at all
 %     if(AF==1) % If only look after attack set DB=0
 %         DB=0; 
 %     else    
@@ -96,7 +99,7 @@ end
 
 
 %% Conflict associated paramters
-if(sum(XU([6 12]))>=1) % See if conflict is being used at alls
+if(XU(9)>=1) % See if conflict is being used at alls
     if(CF~=0)
         K=10.^x(lenbeta+3); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
@@ -115,7 +118,7 @@ else % Conflict is not being used in the model
 end
 
  %% Rainfall assocaited paramters 
-if(XU(7)>=1) % See if rainfall is being used at all
+if(XU(10)>=1) % See if rainfall is being used at all
     rl=10.^x(lenbeta+5);
     k=k+1; % add paramrter    
 else % Rainfall is not being used at all
@@ -123,7 +126,7 @@ else % Rainfall is not being used at all
 end
 
  %% Rainfall only
-if(XU(8)>=1) % See if rainfall is being used at all
+if(XU(11)>=1) % See if rainfall is being used at all
     rh=10.^x(lenbeta+6);
     k=k+1; % add paramrter
     
@@ -131,8 +134,9 @@ else % Rainfall is not being used at all
     rh=0;
 end
 
- %% Attack only
-if(XU(10)>=1) % See if attack only being used
+
+ %% Attack Incidence rainfall
+if(XU(13)>=1) % See if attack only being used
     DAE=10.^x(lenbeta+7);
     k=k+1; % add paramrter
     DBE=10.^x(lenbeta+8);
@@ -141,6 +145,3 @@ else % Rainfall is not being used at all
     DAE=0;
     DBE=0;
 end
-
-end
-

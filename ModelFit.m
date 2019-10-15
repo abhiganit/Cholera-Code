@@ -2,9 +2,9 @@ close all;
 
 %% Load the data
 %% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,GNZI,maxtau] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,IDPt,GNZI,maxtau] = LoadYemenData;
 PDS=0.8;
-atest=0.05;
+atest=0.01;
 %% Forward selection
 load(['ForwardSelection-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
 XU=XUv(end,:);
@@ -13,18 +13,37 @@ par=parv(end,:);
 % Evaluate the number of paramters that are being used in the estimation 
 [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
 
-%% Run the projection
+%% Determine the areas used in the fitting
+NGS=floor(length(GNZI)*PDS);
+Itemp=sum(WI(GNZI,:),2);
+GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
+% Find the top max
+for ii=1:ceil(NGS/2)
+   f=find(Itemp==max(Itemp)); % Find the maximum
+   Itemp(f)=0; % set maximum to zero for it is no longer selected
+   GTF(ii)=f; % Record index
+end
+Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
+% Find the minimum contributors
+for ii=(ceil(NGS/2)+1):NGS
+   f=find(Itemp==min(Itemp)); % Select minimum
+   Itemp(f)=max(Itemp); % Set to maximum for not selected again
+   GTF(ii)=f; % Record index
+end
+GTF=sort(GTF)'; % Gov. to used in the fitting of the model. We sort to keep order consistent with GNZI
 
 %% Run the logistic model with the data
 
-[Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,GNZI));
-Err=abs(Yt-WI(GNZI,1+maxtau:end));
+[Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,GNZI),IDPt(GNZI,:));
+ErrFit=sum(abs(Yt(GTF,:)-WI(GNZI(GTF),1+maxtau:end)),1);
+ErrCV=sum(abs(Yt-WI(GNZI,1+maxtau:end)),1)-ErrFit;
+ErrFit=ErrFit./length(GTF);
+ErrCV=ErrCV./(length(GNZI)-length(GTF));
 figure('units','normalized','outerposition',[0 0 1 1]);
 subplot('Position',[0.0808,0.163120567375887,0.897162184873949,0.793313069908819]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
-NWF=floor(153*PDS);
+NWF=153;
 plot([1+maxtau:NWF],sum(Yt(:,1:(NWF-maxtau))),'k',[1:NWF],sum(WI(GNZI,1:NWF)),'k*','LineWidth',2); hold on;
-plot([NWF:153],sum(Yt(:,(NWF-maxtau):end)),'r',[NWF+1:153],sum(WI(GNZI,NWF+1:end)),'r*','LineWidth',2); hold on;
 
 dW=4;
 NW=153;
@@ -49,11 +68,9 @@ title([X(XUv(end,:)==1).N ' (\alpha= ' num2str(atest) ')'],'Fontsize',20);
 % create smaller axes in top right, and plot on it
 axes('Position',[.45 .75 .5 .2])
 box on
-plot([1+maxtau:NWF],median(Err(:,1:(NWF-maxtau)),1),'k','LineWidth',2); hold on;
-patch( [1+maxtau:NWF flip(1+maxtau:NWF)], [prctile(Err(:,1:(NWF-maxtau)),25) flip(prctile(Err(:,1:(NWF-maxtau)),75))],'k','Facealpha',0.3','LineStyle','none');
+plot([1+maxtau:NWF],ErrFit,'k','LineWidth',2); hold on;
+plot([1+maxtau:NWF],ErrCV,'r','LineWidth',2); hold on;
 
-plot([NWF:153],median(Err(:,(NWF-maxtau):end),1),'r','LineWidth',2); hold on;
-patch( [NWF:153 flip(NWF:153)], [prctile(Err(:,(NWF-maxtau):end),25) flip(prctile(Err(:,(NWF-maxtau):end),75))],'r','Facealpha',0.3','LineStyle','none');
 % changing the aspects of the axis for the the current figure 
 set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'Yminortick','on','Fontsize',14,'XTickLabel',XTL);
 box off;
@@ -65,4 +82,4 @@ xtickangle(45);
 
 xlim([1 153]);
 xlabel('Date','Fontsize',16);
-ylabel({'Absolute error','(Governorate)'},'Fontsize',16);
+ylabel({'Average Absolute error','(Governorate)'},'Fontsize',16);
