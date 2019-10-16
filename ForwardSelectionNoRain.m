@@ -1,4 +1,4 @@
-function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoRain(XU,RSS,CVE,k,atest,PDS,pars)
+function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoRain(XU,RSS,CVE,k,atest,PDS,Gov,pars)
 %BACKWARDSSELECTION Takes the comblex model XU and determines if a simplier
 %model is more suitble
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,45 +43,22 @@ function [XUr,RSSr,CVEr,parr,kr,par] = ForwardSelectionNoRain(XU,RSS,CVE,k,atest
 % kr - the number of paramters estimatedi in the reduced model
 
 %% Start the backwards selection 
+
 frindx=find(XU==0);
-frindx=frindx(frindx<=9);
+frindx=frindx(frindx<=5);
 NMR=length(frindx);
 XUm=repmat(XU,NMR,1);
-par=zeros(NMR,length(pars(1,:)));
+par=zeros(NMR,length(pars));
 RSSv=zeros(NMR,1);
 kr=zeros(NMR,1);
 CVEv=zeros(NMR,1);
 for ii=1:NMR
     XUm(ii,frindx(ii))=1; % Remove the covariate from the model
-    [par(ii,:),RSSv(ii),CVEv(ii)] = ProFittingGA(XUm(ii,:),PDS,pars);    
+    [par(ii,:),RSSv(ii),CVEv(ii)] = ProFittingGA(XUm(ii,:),PDS,Gov,pars);    
     [kr(ii)]=RetParameterPS(par(ii,:),XUm(ii,:));
 end
-if(atest~=0)
-    load('Yemen_Gov_Incidence.mat'); % Incidence data
-    WI=IData'; % Transpose the data set such that the number of areas is the row
-    maxtau=4;
-    %Find areas where we have non-zero incidence over course of epidemic
-    GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-    NWF=153;
-    NGS=floor(length(GNZI)*PDS);
-    Itemp=sum(WI(GNZI,:),2);
-    GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
-    % Find the top max
-    for ii=1:ceil(NGS/2)
-       f=find(Itemp==max(Itemp)); % Find the maximum
-       Itemp(f)=0; % set maximum to zero for it is no longer selected
-       GTF(ii)=f; % Record index
-    end
-    Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-    % Find the minimum contributors
-    for ii=(ceil(NGS/2)+1):NGS
-       f=find(Itemp==min(Itemp)); % Select minimum
-       Itemp(f)=max(Itemp); % Set to maximum for not selected again
-       GTF(ii)=f; % Record index
-    end
-    GTF=sort(GTF)';
-    WI=WI(GNZI(GTF),(1+maxtau):NWF);
-    N=length(WI(:));
+if(atest~=0)    
+    N=floor(153*PDS);
     Fstatistic=((N-kr)./(kr-k)).*((RSS-RSSv)./(RSSv));
     CrC=1-fcdf(Fstatistic,kr-k,kr);
     f=find(CrC==min(CrC)); % choose minimium p-value as we want to increase the size of the model
@@ -114,3 +91,6 @@ else % Does the model comparison based on the cross validation error
         CVEr=[];
     end
 end
+    
+end
+
