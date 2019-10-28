@@ -12,7 +12,7 @@ subplot('Position',[0.0708,0.143120567375887,0.897162184873949,0.793313069908819
 
 mapshow(S,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',1); hold on
 f=find(YASt(:,1)>=1); % find the attacks that have happened before 
-LLB=ProCA(f,2:3);
+LLB=YASt(f,2:3);
 B=unique(LLB,'rows');
 B=[B zeros(length(B(:,1)),1)];
 
@@ -22,7 +22,16 @@ for ii=1:length(B(:,1))
     B(ii,3)=length(g);
 end
 
-scatter(B(:,2),B(:,1),(B(:,3)),'k','filled')
+% scatter(B(:,2),B(:,1),(B(:,3)),'k','filled')
+
+for ii=1:length(B(:,1))
+
+    t = linspace(0, 2*pi);
+    r = 0.05;
+    x = r*cos(t)+B(ii,1);
+    y = r*sin(t)+B(ii,2);
+   h=patch(y,x, 'k','Facealpha',0.35,'EdgeAlpha',0) ;
+end
 scatter(53.08.*ones(5,1),[16.5 16.2 15.9 15.6 15.3]+2.5,[500 100 50 25 5],'k','filled')
 axis off;
 text(53.25.*ones(5,1),[16.5 16.2 15.9 15.6 15.3]+2.5,{'500 Attacks','100 Attacks','50 Attacks','25 Attacks','5 Attacks'},'Fontsize',16);

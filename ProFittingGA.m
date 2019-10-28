@@ -36,19 +36,38 @@ close all;
 clc;
 
 %% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,IDPt,GNZI,maxtau] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,~,GNZI,maxtau] = LoadYemenData;
+
 NGS=floor(length(GNZI)*PDS);
 Itemp=sum(WI(GNZI,:),2);
+Itemp(RC(GNZI)==0)=0;
 GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
 % Find the top max
-for ii=1:ceil(NGS/2)
+for ii=1:ceil(NGS/4)
+   f=find(Itemp==max(Itemp)); % Find the maximum
+   Itemp(f)=0; % set maximum to zero for it is no longer selected
+   GTF(ii)=f; % Record index
+end
+Itemp=sum(WI(GNZI,:),2);
+Itemp(RC(GNZI)==1)=0;
+% Find the top max
+for ii=(ceil(NGS/4)+1):ceil(NGS/2)
    f=find(Itemp==max(Itemp)); % Find the maximum
    Itemp(f)=0; % set maximum to zero for it is no longer selected
    GTF(ii)=f; % Record index
 end
 Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
+Itemp(RC(GNZI)==0)=max(Itemp); % set the one governorate of interest for analysis to maximum so it is not included in the fitting but the cross validation
 % Find the minimum contributors
-for ii=(ceil(NGS/2)+1):NGS
+for ii=(ceil(NGS/2)+1):ceil(3.*NGS/4)
+   f=find(Itemp==min(Itemp)); % Select minimum
+   Itemp(f)=max(Itemp); % Set to maximum for not selected again
+   GTF(ii)=f; % Record index
+end
+Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
+Itemp(RC(GNZI)==1)=max(Itemp); % set the one governorate of interest for analysis to maximum so it is not included in the fitting but the cross validation
+% Find the minimum contributors
+for ii=(ceil(3.*NGS/4)+1):NGS
    f=find(Itemp==min(Itemp)); % Select minimum
    Itemp(f)=max(Itemp); % Set to maximum for not selected again
    GTF(ii)=f; % Record index
@@ -69,14 +88,16 @@ pars([9:15]+length(XU))=ceil(3.*pars([9:15]+length(XU)))-1;
 options = optimoptions('ga','MaxGenerations',50000,'MaxStallGenerations',500,'UseParallel',true,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
 optionsps = optimoptions('patternsearch','UseParallel',true,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
 
-[par] =ga(@(x)OFuncProGA(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),IDPt(GNZI(GTF),1:NW)),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
+[par] =ga(@(x)OFuncProGA(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),[]),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
 par(XU==0)=-30; % for the recursive componetnt
 par([1:8]+length(XU))=par([1:8]+length(XU))./4-0.01; % such that they do not push on the boundary
 par([9:15]+length(XU))= (par([9:15]+length(XU))+1)./3-0.01; % such that they do not push on the boundary
-[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),IDPt(GNZI(GTF),1:NW)),par,[],[],[],[],lbps,ubps,[],optionsps); 
+[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),[]),par,[],[],[],[],lbps,ubps,[],optionsps); 
 fvalfit=10.^fvalfit;
 par(XU==0)=-30; % for the recursive componetnt
 % Calculate the cross-validation error by calculating error for all areas
 % w/ non-zero incidence and then subtracting the value of fvalfit
-CVE=(10.^OFuncProPS(par,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),Rtv(GNZI,1:NW),XU,maxtau,P(GNZI,1:NW),RC(GNZI),H(GNZI,1:NW),WPIN(GNZI,1:NW),Mt(GNZI,1:NW),IDPt(GNZI,1:NW)))-fvalfit;
+
+% Load data for the cross-Validation at the district level
+CVE=(10.^OFuncProPS(par,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),Rtv(GNZI,1:NW),XU,maxtau,P(GNZI,1:NW),RC(GNZI),H(GNZI,1:NW),WPIN(GNZI,1:NW),Mt(GNZI,1:NW),[]))-fvalfit;
 end
