@@ -4,7 +4,7 @@ lbps=[-32.*ones(1,18) zeros(1,18-7) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32
 ubps=[ 5.*ones(1,18) ones(1,18-7) ones(1,7) log10([ones(1,8) 20 3 20 3 120 120 120 120 120 1000 1000 1000 1 1000 1000 1])];
 temppar=lbps+(ubps-lbps).*rand(size(lbps));
 
-for cvii=1:11
+for cvii=11:-1:1
     PDS=0.4+0.05.*(cvii-1);
 
    %% Run the projection

@@ -1,4 +1,4 @@
-function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,IDPt,GNZI,maxtau] = LoadYemenData
+function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenData
 % Loads the Data needed to rum the regression model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,6 +15,7 @@ function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,IDPt,GNZI,maxtau] = LoadYemenData
 % WPIN - transformation of density of WASH people in need (22x1)
 % Et - External incidence due to IDP 
 % GNZI - Gov with non-zero incidence
+% GV - Inidciator if vaccination occurred in governorate
 % maxtau - the maximum lag considered
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
@@ -59,16 +60,79 @@ H=10000.*[ repmat(H./AP(:,1),1,NW2016) repmat(H./AP(:,2),1,52)  repmat(H./AP(:,3
 % WASH People in Need Desnity
 load('WASH_PIN_Yemen.mat');
 WPINm=[ repmat(WPIN(:,1)./AP(:,1),1,NW2016) repmat(WPIN(:,2)./AP(:,2),1,52)  repmat(WPIN(:,3)./AP(:,3),1,52)  repmat(WPIN(:,4)./AP(:,4),1,NW2019)];
+
+
+load('Food_PIN_Yemen.mat');
+FPINm=[ repmat(FPIN(:,1)./AP(:,1),1,NW2016) repmat(FPIN(:,2)./AP(:,2),1,52)  repmat(FPIN(:,3)./AP(:,3),1,52)  repmat(FPIN(:,4)./AP(:,4),1,NW2019)];
 %Find areas where we have non-zero incidence over course of epidemic
 GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
 
 % External effect due to IDP
 PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
-load('Yemen_IDP.mat'); % load IDP cell matrix
-IDPtAbs=IDPMatrix(IDP,Sm,153); % Calculate temporal IDP absolute numbers
-IDPt = Et(WI,PopS,IDPtAbs);
+% load('Yemen_IDP.mat'); % load IDP cell matrix
+% IDPtAbs=IDPMatrix(IDP,Sm,153); % Calculate temporal IDP absolute numbers
+% IDPt = Et(WI,PopS,IDPtAbs);
 %% Comput the attack rate per 10,000
 WI=10000.*WI./PopS;
+
+%% Diesel and Wheat prices
+load('Diesel_Gov_Yemen.mat')
+load('Wheat_Gov_Yemen.mat')
+Diesel=Diesel';
+Wheat=Wheat';
+Wheatt=zeros(size(WI));
+Dieselt=zeros(size(WI));
+
+% The dates for the prices being used
+startData = [ ];
+endData = [ ];
+for yy=2016:2019
+    if(yy==2016)
+        for mm=10:12
+            startData=[startData; datenum(yy,mm,1)];
+            if(mm<12)
+                endData=[endData; datenum(yy,mm+1,1)-1]; % We go to the first day of the next month and subtract one day
+            else
+                endData=[endData; datenum(yy+1,1,1)-1]; % We go to the first day of the next month and subtract one day
+            end
+        end
+    elseif(yy==2019)        
+        for mm=1:9
+            startData=[startData; datenum(yy,mm,1)];    
+            if(mm<12)
+                endData=[endData; datenum(yy,mm+1,1)-1]; % We go to the first day of the next month and subtract one day
+            else
+                endData=[endData; datenum(yy+1,1,1)-1]; % We go to the first day of the next month and subtract one day
+            end        
+        end
+    else
+        for mm=1:12
+            startData=[startData; datenum(yy,mm,1)];
+            if(mm<12)
+                endData=[endData; datenum(yy,mm+1,1)-1]; % We go to the first day of the next month and subtract one day
+            else
+                endData=[endData; datenum(yy+1,1,1)-1]; % We go to the first day of the next month and subtract one day
+            end
+        end
+    end
+end
+
+EndFirstEpiWeek= datenum('10-09-2016');% Start of second epiweek is oct 10, 2016
+for ii=1:length(WI(1,:))
+    f=find(EndFirstEpiWeek+7*(ii-1)<=endData,1);% Need the first one to satisfy this condition as we increase over time and will elminate the other past months
+    Wheatt(:,ii)=Wheat(:,f);
+    Dieselt(:,ii)=Diesel(:,f);
+end
+
+% Vaccination doses 
+[V1,V2]= VaccinationTime(1,153);
+
+VT1=V1./PopS;
+VT2=V2./PopS;
+
+GV=sum(VT1+VT2,2);
+GV(GV>0)=1;
+
 %% Adjust ascpects of functions and data for the fitting
 
 maxtau=4; % The maximum lag allowed for the model

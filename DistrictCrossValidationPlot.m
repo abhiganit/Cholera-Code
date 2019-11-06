@@ -1,30 +1,30 @@
 %% Compare District level incidence of the various models
-%close all;
+close all;
 clear;
 clc;
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,~,GNZI,maxtau] = LoadYemenDistrictData;
-PDS=0.8;
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenDistrictData;
+PDS=0.85;
 atest=0;
 %% Forward selection
-
-load(['ForwardSelectionNoRain-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
+load(['ForwardSelectionNoRainNoConflict-Vaccination-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
 XU=XUv(end,:);
 par=parv(end,:);
 
 % Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
+[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(parv(end,:),XUv(end,:));
 %% Run the projection
 
 %% Run the logistic model with the data
 
-[Yt,~]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,Mt,[]);
+[Yt,~]= LogisticModel(beta,WI,tA(:,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(:,1:length(WI(1,:))),K,n,Rtv(:,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(:,1:length(WI(1,:))),RC,H(:,1:length(WI(1,:))),WPIN(:,1:length(WI(1,:))),FPIN(:,1:length(WI(1,:))),Mt(:,1:length(WI(1,:))),Wheatt(:,1:length(WI(1,:))),Dieselt(:,1:length(WI(1,:))),mln,a,VT1(:,1:length(WI(1,:))),VT2(:,1:length(WI(1,:))),KV,dV);
+[YtNV,~]= LogisticModel(beta,WI,tA(:,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(:,1:length(WI(1,:))),K,n,Rtv(:,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(:,1:length(WI(1,:))),RC,H(:,1:length(WI(1,:))),WPIN(:,1:length(WI(1,:))),FPIN(:,1:length(WI(1,:))),Mt(:,1:length(WI(1,:))),Wheatt(:,1:length(WI(1,:))),Dieselt(:,1:length(WI(1,:))),mln,a,VT1(:,1:length(WI(1,:))),VT2(:,1:length(WI(1,:))),0.*KV,dV);
 load('PopulationSize_DistrictYemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
 PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; 
 PopS=PopS(:,31:end); % Incidence data for the districts starts at may 1 2017
 Yt=(Yt./(10000)).*PopS(:,maxtau+1:end);
-
+YtNV=(YtNV./(10000)).*PopS(:,maxtau+1:end);
 load('Yemen_District_Incidence.mat'); % Incidence data
 WI=IData'; % Transpose the data set such that the number of areas is the row
 
@@ -67,8 +67,9 @@ for ii=1:ceil(length(SName)/4)
             MI=floor(log10(max(Yt(jj+4*(ii-1),:)))); % The max magnitude we want for the figure
             FF=ceil(max(Yt(jj+4*(ii-1),:))./10^MI);
             NW=length(D); % Number of weeks
-            scatter([1:NW],D,40,'k','filled'); hold on; % Plot data
-            plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt(jj+4*(ii-1),:),'b','LineWidth',2);  % Plot model predictions  
+            scatter([1:NW],D,40,'r','filled'); hold on; % Plot data
+            plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],YtNV(jj+4*(ii-1),:),'-.','color',[0.5 0.5 0.5],'LineWidth',2);  % Plot model predictions 
+            plot([(1+(length(D)-length(Yt(jj+4*(ii-1),:)))):NW],Yt(jj+4*(ii-1),:),'k','LineWidth',2);  % Plot model predictions   
 
             box off; % removes the outside box on the figure
             xlim([1 NW]); % sets the x-limits of our x -axis

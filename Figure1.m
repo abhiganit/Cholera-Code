@@ -1,161 +1,260 @@
-%% Produces the model prediction for national incidence and the cross validation governoertaes
 close all;
+clear;
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,GNZI,maxtau] = LoadYemenData; % Load the data used to construct the figure
 
-%% Load the data
-%% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,IDPt,GNZI,maxtau] = LoadYemenData;
-PDS=0.8;
-atest=0.01;
-%% Forward selection
-load(['ModelSelectionNoRain-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
-XU=XUv(end,:);
-par=parv(end,:);
+S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
-% Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
-
-%% Determine the areas used in the fitting
-NGS=floor(length(GNZI)*PDS);
-Itemp=sum(WI(GNZI,:),2);
-GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
-% Find the top max
-for ii=1:ceil(NGS/2)
-   f=find(Itemp==max(Itemp)); % Find the maximum
-   Itemp(f)=0; % set maximum to zero for it is no longer selected
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-% Find the minimum contributors
-for ii=(ceil(NGS/2)+1):NGS
-   f=find(Itemp==min(Itemp)); % Select minimum
-   Itemp(f)=max(Itemp); % Set to maximum for not selected again
-   GTF(ii)=f; % Record index
-end
-GTF=sort(GTF)'; % Gov. to used in the fitting of the model. We sort to keep order consistent with GNZI
-
-ErrCv=zeros(3,153-maxtau);
-
-%% Run the model with all factors
-[YtA,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,GNZI),IDPt(GNZI,:));
-ErrFit=sum(abs(YtA(GTF,:)-WI(GNZI(GTF),1+maxtau:end)),1);
-ErrCV(1,:)=sum(abs(YtA-WI(GNZI,1+maxtau:end)),1)-ErrFit;
-
-%% Run Model with conflict and no rain
-load(['ModelSelectionNoRain-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
-XU=XUv(end-1,:);
-par=parv(end-1,:);
-
-% Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
-[YtC,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,GNZI),IDPt(GNZI,:));
-ErrFit=sum(abs(YtC(GTF,:)-WI(GNZI(GTF),1+maxtau:end)),1);
-ErrCV(2,:)=sum(abs(YtC-WI(GNZI,1+maxtau:end)),1)-ErrFit;
-
-%% Run Model with rain and no conflict
-load(['ModelSelectionNoRain-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
-XU=XUv(end-2,:);
-par=parv(end-2,:);
-
-% Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
-[YtR,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,GNZI),IDPt(GNZI,:));
-ErrFit=sum(abs(YtR(GTF,:)-WI(GNZI(GTF),1+maxtau:end)),1);
-ErrCV(3,:)=sum(abs(YtR-WI(GNZI,1+maxtau:end)),1)-ErrFit;
-
-ErrCV=ErrCV./(length(GNZI)-length(GTF));
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.0808,0.16,0.897162184873949,0.793313069908819]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+%% Attack rate
+subplot('Position',[0.035,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+XS=linspace(41.7741,54.6472,101);
+YS=linspace(11.7,19.0978,101);
+[XSRCt,YSRCt]=meshgrid(XS,YS);
+XSRC=XSRCt(:);
+YSRC=YSRCt(:);
 
-NWF=153;
-plot([1:NWF],sum(WI(GNZI,1:NWF)),'ko','LineWidth',2,'Markerfacecolor','k','Markersize',5); hold on;
-plot([1+maxtau:NWF],sum(YtA(:,1:(NWF-maxtau))),'k','LineWidth',2);
-plot([1+maxtau:NWF],sum(YtC(:,1:(NWF-maxtau))),'color',hex2rgb('#E81E25'),'LineWidth',2);
-plot([1+maxtau:NWF],sum(YtR(:,1:(NWF-maxtau))),'color',hex2rgb('#6A92CC'),'LineWidth',2);
-
-dW=4;
-NW=153;
-startDateofSim = datenum('10-03-2016');% The week of our first data point (October 3, 2016)
-XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-% changing the aspects of the axis for the the current figure 
-set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'YTick',[0:5000:55000],'Yminortick','on','Fontsize',16,'XTickLabel',XTL);
-
-    % Sets the y-axis to not have 10^n
-    ax=gca; % finds the current axis
-    ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
-box off;
-xtickangle(45);
-
-xlabel('Date','Fontsize',18);
-yh=ylabel({'Suspected cholera cases','(National)'},'Fontsize',18);
-ylim([0 55005]);
-xlim([1 153.5]);
-
-text(yh.Extent(1),0.99.*max(ylim),'A','Fontsize',32,'fontweight','bold');
-% create smaller axes in top right, and plot on it
-axes('Position',[.45 .75 .5 .2])
-box on
-plot([1+maxtau:NWF],ErrCV(1,:),'k','LineWidth',2); hold on;
-plot([1+maxtau:NWF],ErrCV(2,:),'color',hex2rgb('#E81E25'),'LineWidth',2); hold on;
-plot([1+maxtau:NWF],ErrCV(3,:),'color',hex2rgb('#6A92CC'),'LineWidth',2); hold on;
-
-% changing the aspects of the axis for the the current figure 
-set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'Yminortick','on','Fontsize',14,'XTickLabel',XTL,'YTick',[0:100:1000]);
-ylim([0 1000]);
-box off;
-    % Sets the y-axis to not have 10^n
-    ax=gca; % finds the current axis
-    ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
-box off;
-xtickangle(45);
-
-xlim([1 153]);
-xlabel('Date','Fontsize',16);
-ylabel({'Average Absolute error','(Governorate)'},'Fontsize',16);
-
-%% Plot the cross validation for the governates
-CVG=zeros(length(GNZI)-length(GTF),1);
-cc=1;
-for ii=1:length(GNZI)
-    if(isempty(find(GNZI(ii)==GTF)))
-        CVG(cc)=ii;
-        cc=cc+1;
+XS=[(XS(2:end)+XS(1:end-1))./2];
+YS=[(YS(2:end)+YS(1:end-1))./2];
+[XSRCt,YSRCt]=meshgrid(XS,YS);
+XSRC=[XSRC; XSRCt(:)];
+YSRC=[YSRC; YSRCt(:)];
+in=zeros(size(XSRC));
+for ii=1:length(S)
+    if(RC(ii)==1)
+        in=in+inpolygon(XSRC,YSRC,S(ii).X,S(ii).Y);
     end
 end
-figure('units','normalized','outerposition',[0 0 1 1]);
-N=struct('G',{'Abyan';'Aden';'Al Bayda';'Al Dhale''e';'Al Hudaydah';'Al Jawf';'Al Maharah';'Al Mahwit';'Amanat Al Asimah';'Amran';'Dhamar';'Hadramaut';'Hajjah';'Ibb';'Lahj';'Marib';'Raymah';'Sa''ada';'Sana''a';'Shabwah';'Socotra';'Taizz'});
-for ii=1:2
-    for jj=1:2
-        subplot('Position',[0.0808+(0.94/2).*(jj-1),0.16+(2-ii).*(0.85/2),0.95.*0.897162184873949/2,0.95.*0.793313069908819/2]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-        plot([1:NWF],(WI(GNZI(CVG(jj+2.*(ii-1))),1:NWF)),'ko','LineWidth',2,'Markerfacecolor','k','Markersize',5); hold on;
-        plot([1+maxtau:NWF],(YtA(CVG(jj+2.*(ii-1)),1:(NWF-maxtau))),'k','LineWidth',2);
-        plot([1+maxtau:NWF],(YtC(CVG(jj+2.*(ii-1)),1:(NWF-maxtau))),'color',hex2rgb('#E81E25'),'LineWidth',2);
-        plot([1+maxtau:NWF],(YtR(CVG(jj+2.*(ii-1)),1:(NWF-maxtau))),'color',hex2rgb('#6A92CC'),'LineWidth',2);
-        title(N(GNZI(CVG(jj+2.*(ii-1)))).G,'Fontsize',18);
-        dW=8;
-        NW=153;
-        startDateofSim = datenum('10-03-2016');% The week of our first data point (October 3, 2016)
-        XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-        % changing the aspects of the axis for the the current figure 
-        if(ii==2)
-            set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'YTick',[0:500:5500],'Yminortick','on','Fontsize',16,'XTickLabel',XTL);
-        xtickangle(45);
+XSRC=XSRC(in>0);
+YSRC=YSRC(in>0);
+MAR=mean(WI,2);
+MART=MAR;
+MAR=MAR./max(MAR);
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor','r','Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+end
+scatter(XSRC,YSRC,3,'k','filled');
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(0,max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,num2str(dA(ii)),'Rotation',270,'Fontsize',14);
 
-        xlabel('Date','Fontsize',18);
-        else
-            set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'YTick',[0:500:5500],'Yminortick','on','Fontsize',16,'XTickLabel','');
-        end
-        if(jj==1)
-        
-        yh=ylabel({'Suspected cholera cases'},'Fontsize',18);
-        end
-
-            % Sets the y-axis to not have 10^n
-            ax=gca; % finds the current axis
-            ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
-        box off;
-        ylim([0 5500]);
-xlim([1 153.5]);
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],'r','Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,num2str(round(dA(ii),1)),'Rotation',270,'Fontsize',14);
     end
 end
+text(mean(xlim),10.78,'Attack rate per 10,000','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
 
+axis off;
+text(min(xlim),max(ylim)*0.98,'i)','Fontsize',16);
+%% WASH
+subplot('Position',[0.47,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
+MAR=mean(WPINm,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',[0 0.6 0.6],'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[0 0.6 0.6],'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Percentage of population in need of WaSH','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'ii)','Fontsize',16);
+%% Food security
+subplot('Position',[0.035,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=mean(FPINm,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',hex2rgb('#2E4600'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#2E4600'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Percentage of population in need of food security','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'iii)','Fontsize',16);
+%% Diesel
+subplot('Position',[0.47,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=mean(Dieselt,2);
+MART=MAR(MAR>0);
+MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
+for ii=1:length(S)
+    if(MAR(ii)>=0)
+        mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[153,52,4]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Price of diesel','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'iv)','Fontsize',16);
+figure('units','normalized','outerposition',[0 0 1 1]);
+%% Populatino Desnity
+subplot('Position',[0.035,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=mean(P,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',[136,86,167]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,num2str(round(dA(ii),2)),'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[136,86,167]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,num2str(round(dA(ii),1)),'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'People per km^2','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'v)','Fontsize',16);
+%% Hospital
+subplot('Position',[0.47,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=mean(H,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',[254,217,118]/255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[254,217,118]/255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Health facilities per 10,000','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'vi)','Fontsize',16);
+%% Targeted attacks
+subplot('Position',[0.035,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=sum(tA,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=min(MART):max(MART);
+dX=linspace(min(xlim),max(xlim),length(dA));
+ii=1;
+h=text(dX(ii), 11.68,[num2str((dA(ii))) ],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:length(dA)
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[221,28,119]./255,'Facealpha',(ii-1)./length(dA),'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str((dA(ii)))],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Total number of attacks on water systems','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'vii)','Fontsize',16);
+%% Rainfall
+subplot('Position',[0.47,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=mean(Rtv,2);
+MART=MAR(MAR>0);
+MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
+for ii=1:length(S)
+    if(MAR(ii)>=0)
+        mapshow(S(ii),'FaceColor',[5,112,176]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[5,112,176]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Rainfall','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'viii)','Fontsize',16);
+clear;

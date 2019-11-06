@@ -2,22 +2,22 @@
 close all;
 clear;
 clc;
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,IDPt,GNZI,maxtau] = LoadYemenData;
-PDS=0.8;
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenData;
+PDS=0.85;
 atest=0;
 %% Forward selection
-load(['ForwardSelectionNoRain-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
-XU=XUr;
-par=parr;
+load(['ForwardSelectionNoRainNoConflict-Vaccination-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
+
 
 % Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
+[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(parv(end,:),XUv(end,:));
 %% Run the projection
 
 %% Run the logistic model with the data
 
-[Yt,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),IDPt(GNZI,1:length(WI(1,:))));
-
+[Yt,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV);
+dI=WI(GNZI,(1+maxtau):end)-Yt;
+temp=0;
 % atest=0.05;
 % %% Forward selection
 % load(['ForwardSelectionNoRain-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
@@ -30,49 +30,14 @@ par=parr;
 % %% Run the projection
 % 
 
-load(['ForwardSelectionNoRain-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
-XU=XUv(end,:);
-par=parv(end,:);
+load(['ForwardSelectionNoRainNoConflict-Vaccination-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
 
 % Evaluate the number of paramters that are being used in the estimation 
-[k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
+[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(parv(end,:),XUv(end,:));
+KV=KV.*0;
+[YtNR,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV);
 
-[YtNR,~]=LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),IDPt(GNZI,1:length(WI(1,:))));
-NGS=floor(length(GNZI)*PDS);
-Itemp=sum(WI(GNZI,:),2);
-Itemp(RC(GNZI)==0)=0;
-GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
-% Find the top max
-for ii=1:ceil(NGS/4)
-   f=find(Itemp==max(Itemp)); % Find the maximum
-   Itemp(f)=0; % set maximum to zero for it is no longer selected
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2);
-Itemp(RC(GNZI)==1)=0;
-% Find the top max
-for ii=(ceil(NGS/4)+1):ceil(NGS/2)
-   f=find(Itemp==max(Itemp)); % Find the maximum
-   Itemp(f)=0; % set maximum to zero for it is no longer selected
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-Itemp(RC(GNZI)==0)=max(Itemp); % set the one governorate of interest for analysis to maximum so it is not included in the fitting but the cross validation
-% Find the minimum contributors
-for ii=(ceil(NGS/2)+1):ceil(3.*NGS/4)
-   f=find(Itemp==min(Itemp)); % Select minimum
-   Itemp(f)=max(Itemp); % Set to maximum for not selected again
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-Itemp(RC(GNZI)==1)=max(Itemp); % set the one governorate of interest for analysis to maximum so it is not included in the fitting but the cross validation
-% Find the minimum contributors
-for ii=(ceil(3.*NGS/4)+1):NGS
-   f=find(Itemp==min(Itemp)); % Select minimum
-   Itemp(f)=max(Itemp); % Set to maximum for not selected again
-   GTF(ii)=f; % Record index
-end
-GTF=sort(GTF)'; % Gov. to used in the fitting of the model. We sort to keep order consistent with GNZI
+[GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,PDS);
 load('Yemen_Gov_Incidence.mat'); % Incidence data
 
 WI=IData';

@@ -36,68 +36,32 @@ close all;
 clc;
 
 %% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,~,GNZI,maxtau] = LoadYemenData;
-
-NGS=floor(length(GNZI)*PDS);
-Itemp=sum(WI(GNZI,:),2);
-Itemp(RC(GNZI)==0)=0;
-GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
-% Find the top max
-for ii=1:ceil(NGS/4)
-   f=find(Itemp==max(Itemp)); % Find the maximum
-   Itemp(f)=0; % set maximum to zero for it is no longer selected
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2);
-Itemp(RC(GNZI)==1)=0;
-% Find the top max
-for ii=(ceil(NGS/4)+1):ceil(NGS/2)
-   f=find(Itemp==max(Itemp)); % Find the maximum
-   Itemp(f)=0; % set maximum to zero for it is no longer selected
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-Itemp(RC(GNZI)==0)=max(Itemp); % set the one governorate of interest for analysis to maximum so it is not included in the fitting but the cross validation
-% Find the minimum contributors
-for ii=(ceil(NGS/2)+1):ceil(3.*NGS/4)
-   f=find(Itemp==min(Itemp)); % Select minimum
-   Itemp(f)=max(Itemp); % Set to maximum for not selected again
-   GTF(ii)=f; % Record index
-end
-Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-Itemp(RC(GNZI)==1)=max(Itemp); % set the one governorate of interest for analysis to maximum so it is not included in the fitting but the cross validation
-% Find the minimum contributors
-for ii=(ceil(3.*NGS/4)+1):NGS
-   f=find(Itemp==min(Itemp)); % Select minimum
-   Itemp(f)=max(Itemp); % Set to maximum for not selected again
-   GTF(ii)=f; % Record index
-end
-GTF=sort(GTF)'; % Gov. to used in the fitting of the model. We sort to keep order consistent with GNZI
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenData;
+[GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,PDS);
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
-lbps=[-32.*ones(1,length(XU)) zeros(1,8) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32.*ones(1,5)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-ubps=[ 5.*ones(1,length(XU)) ones(1,8) ones(1,7) log10([ones(1,8) 20 3 20 3 120 120 120 120 120])]; % specify the upperbound for the parameters 
+lbps=[-32.*ones(1,length(XU)) zeros(1,length(XU)-7) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32.*ones(1,9) -32.*ones(1,3)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ubps=[ 5.*ones(1,length(XU)) ones(1,length(XU)-7) ones(1,7) log10([ones(1,8) 20 3 20 3 120 120 120 120 120 1000 1000 1000 1 1000 1000 1])]; % specify the upperbound for the parameters 
 
-lb=[-32.*ones(1,length(XU)) ones(1,8) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32.*ones(1,5) ]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-ub=[ 5.*ones(1,length(XU)) 4.*ones(1,8) 2.*ones(1,7) log10([ones(1,8) 20 3 20 3 120 120 120 120 120])]; % specify the upperbound for the parameters 
+lb=[-32.*ones(1,length(XU)) ones(1,length(XU)-7) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32.*ones(1,9) -32.*ones(1,3)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
+ub=[ 5.*ones(1,length(XU)) 4.*ones(1,length(XU)-7) 2.*ones(1,7) log10([ones(1,8) 20 3 20 3 120 120 120 120 120 1000 1000 1000 1 1000 1000 1])]; % specify the upperbound for the parameters 
 
-IntC=[1:15]+length(XU);
+IntC=[1:7+(length(XU)-7)]+length(XU);
 
 %% Run the fitting algorithm
-pars([1:8]+length(XU))=ceil(4.*pars([1:8]+length(XU)));
-pars([9:15]+length(XU))=ceil(3.*pars([9:15]+length(XU)))-1;
+pars([1:(length(XU)-7)]+length(XU))=ceil(4.*pars([1:(length(XU)-7)]+length(XU)));
+pars([1:7]+2.*length(XU)-7)=ceil(3.*pars([1:7]+2.*length(XU)-7))-1;
 options = optimoptions('ga','MaxGenerations',50000,'MaxStallGenerations',500,'UseParallel',true,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
 optionsps = optimoptions('patternsearch','UseParallel',true,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
 
-[par] =ga(@(x)OFuncProGA(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),[]),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
+[par] =ga(@(x)OFuncProGA(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW)),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
 par(XU==0)=-30; % for the recursive componetnt
-par([1:8]+length(XU))=par([1:8]+length(XU))./4-0.01; % such that they do not push on the boundary
-par([9:15]+length(XU))= (par([9:15]+length(XU))+1)./3-0.01; % such that they do not push on the boundary
-[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),[]),par,[],[],[],[],lbps,ubps,[],optionsps); 
-fvalfit=10.^fvalfit;
+par([1:(length(XU)-7)]+length(XU))=par([1:(length(XU)-7)]+length(XU))./4-0.01; % such that they do not push on the boundary
+par([1:7]+2.*length(XU)-7)= (par([1:7]+2.*length(XU)-7)+1)./3-0.01; % such that they do not push on the boundary
+[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW)),par,[],[],[],[],lbps,ubps,[],optionsps); 
 par(XU==0)=-30; % for the recursive componetnt
 % Calculate the cross-validation error by calculating error for all areas
 % w/ non-zero incidence and then subtracting the value of fvalfit
 
 % Load data for the cross-Validation at the district level
-CVE=(10.^OFuncProPS(par,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),Rtv(GNZI,1:NW),XU,maxtau,P(GNZI,1:NW),RC(GNZI),H(GNZI,1:NW),WPIN(GNZI,1:NW),Mt(GNZI,1:NW),[]))-fvalfit;
+CVE=(OFuncProPS(par,WI(GNZI(GTCV),1:NW),tA(GNZI(GTCV),1:NW),Ctv(GNZI(GTCV),1:NW),Rtv(GNZI(GTCV),1:NW),XU,maxtau,P(GNZI(GTCV),1:NW),RC(GNZI(GTCV)),H(GNZI(GTCV),1:NW),WPIN(GNZI(GTCV),1:NW),FPIN(GNZI(GTCV),1:NW),Mt(GNZI(GTCV),1:NW),Wheatt(GNZI(GTCV),1:NW),Dieselt(GNZI(GTCV),1:NW),V1(GNZI(GTCV),1:NW),V2(GNZI(GTCV),1:NW)));
 end

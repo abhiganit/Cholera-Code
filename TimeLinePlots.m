@@ -87,6 +87,49 @@ ylabel('Price of diesel','Fontsize',18);
 legend('Sana`a City','Hodeidah City','Aden');
 legend box off;
 
+%% Diesel
+load('Wheat_Yemen_Time.mat');
+
+% Starts June 2016 to September 2019
+DS=zeros(40,1);
+cc=1;
+for yy=2016:2019
+    if(yy==2016)
+        for mm=6:12
+            DS(cc) = datenum(yy,mm,15);
+            cc=cc+1;
+        end
+    elseif(yy<2019)        
+        for mm=1:12
+            DS(cc) = datenum(yy,mm,15);
+            cc=cc+1;
+        end
+    else
+       for mm=1:9
+           DS(cc) = datenum(yy,mm,15);
+            cc=cc+1;
+       end
+    end
+end
+
+XTL=datestr(DS,'mm/dd/yy');
+XTL([2:2:40],:)= ' ';
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+subplot('Position',[0.0808,0.18,0.897162184873949,0.793313069908819]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+plot([1:40],W(:,1),'k','LineWidth',2); hold on;
+plot([1:40],W(:,2),'color',hex2rgb('#CB0000'),'LineWidth',2);
+plot([1:40],W(:,3),'color',hex2rgb('#F5BE41'),'LineWidth',2);
+set(gca,'Tickdir','out','LineWidth',2,'Fontsize',16,'XTickLabel',XTL,'XTick',[1:1:40],'YTick',[0:25:300]);
+xtickangle(45);
+box off;
+xlim([1 40]);
+xlabel('Date','Fontsize',18);
+ylabel('Price of wheat','Fontsize',18);
+legend({'Sana`a City','Hodeidah City','Aden'},'Location','northwest');
+legend box off;
+
 %% Prior shellings
 
 figure('units','normalized','outerposition',[0 0 1 1]);

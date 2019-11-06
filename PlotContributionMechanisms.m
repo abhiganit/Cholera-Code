@@ -1,151 +1,161 @@
 % Read table of past fitsclose all;
 close all;
-%% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,GNZI,maxtau] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,GNZI,maxtau] = LoadYemenData; % Load the data used to construct the figure
+% PDS=0.8;
+% atest=0;
+% load(['ForwardSelection-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
+% 
+% % Evaluate the number of paramters that are being used in the estimation 
+% [~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a]=RetParameterPS(parv(end,:),XUv(end,:));
+% 
+% [Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a);
 
-    %% Forward selection
-    load('ForwardSelection-PercentDataSet=80-alpha=1.mat');
-    XU=XUv(end,:);
-    par=parv(end,:);
-    % Evaluate the number of paramters that are being used in the estimation 
-    [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF]=RetParameterPS(par,XU);
-    
-    %% Run the projection
-    
-    %% Run the logistic model with the data
+% [XRemoveFS] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,0.*FPIN,Mt,Wheatt,Dieselt,mln,a);
+% [XRemoveWaSH] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,0.*WPIN,FPIN,Mt,Wheatt,Dieselt,mln,a);
+% load('Yemen_Gov_Incidence.mat')
+% IData=IData';
+% load('PopulationSize_Yemen.mat');
+% NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
+% NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
+% % External effect due to IDP
+% PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
+% 
+% MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
+% 
+% Inc=1:6;
+% Conf=7:10;
+% Rain=11:12;
+% CR=13:15;
+% Com=16:18;
+% CInc=zeros(size(squeeze(X(1,:,:))));
+% CConflict=zeros(size(squeeze(X(1,:,:))));
+% CRain=zeros(size(squeeze(X(1,:,:))));
+% CCR=zeros(size(squeeze(X(1,:,:))));
+% CCom=zeros(size(squeeze(X(1,:,:))));
+% for ii=1:length(Inc)
+%     CInc=CInc+beta(Inc(ii)).*squeeze(X(Inc(ii),:,:));
+% end
+% 
+% for ii=1:length(Conf)
+%     CConflict=CConflict+beta(Conf(ii)).*squeeze(X(Conf(ii),:,:));
+% end
+% 
+% for ii=1:length(Rain)
+%     CRain=CRain+beta(Rain(ii)).*squeeze(X(Rain(ii),:,:));
+% end
+% 
+% for ii=1:length(CR)
+%     CCR=CCR+beta(CR(ii)).*squeeze(X(CR(ii),:,:));
+% end
+% 
+% for ii=1:length(Com)
+%     CCom=CCom+beta(Com(ii)).*squeeze(X(Com(ii),:,:));
+% end
+%    
+% PC=CCR./Yt;
+% PC(Yt==0)=0;
 
-    [Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI),RC(GNZI),H(GNZI),WPIN(GNZI),Mt(GNZI,GNZI));
+%% Plot the data
 
-    CInc=(beta(1).*squeeze(X(1,:,:))+beta(2).*squeeze(X(2,:,:))+beta(3).*squeeze(X(3,:,:))+beta(4).*squeeze(X(4,:,:))+beta(9).*squeeze(X(9,:,:))+beta(7).*squeeze(X(7,:,:))+beta(8).*squeeze(X(8,:,:)));
-    CConflict=(beta(5).*squeeze(X(5,:,:))+beta(6).*squeeze(X(6,:,:))+beta(10).*squeeze(X(10,:,:))+beta(11).*squeeze(X(11,:,:))+beta(12).*squeeze(X(12,:,:))+beta(13).*squeeze(X(13,:,:)));
-    Mt=sum(Yt);
+ColorM=[0 0.6 0.6; % WaSH
+        hex2rgb('#2E4600'); % Food Security
+        [153,52,4]./255]; % Diesel prices
 
+IW=7.*(([1; 22 ; 75 ; 122; 150]-1)+maxtau); % The 150 is the start of the week we do not have data for and we are subtracting a week for the index of the week as the index zero is Oct 3, 2016
+IW=[IW(1) IW(2)-1 IW(2) IW(3)-1 IW(3) IW(4)-1 IW(4) IW(5)-1];
+startDateofSim = datenum('10-03-2016');% Start date
+dW=5;
+XTL=datestr([startDateofSim+IW],'mmm.dd,yyyy');
+
+S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+
+XGL={S(GNZI).ADM1_EN};
+
+
+
+% Governorate
 figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.0708,0.163120567375887,0.897162184873949,0.793313069908819]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+% First wave
+subplot('Position',[0.04,0.48,0.45,0.45]);
 
-%Tot=repmat((sum(CInc,1)+sum(CRain,1)+sum(CConflict,1))./(Mt),3,1);
-h=bar([1:149]+maxtau,([sum(CInc,1);sum(CConflict,1)])','stacked','LineStyle','none');
-h(1).FaceColor = 'flat';
-h(1).CData = [0.4 0.4 0.4];
-h(2).FaceColor = 'flat';
-h(2).CData = [0.9 0 0];
-% The size to separate the weeks in the x-label
-
-hold on;
-%hmf=plot([1:149]+maxtau,NatIData(1+maxtau:end),'k-o','LineWidth',2,'MarkerSize',5,'MarkerEdgeColor',[0 0 0],'MarkerFaceColor',[0 0 0]);
-dW=4;
-NW=length(WI(1,:));
-startDateofSim = datenum('10-03-2016');% The week of our first data point (October 3, 2016)
-XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-% changing the aspects of the axis for the the current figure 
-set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:dW:NW],'YTick',[0:5000:55000],'Yminortick','on','Fontsize',16,'XTickLabel',XTL);
-
-    % Sets the y-axis to not have 10^n
-    ax=gca; % finds the current axis
-    ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
-box off;
+b=bar([1:length(GNZI)],rand(length(GNZI),3),'LineStyle','none');
+set(gca,'linewidth',2,'tickdir','out','XTick',[1:length(GNZI)],'XTickLabel',XGL,'Fontsize',16,'Yminortick','on');
 xtickangle(45);
-
-xlabel('Date','Fontsize',18);
-yh=ylabel('Suspected cholera cases','Fontsize',18);
-ylim([0 55005]);
-xlim([1 153.5]);
-IW=[1 21; 22 74; 75 116; 117 149];
-WN=struct('N',{'First wave','Second wave','Third wave','Fourth wave'});
-for ii=1:3
-    plot((maxtau+mean([IW(ii,2) IW(ii+1,1)])).*ones(1001,1),linspace(0,55005,1001),'k-.','LineWidth',2);
-    text((mean(IW(ii,:))),56020,WN(ii).N,'Fontsize',18);
+box off;
+xlabel('Governorate','Fontsize',18);
+ylabel('Suscpected cholera cases','Fontsize',18);
+title([XTL(1,:) ' to ' XTL(2,:)],'Fontsize',18);
+for ii=1:length(ColorM(:,1))
+    b(ii).FaceColor = 'flat';
+    b(ii).CData = ColorM(ii,:);
 end
-text((mean(IW(4,:))),56020,WN(4).N,'Fontsize',18);
+ylim([0 1]);
+ax=gca;
+tickl=ax.TickLength;
 
-legend([h],{'Other factors','Conflict'},'Fontsize',18,'location','northwest');
+% Second wave
+subplot('Position',[0.545,0.48,0.45,0.45]);
 
-legend boxoff;
-text(yh.Extent(1),55528,'A','Fontsize',32,'FontWeight','bold');
-print(gcf,[pwd '\Figures\Figure1A.png'],'-dpng','-r600');
-%% Waves
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.075105042016807,0.163120567375887,0.259453781512605,0.8217]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-
-Tot1=sum(sum(CInc(:,IW(1,1):IW(1,2)),1)+sum(CRain(:,IW(1,1):IW(1,2)),1)+sum(CConflict(:,IW(1,1):IW(1,2)),1));
-Tot2=sum(sum(CInc(:,IW(2,1):IW(2,2)),1)+sum(CRain(:,IW(2,1):IW(2,2)),1)+sum(CConflict(:,IW(2,1):IW(2,2)),1));
-Tot3=sum(sum(CInc(:,IW(3,1):IW(3,2)),1)+sum(CRain(:,IW(3,1):IW(3,2)),1)+sum(CConflict(:,IW(3,1):IW(3,2)),1));
-Tot4=sum(sum(CInc(:,IW(4,1):IW(4,2)),1)+sum(CRain(:,IW(4,1):IW(4,2)),1)+sum(CConflict(:,IW(4,1):IW(4,2)),1));
-h=barh([1:4],flip([sum(sum(CConflict(:,IW(1,1):IW(1,2)),1))./Tot1 sum(sum(CRain(:,IW(1,1):IW(1,2)),1))./Tot1;sum(sum(CConflict(:,IW(2,1):IW(2,2)),1))./Tot2 sum(sum(CRain(:,IW(2,1):IW(2,2)),1))./Tot2;sum(sum(CConflict(:,IW(3,1):IW(3,2)),1))./Tot3 sum(sum(CRain(:,IW(3,1):IW(3,2)),1))./Tot3;sum(sum(CConflict(:,IW(4,1):IW(4,2)),1))./Tot4 sum(sum(CRain(:,IW(4,1):IW(4,2)),1))./Tot4]),'stacked','LineStyle','none');
-
-h(2).FaceColor = 'flat';
-h(2).CData = [0 0.6 1];
-h(1).FaceColor = 'flat';
-h(1).CData = [0.9 0 0];
-legend({'Conflict','Rainfall'},'Fontsize',18);
-legend boxoff;
-N=struct('G',{'Abyan';'Aden';'Al Bayda';'Al Dhale''e';'Al Hudaydah';'Al Jawf';'Al Maharah';'Al Mahwit';'Amanat Al Asimah';'Amran';'Dhamar';'Hadramaut';'Hajjah';'Ibb';'Lahj';'Marib';'Raymah';'Sa''ada';'Sana''a';'Shabwah';'Socotra';'Taizz'});
-
-% changing the aspects of the axis for the the current figure 
-set(gca,'Tickdir','out','LineWidth',2,'YTick',[1:4],'XTick',[0:0.1:1],'Xminortick','on','Fontsize',16,'YTickLabel',{'Fourth wave','Third wave','Second wave','First wave'});
-
-box off;
+b=bar([1:length(GNZI)],rand(length(GNZI),3),'LineStyle','none');
+set(gca,'linewidth',2,'tickdir','out','XTick',[1:length(GNZI)],'XTickLabel',XGL,'Fontsize',16,'Yminortick','on');
 xtickangle(45);
-
-xlabel({'Estimated contribtuion to suscpeted','cholera cases'},'Fontsize',18);
-xlim([0 0.4]);
-ylim([0.5 4.5]);
-text(-0.290688259109312*max(xlim),4.443896424167694,'B','Fontsize',32,'FontWeight','bold');
-
-%% Govnorate level various waves and the impact of rainfall
-% 
-Tot1=(sum(CInc(:,IW(1,1):IW(1,2)),2)+sum(CRain(:,IW(1,1):IW(1,2)),2)+sum(CConflict(:,IW(1,1):IW(1,2)),2));
-Tot2=(sum(CInc(:,IW(2,1):IW(2,2)),2)+sum(CRain(:,IW(2,1):IW(2,2)),2)+sum(CConflict(:,IW(2,1):IW(2,2)),2));
-Tot3=(sum(CInc(:,IW(3,1):IW(3,2)),2)+sum(CRain(:,IW(3,1):IW(3,2)),2)+sum(CConflict(:,IW(3,1):IW(3,2)),2));
-Tot4=(sum(CInc(:,IW(4,1):IW(4,2)),2)+sum(CRain(:,IW(4,1):IW(4,2)),2)+sum(CConflict(:,IW(4,1):IW(4,2)),2));
-% 
-TT=[Tot1 Tot2 Tot3 Tot4];
-R=[sum(CRain(:,IW(1,1):IW(1,2)),2)./Tot1 sum(CRain(:,IW(2,1):IW(2,2)),2)./Tot2 sum(CRain(:,IW(3,1):IW(3,2)),2)./Tot3 sum(CRain(:,IW(4,1):IW(4,2)),2)./Tot4];
-CM=[sum(CConflict(:,IW(1,1):IW(1,2)),2)./Tot1 sum(CConflict(:,IW(2,1):IW(2,2)),2)./Tot2 sum(CConflict(:,IW(3,1):IW(3,2)),2)./Tot3 sum(CConflict(:,IW(4,1):IW(4,2)),2)./Tot4;];
-for jj=1:4
-    subplot('Position',[0.38,0.163120567375887+0.21*(jj-1),0.57,0.189]);
-    yyaxis left
-    h=bar([1:20],[CM(:,(5-jj)) R(:,(5-jj))],'stacked','LineStyle','none');
-    h(2).FaceColor = 'flat';
-    h(2).CData = [0 0.6 1];
-    h(1).FaceColor = 'flat';
-    h(1).CData = [0.9 0 0];
-    box off;
-    xlim([0.5 20.5]);
-    ylim([0 1]);
-    if(jj==1)        
-        set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:20],'YTick',[0:0.2:1],'Yminortick','on','Fontsize',16,'XTickLabel',{N(GNZI).G},'ycolor','k');
-        xlabel('Govnorate','Fontsize',18)   
-        xtickangle(45);
-    else
-        if(jj==2)            
-            yh=ylabel({'Estimated contribtuion to suscpeted cholera cases'},'Fontsize',18);
-            yh.Position=[-0.416870970915301,1.002674273628602,-1];
-        end
-        if(jj==4)
-            text(-1,0.9591,'C','Fontsize',32','FontWeight','bold');
-        end
-        set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:20],'YTick',[0:0.2:1],'Yminortick','on','Fontsize',16,'XTickLabel',{''},'ycolor','k');
-    end
-    yyaxis right
-    semilogy([1:20],TT(:,5-jj),'-o','color',[0 0 0],'LineWidth',2,'MarkerSize',5,'MarkerEdgeColor',[0 0 0],'MarkerFaceColor',[0 0 0]);
-    if(jj==1)        
-        set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:20],'YTick',10.^[0:6],'Fontsize',16,'XTickLabel',{N(GNZI).G},'ycolor',[0 0 0]);
-        xlabel('Govnorate','Fontsize',18)   
-        xtickangle(45);
-    else        
-        if(jj==2)  
-            yh=ylabel({'Estimated suscpeted cholera cases'},'Fontsize',18);
-            yh.Rotation=270;
-            yh.Position=[22.13655849975374,3383877.445489365,-1];
-        end
-        set(gca,'Tickdir','out','LineWidth',2,'XTick',[1:20],'YTick',10.^[0:6],'Fontsize',16,'XTickLabel',{''},'ycolor',[0 0 0]);
-    end
-    box off;
-    
-    xlim([0.5 20.5]);
-    ylim([1,10^6]);
+box off;
+xlabel('Governorate','Fontsize',18);
+ylabel('Suscpected cholera cases','Fontsize',18);
+title([XTL(3,:) ' to ' XTL(4,:)],'Fontsize',18);
+for ii=1:length(ColorM(:,1))
+    b(ii).FaceColor = 'flat';
+    b(ii).CData = ColorM(ii,:);
 end
 
-print(gcf,[pwd '\Figures\Figure1B.png'],'-dpng','-r600');
+ylim([0 1]);
+figure('units','normalized','outerposition',[0 0 1 1]);
+% Third wave
+subplot('Position',[0.04,0.48,0.45,0.45]);
 
+b=bar([1:length(GNZI)],rand(length(GNZI),3),'LineStyle','none');
+set(gca,'linewidth',2,'tickdir','out','XTick',[1:length(GNZI)],'XTickLabel',XGL,'Fontsize',16,'Yminortick','on');
+xtickangle(45);
+box off;
+xlabel('Governorate','Fontsize',18);
+ylabel('Suscpected cholera cases','Fontsize',18);
+title([XTL(5,:) ' to ' XTL(6,:)],'Fontsize',18);
+for ii=1:length(ColorM(:,1))
+    b(ii).FaceColor = 'flat';
+    b(ii).CData = ColorM(ii,:);
+end
+
+ylim([0 1]);
+% Fourth wave
+subplot('Position',[0.545,0.48,0.45,0.45]);
+
+b=bar([1:length(GNZI)],rand(length(GNZI),3),'LineStyle','none');
+set(gca,'linewidth',2,'tickdir','out','XTick',[1:length(GNZI)],'XTickLabel',XGL,'Fontsize',16,'Yminortick','on');
+xtickangle(45);
+box off;
+xlabel('Governorate','Fontsize',18);
+ylabel('Suscpected cholera cases','Fontsize',18);
+title([XTL(7,:) ' to ' XTL(8,:)],'Fontsize',18);
+for ii=1:length(ColorM(:,1))
+    b(ii).FaceColor = 'flat';
+    b(ii).CData = ColorM(ii,:);
+end
+
+ylim([0 1]);
+% National
+figure('units','normalized','outerposition',[0 0 1 1]);
+
+subplot('Position',[0.04,0.48,0.955,0.45]);
+
+
+b=bar([1:4],rand(4,3),'LineStyle','none');
+ylim([0 1]);
+set(gca,'linewidth',2,'tickdir','out','XTick',[1:length(GNZI)],'XTickLabel',{'First','Second','Third','Fourth'},'Fontsize',16,'Yminortick','on','TickLength',tickl.*0.45/0.955);
+
+box off;
+xlabel('Epidemic wave','Fontsize',18);
+ylabel('Suscpected cholera cases','Fontsize',18);
+for ii=1:length(ColorM(:,1))
+    b(ii).FaceColor = 'flat';
+    b(ii).CData = ColorM(ii,:);
+end
