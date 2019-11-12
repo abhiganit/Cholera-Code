@@ -58,7 +58,10 @@ RSSv=zeros(NMR,1);
 kr=zeros(NMR,1);
 CVEv=zeros(NMR,1);
 for ii=1:NMR
-    XUm(ii,IndxAllow(ii))=1; % Remove the covariate from the model
+    XUm(ii,IndxAllow(ii))=1; % Remove the covariate from the model 
+end
+
+parfor ii=1:NMR
     [par(ii,:),RSSv(ii),CVEv(ii)] = ProFittingGA(XUm(ii,:),PDS,pars);
     [kr(ii)]=RetParameterPS(par(ii,:),XUm(ii,:));
 end

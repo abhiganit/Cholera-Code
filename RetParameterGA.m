@@ -1,4 +1,4 @@
-function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterGA(x,XU)
+function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,KP,a,KV,dV]=RetParameterGA(x,XU,CF)
 %Based on the input-x and functions used we return the proper paramters to
 %evalaute the regression model
 
@@ -72,10 +72,7 @@ beta=[10.^x(1:length(XU))].*XU;
 nob=length(XU);
 tau=[ones(1,7) x(nob+[1:(length(XU)-7)])];
 NTE=(length(XU)-7);
-CF=x(nob+NTE+[1 2]);
-RF=x(nob+NTE+3);
-RIF=x(nob+NTE+[4 5 6 7]);
-lenbeta=length(XU)+NTE+7;
+lenbeta=length(XU)+NTE;
 k=sum(XU)+ sum(XU([8:length(XU)])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
 
@@ -121,7 +118,7 @@ end
 
 %% Conflict associated paramters
 K=zeros(2,1);
-n=zeros(2,1);
+n=ones(2,1);
 if(XU(9)==1) % See if conflict is being used at alls
     if(CF(1)~=0)
         K(1)=10.^x(lenbeta+9); % Set rate of change for the paramter of the effects of conflict
@@ -173,7 +170,7 @@ if(XU(15)>=1) % See if rainfall is being used at all
 end
 
  %% Rainfall only
-if(XU(11)>=1) % See if rainfall is being used at all
+if(XU(12)>=1) % See if rainfall is being used at all
     rh=10.^x(lenbeta+17);
     k=k+1; % add paramrter
     
@@ -181,31 +178,23 @@ else % Rainfall is not being used at all
     rh=0;
 end
 
-% Threshold for Wheat
-mln=zeros(3,1);
-if(XU(16)>=1)
-    mln(1)=10.^x(lenbeta+18);
+% Incidence per capita saturation
+if(sum(XU([8:11 13:18]))>=1)
+    KP=10.^x(lenbeta+18); % Saturation of the incidence per capita
     k=k+1;
-end
-% Price threshold diesel
-if(XU(17)>=1)
-    mln(2)=10.^x(lenbeta+19);
-    k=k+1;
-end
-% Price threshold diesel
-if(XU(18)>=1)
-    mln(3)=10.^x(lenbeta+20);
-    k=k+1;
+else
+    KP=10^3;
 end
 
 % Weight of WASH vs Food security
-a=10.^x(lenbeta+21);
+a=10.^x(lenbeta+19);
 k=k+1;
 
 
 % Vaccination
-KV=10.^x(lenbeta+[22:23]);
-dV=10.^x(lenbeta+24);
-k=k+3;
+
+KV=10.^x(lenbeta+[20]);
+dV=[10.^x(lenbeta+21); exp(log(26/56)/(4*52)) ];
+k=k+2;
 end
 

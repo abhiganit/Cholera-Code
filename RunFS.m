@@ -4,7 +4,7 @@ IndxAllow=[1:18];
 gg=find(XUv(end,IndxAllow)==0);
 IndxAllow=IndxAllow(gg);
 atest=0;
-[XUr,RSSr,CVEr,parr,kr,partemp] = ForwardSelection(XUv(end,:),RSSv(end),CVE(end),kv(end),atest,PDS,par,IndxAllow);
+[XUr,RSSr,CVEr,parr,kr,partemp] = ForwardSelection(XUv(end,:),RSSv(end),CVE(end),kv(end),atest,PDS,parv(end,:),IndxAllow);
 
 save(['ForwardSelection-Vaccination-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
 while(~isempty(XUr))

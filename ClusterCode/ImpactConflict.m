@@ -24,6 +24,8 @@ if(CF==0) % Conduct linear growth of the effect of conflict
 else
    Y=Ct-K; % The Hill function for the effects of conflict become saturated 
    Y(Y<0)=0;
-   Y=Y.^n;
+   if(CF==2)
+      Y=Y./(Y+n); 
+   end
 end
 end

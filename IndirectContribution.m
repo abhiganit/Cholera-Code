@@ -1,4 +1,4 @@
-function Ct = IndirectContribution(Yt,beta,Xt,indx,tau,EOCV,maxtau)
+function Ct = IndirectContribution(Yt,beta,Xt,indx,EOCV)
 % Recursively computes the indirect contribution of the components sent
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input
@@ -19,19 +19,17 @@ function Ct = IndirectContribution(Yt,beta,Xt,indx,tau,EOCV,maxtau)
 % Compute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Ct=zeros(length(Yt(:,1)),length(Yt(1,:))+maxtau);
+Ct=zeros(size(Yt));
 
 for ii=1:length(Yt(1,:))
-    for jj=1:length(beta) % We do not include the first component which is just a constant
-        if(~isempty(find(jj==indx)))
-            Ct(:,ii+maxtau)=Ct(:,ii+maxtau)+(1-EOCV(:,ii)).*beta(jj).*(squeeze(Xt(jj,:,ii))'); 
-        elseif(jj>1)
-            Ct(:,ii+maxtau)=Ct(:,ii+maxtau)+(1-EOCV(:,ii)).*beta(jj).*(squeeze(Xt(jj,:,ii))').*Ct(:,ii+maxtau-tau(jj)); 
-        end
+    for jj=1:length(indx) % We do not include the first component which is just a constant        
+       if(ii>1)
+        Ct(:,ii)=Ct(:,ii)+(sum((1-EOCV(:,1:ii)).*beta(indx(jj)).*(squeeze(Xt(indx(jj),:,1:ii))),2)./sum(Yt(:,1:ii),2));
+       else
+           Ct(:,ii)=Ct(:,ii)+(((1-EOCV(:,1:ii)).*beta(indx(jj)).*(squeeze(Xt(indx(jj),:,1:ii)))')./(Yt(:,1:ii)));
+       end
     end
-    Ct(:,ii+maxtau)=Ct(:,ii+maxtau)./Yt(:,ii);
 end
-Ct=Ct(:,(1+maxtau):end); % truncate to the points computed in the regression model
 
 end
 

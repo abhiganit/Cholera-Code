@@ -3,14 +3,15 @@ close all;
 clear;
 clc;
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenData;
-PDS=0.85;
+PDS=0.8;
 atest=0;
 %% Forward selection
-load(['ForwardSelectionNoRainNoConflict-Vaccination-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
+load('TestFit-Vaccination-PercentDataVARY.mat')
+CF=[1;1];
+RIF=zeros(4,1);
+RF=0;
+ [~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,mln,a,KV,dV]=RetParameterPS(par(1,:),XU,CF);
 
-
-% Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(parv(end,:),XUv(end,:));
 %% Run the projection
 
 %% Run the logistic model with the data
@@ -30,11 +31,7 @@ temp=0;
 % %% Run the projection
 % 
 
-load(['ForwardSelectionNoRainNoConflict-Vaccination-alpha=' num2str(atest*100) '-PercentData=' num2str(PDS*100) '.mat']);
-
-% Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(parv(end,:),XUv(end,:));
-KV=KV.*0;
+beta(1)=0;
 [YtNR,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV);
 
 [GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,PDS);
