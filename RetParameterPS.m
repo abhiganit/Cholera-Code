@@ -1,4 +1,4 @@
-function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,KP,a,KV,dV]=RetParameterPS(x,XU,CF)
+function [k,beta,tau,DB,DA,K,n,KP,KV,dV,r,r0,rm]=RetParameterPS(x,XU,CF,RF)
 %Based on the input-x and functions used we return the proper paramters to
 %evalaute the regression model
 
@@ -70,132 +70,116 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,KP,a,KV,dV]=RetParameterPS(x,XU,CF)
 % Set the coefficients fo rthe regression model
 
 beta=[10.^x(1:length(XU))].*XU;
-nob=length(XU);
-tau=[ones(1,7) ceil(4.*x(nob+[1:(length(XU)-7)]))];
-NTE=(length(XU)-7);
-lenbeta=length(XU)+NTE;
-k=sum(XU)+ sum(XU([8:length(XU)])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
+tau=[ones(1,length(XU))];
+lenbeta=length(XU);
+k=sum(XU); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
 
 %% Attack asscoaited paramters
-DA=zeros(2,1);
-DB=zeros(2,1);
-if(XU(8)==1)  % See if attacks being used at all
-    DB(1)=10.^x(lenbeta+1); %looking befroe the attack
+DA=zeros(1,1);
+DB=zeros(1,1);
+if(XU(2)==1)  % See if attacks being used at all
+    DA(1)=10.^x(lenbeta+1);  %looking after the attack
     k=k+1; % Add estimated paramter
-    DA(1)=10.^x(lenbeta+2);  %looking after the attack
-    k=k+1; % Add estimated paramter
-end
-
-if(XU(14)==1)  % See if attacks being used at all
-        DB(2)=10.^x(lenbeta+3); %looking befroe the attack
-        k=k+1; % Add estimated paramter
-
-        DA(2)=10.^x(lenbeta+4);  %looking after the attack
-        k=k+1; % Add estimated paramter
-end
-
-DAE=zeros(2,1);
-DBE=zeros(2,1);
-
-if(XU(10)==1)  % See if attacks being used at all
- 
-        DBE(1)=10.^x(lenbeta+5); %looking befroe the attack
-        k=k+1; % Add estimated paramter
-        DAE(1)=10.^x(lenbeta+6);  %looking after the attack
-        k=k+1; % Add estimated paramter
-
-end
-
-if(XU(15)==1)  % See if attacks being used at all
-
-        DBE(2)=10.^x(lenbeta+7); %looking befroe the attack
-        k=k+1; % Add estimated paramter
-        DAE(2)=10.^x(lenbeta+8);  %looking after the attack
-        k=k+1; % Add estimated paramter
 end
 
 
 
 %% Conflict associated paramters
-K=zeros(2,1);
-n=ones(2,1);
-if(XU(9)==1) % See if conflict is being used at alls
-    if(CF(1)~=0)
-        K(1)=10.^x(lenbeta+9); % Set rate of change for the paramter of the effects of conflict
+K=zeros(4,1);
+n=ones(4,1);
+if(XU(3)==1) % See if conflict is being used at alls
+    if(CF(1)==2)
+        K(1)=10.^x(lenbeta+2); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
     else
         K(1)=0;
     end
-    if(CF(1)==2) % If the full hill function is being used
-        n(1)=10.^x(lenbeta+10); % Hill coefficient estimate
+    if(CF(1)~=0) % If the full hill function is being used
+        n(1)=10.^x(lenbeta+3); % Hill coefficient estimate
         k=k+1; % add to estimated paramters
     else
         n(1)=1; % Hill coefficient ot estimated
     end    
 end
 
-if(XU(13)==1) % See if conflict is being used at alls
-    if(CF(2)~=0)
-        K(2)=10.^x(lenbeta+11); % Set rate of change for the paramter of the effects of conflict
+if(XU(7)==1) % See if conflict is being used at alls
+    if(CF(2)==2)
+        K(2)=10.^x(lenbeta+4); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
     else
-        K(1)=0;
+        K(2)=0;
     end
-    if(CF(2)==2) % If the full hill function is being used
-        n(1)=10.^x(lenbeta+12); % Hill coefficient estimate
+    if(CF(2)~=0) % If the full hill function is being used
+        n(2)=10.^x(lenbeta+5); % Hill coefficient estimate
         k=k+1; % add to estimated paramters
     else
         n(2)=1; % Hill coefficient ot estimated
     end    
 end
-
-
- %% Rainfall assocaited paramters 
-rl=zeros(4,1);
-if(XU(11)>=1) % See if rainfall is being used at all
-    rl(1)=10.^x(lenbeta+13);
-    k=k+1; % add paramrter    
-end
-if(XU(13)>=1) % See if rainfall is being used at all
-    rl(2)=10.^x(lenbeta+14);
-    k=k+1; % add paramrter    
-end
-if(XU(14)>=1) % See if rainfall is being used at all
-    rl(3)=10.^x(lenbeta+15);
-    k=k+1; % add paramrter    
-end
-if(XU(15)>=1) % See if rainfall is being used at all
-    rl(4)=10.^x(lenbeta+16);
-    k=k+1; % add paramrter    
+% Shellings
+if(XU(4)==1)  % See if attacks being used at all
+    if(CF(1)==2)
+        K(3)=10.^x(lenbeta+6); % Set rate of change for the paramter of the effects of conflict
+        k=k+1; % add a paramter
+    else
+        K(3)=0;
+    end
+    if(CF(1)~=0) % If the full hill function is being used
+        n(3)=10.^x(lenbeta+7); % Hill coefficient estimate
+        k=k+1; % add to estimated paramters
+    else
+        n(3)=1; % Hill coefficient ot estimated
+    end
 end
 
- %% Rainfall only
-if(XU(12)>=1) % See if rainfall is being used at all
-    rh=10.^x(lenbeta+17);
-    k=k+1; % add paramrter
-    
-else % Rainfall is not being used at all
-    rh=0;
+if(XU(8)==1)   % See if attacks being used at all
+    if(CF(2)==2)
+        K(4)=10.^x(lenbeta+8); % Set rate of change for the paramter of the effects of conflict
+        k=k+1; % add a paramter
+    else
+        K(4)=0;
+    end
+    if(CF(2)~=0) % If the full hill function is being used
+        n(4)=10.^x(lenbeta+9); % Hill coefficient estimate
+        k=k+1; % add to estimated paramters
+    else
+        n(4)=1; % Hill coefficient ot estimated
+    end
 end
 
-
-% Incidence per capita saturation
-if(sum(XU([8:11 13:18]))>=1)
-    KP=10.^x(lenbeta+18); % Saturation of the incidence per capita
+KP=zeros(2,1);
+% Diesel price
+if(sum(XU([5 9])>=1))
+    KP(1)=10.^x(lenbeta+10);
     k=k+1;
-else
-    KP=10^3;
 end
 
-% Weight of WASH vs Food security
-a=10.^x(lenbeta+19);
-k=k+1;
-
+% Wheit price
+if(XU(10)>=1)
+    KP(2)=10.^x(lenbeta+11);
+    k=k+1;
+end
 
 % Vaccination
 
-KV=10.^x(lenbeta+[20]);
-dV=[10.^x(lenbeta+21); exp(log(26/56)/(4*52)) ];
+KV=10.^x(lenbeta+[12]);
+dV=[10.^x(lenbeta+13); exp(log(26/56)/(4*52)) ];
 k=k+2;
+
+r=10.^x(lenbeta+[14]);
+k=k+1;
+
+if(RF(1)>=0)
+    r0=10.^x(lenbeta+[15]);
+    k=k+1;
+else
+    r0=0;
+end
+if(RF(2)>=0)
+    rm=10.^x(lenbeta+[16]);
+    k=k+1;
+else
+    rm=0;
+end
 end

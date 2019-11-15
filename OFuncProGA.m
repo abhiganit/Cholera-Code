@@ -1,4 +1,4 @@
-function [F]= OFuncProGA(x,CF,RF,RIF,WI,tA,Ctv,Rtv,XU,maxtau,P,RC,H,WPIN,FPIN,Mt,Wheatt,Dieselt,V1,V2)
+function [F]= OFuncProGA(x,CF,WI,tA,Ctv,XU,maxtau,RC,WPIN,FPIN,Mt,Wheatt,Dieselt,V1,V2,Rtv,RF)
 % The difference of the predicted incidence and weekly incidence for all
 % weeks and areas
 %===============================
@@ -60,14 +60,14 @@ XU(f(g))=1; % set non-zero and non-one to one
 
 %Returns the paramters for the specified functions based on the
 %transformation from the bounds
-[xf] = ExpandPar(x,XU,0);
-[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,KP,a,KV,dV]=RetParameterGA(xf,XU,CF);
+[xf] = ExpandPar(x,XU,CF,RF,0);
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r,r0,rm]=RetParameterGA(xf,XU,CF,RF);
 
 %%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
 % Determine model predicted incidence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-[Yt,~]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,a,V1,V2,KV,dV);
+[Yt,~]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,RC,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,V1,V2,KV,dV,r,Rtv,RF,r0,rm);
 
 FF=(WI(:,(maxtau+1):end))-(Yt); % Compute the difference for the times and the locations that is tau weeks ahead
 F=mean(sum(FF(:).^2)); % convert the matrix into a vector for the use of lsqnonlin

@@ -1,4 +1,4 @@
-function [Yt,X]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,a,V1,V2,KV,dV)
+function [Yt,X]= LogisticModel(beta,WI,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,RC,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,V1,V2,KV,dV,r,Rtv,RF,r0,rm)
 % Produces the predicted incicence in matrix form for the diffrent areas
 % and weeks
 %===============================
@@ -68,14 +68,14 @@ function [Yt,X]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh
 
 %% Input for regression model
 
-[X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,a);
+[X] = CalcCovariates(WI,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,RF,r0,rm);
 dV1=ImpactAttack(V1-V2,0,dV(1),2,maxtau); % Two week delay until acquire immunity
 dV2=ImpactAttack(V2,0,dV(2),2,maxtau);  % Two week delay until acquire immunity
 EOVC=EffectOCV(dV1,KV,dV2,KV);
 %% Output of regression model: the predicted weekly incidence of the model
 Yt=zeros(size(squeeze(X(1,:,:))));
 for ii=1:length(beta)
-    Yt=Yt+(1-EOVC).*beta(ii).*squeeze(X(ii,:,:));
+    Yt=Yt+(1-EOVC).*beta(ii).*(1+r.*repmat(RC,1,length(X(ii,1,:)))).*squeeze(X(ii,:,:));
 end
 
 end

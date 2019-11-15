@@ -25,7 +25,7 @@ else
    Y=Ct-K; % The Hill function for the effects of conflict become saturated 
    Y(Y<0)=0;
    if(CF==2)
-      Y=Y./(Y+n); 
+    Y=1-exp(-Y.*n);
    end
 end
 end

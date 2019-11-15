@@ -1,19 +1,30 @@
 % Read table of past fitsclose all;
 close all;
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenData; % Load the data used to construct the figure
-load('Fit-Vaccination-alpha=0-PercentDataVARY.mat');
-ff=find((CVE+RSSv)==min(CVE+RSSv));
-
+load('Fit-Vaccination-PercentData=80.mat');
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenData;
+[GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,0.8);
+NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+ndata=WI(GNZI(GTF),(maxtau+1):NW);
+ndata=length(ndata(:));
+AIC=zeros(length(CF(1,:)),1);
+kv=zeros(length(CF(1,:)),1);
+fmin=[1 2];%find(CVE==min(CVE));
+if(length(fmin)>1)
+    for ii=1:length(AIC)
+        [kv(ii)]=RetParameterPS(par(ii,:),XU,CF(:,ii),RF);
+        AIC(ii)= AICScore(kv(ii),ndata,RSSv(ii).*ndata);
+    end
+    fmin=find(AIC==min(AIC),1);
+end
+CF=CF(:,fmin);
 % Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(par(ff,:),XU);
+[~,beta,tau,DB,DA,DBE,DAE,K,n,KP,KV,dV,r,KI,r0,rm]=RetParameterPS(par(fmin,:),XU,CF,RF);
 
-[Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a,VT1(GNZI,1:length(WI(1,:))),VT2(GNZI,1:length(WI(1,:))),KV,dV);
-dV1=ImpactAttack(VT1(GNZI,1:length(WI(1,:))),0,dV,2,maxtau); % Two week delay until acquire immunity
-dV2=ImpactAttack(VT2(GNZI,1:length(WI(1,:))),0,dV,2,maxtau);  % Two week delay until acquire immunity
-EOVC=EffectOCV(dV1,KV(1),dV2,KV(2));
-
-[XRemoveFS] = CalcCovariates(WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),0.*FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a);
-[XRemoveWaSH] = CalcCovariates(WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),0.*WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a);
+[Yt,X]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,tau,maxtau,CF,RC(GNZI),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),KP,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV,r,KI,Rtv(GNZI,1:length(WI(1,:))),RF,r0,rm);
+[YtNR,XNR]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,tau,maxtau,CF,RC(GNZI),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),KP,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV,0,KI,Rtv(GNZI,1:length(WI(1,:))),RF,r0,rm);
+dV1=ImpactAttack(V1(GNZI,1:length(WI(1,:)))-V2(GNZI,1:length(WI(1,:))),0,dV(1),2,maxtau); % Two week delay until acquire immunity
+dV2=ImpactAttack(V2(GNZI,1:length(WI(1,:))),0,dV(2),2,maxtau);  % Two week delay until acquire immunity
+EOVC=EffectOCV(dV1,KV,dV2,KV);
 
 load('PopulationSize_Yemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
@@ -23,55 +34,26 @@ PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repm
 
 MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
  
-Inc=1:6;
-FW=[1 4 5 6];
-% Conf=7:10;
-% Rain=11:12;
- CR=7:10;
-% Com=16:18;
-% CInc=zeros(size(squeeze(X(1,:,:))));
-% CConflict=zeros(size(squeeze(X(1,:,:))));
-% CRain=zeros(size(squeeze(X(1,:,:))));
- CCR=zeros(size(squeeze(X(1,:,:))));
-% CCom=zeros(size(squeeze(X(1,:,:))));
 
-CIncFS=zeros(size(squeeze(X(1,:,:))));
-CIncWaSH=zeros(size(squeeze(X(1,:,:))));
-for ii=1:length(FW)
-     CIncFS=CIncFS+(1-EOVC).*beta(FW(ii)).*squeeze(XRemoveWaSH(FW(ii),:,:)).*PopS(GNZI,maxtau+1:end)./10000;
-     CIncWaSH=CIncWaSH+(1-EOVC).*beta(FW(ii)).*squeeze(XRemoveFS(FW(ii),:,:)).*PopS(GNZI,maxtau+1:end)./10000;
-end
-% 
-% for ii=1:length(Conf)
-%     CConflict=CConflict+beta(Conf(ii)).*squeeze(X(Conf(ii),:,:));
-% end
-% 
-% for ii=1:length(Rain)
-%     CRain=CRain+beta(Rain(ii)).*squeeze(X(Rain(ii),:,:));
-% end
-% 
-for ii=1:length(CR)
-    CCR=CCR+beta(CR(ii)).*squeeze(X(CR(ii),:,:)).*PopS(GNZI,maxtau+1:end)./10000;
-end
-% 
-% for ii=1:length(Com)
-%     CCom=CCom+beta(Com(ii)).*squeeze(X(Com(ii),:,:));
-% end
-%    
-% PC=CCR./Yt;
-% PC(Yt==0)=0;
+CIncWaSH=(1-EOVC).*beta(1).*(1+r.*repmat(RC(GNZI),1,length(PopS(GNZI,maxtau+1:end)))).*squeeze(X(1,:,:)).*PopS(GNZI,maxtau+1:end)./10000;
+CCR=(1-EOVC).*beta(2).*(1+r.*repmat(RC(GNZI),1,length(PopS(GNZI,maxtau+1:end)))).*squeeze(X(2,:,:)).*PopS(GNZI,maxtau+1:end)./10000;
+CIncFS=(1-EOVC).*beta(6).*(1+r.*repmat(RC(GNZI),1,length(PopS(GNZI,maxtau+1:end)))).*squeeze(X(6,:,:)).*PopS(GNZI,maxtau+1:end)./10000;
+Rf=(1-EOVC).*beta(11).*(1+r.*repmat(RC(GNZI),1,length(PopS(GNZI,maxtau+1:end)))).*squeeze(X(11,:,:)).*PopS(GNZI,maxtau+1:end)./10000;
+CRebC=(Yt-YtNR).*PopS(GNZI,maxtau+1:end)./10000;
+
 
 IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model
-WW=zeros(4,length(GNZI),3);
+WW=zeros(4,length(GNZI),4);
 for ww=1:4
-    WW(ww,:,:)=[(sum(CIncFS(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2)) (sum(CIncWaSH(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2)) (sum(CCR(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2))];
+    WW(ww,:,:)=[(sum(CIncFS(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2)) (sum(CIncWaSH(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2)) (sum(CCR(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2)) (sum(Rf(:,IndW(ww,1):IndW(ww,2)),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2))];
 end
 
 %% Plot the data
 
 ColorM=[hex2rgb('#2E4600'); % Food Security 
         0 0.6 0.6; % WaSH
-        1 0 1]; % Targeted attacks
+        1 0 1;
+        0 0 1]; % Targeted attacks
 
 
 IW=7.*(([1; 22 ; 75 ; 122; 150]-1)+maxtau); % The 150 is the start of the week we do not have data for and we are subtracting a week for the index of the week as the index zero is Oct 3, 2016
@@ -88,25 +70,6 @@ dX=0.01;
 Wid=0.2;
 % Governorate
 
-% 
-% subplot('Position',[0.12,0.14,0.25,0.855]);
-% for ii=1:length(GNZI)
-%     for jj=1:length(squeeze(WW(1,1,:)))
-%         for wv=1:4
-%             if(jj==1)
-%                 patch([0 0 squeeze(WW(wv,Gint,jj)) squeeze(WW(wv,Gint,jj))],length(GNZI)-ii+((1.5*dX+1.5*Wid)-(Wid+dX)*(wv-1))+[Wid/2 -Wid/2 -Wid/2 Wid/2],ColorM(jj,:),'Facealpha',wv/4,'Edgealpha',0)
-%             else
-%                 patch([sum(squeeze(WW(wv,Gint,1:(jj-1)))) sum(squeeze(WW(wv,Gint,1:(jj-1)))) sum(squeeze(WW(wv,Gint,1:jj))) sum(squeeze(WW(wv,Gint,1:jj)))],length(GNZI)-ii+((1.5*dX+1.5*Wid)-(Wid+dX)*(wv-1))+[Wid/2 -Wid/2 -Wid/2 Wid/2],ColorM(jj,:),'Facealpha',wv/4,'Edgealpha',0)                
-%             end
-%         end
-%     end
-% end
-% ylim([-0.5 20.5]);
-% xlim([0 1]);
-% set(gca,'linewidth',2,'tickdir','out','YTick',[0:(length(GNZI)-1)],'YTickLabel',flip(XGL),'Fontsize',16,'Xminortick','on');
-% xlabel('Contribution to suscpected cholera cases','Fontsize',18);
-% 
-% ylabel('Governorate','Fontsize',18);
 
 load('Yemen_Gov_Incidence.mat');
 startDateofSim = datenum('10-03-2016');% Start date
@@ -123,7 +86,7 @@ for mm=1:3
     subplot('Position',[0.06,0.14+(3-mm)*0.29,0.935,0.27]);
 
     Gint=Gintv(mm);
-    b=bar([(1+maxtau):NW],[(CIncFS(Gint,:)); CIncWaSH(Gint,:) ; CCR(Gint,:)]','Stacked','LineStyle','none');
+    b=bar([(1+maxtau):NW],[(CIncFS(Gint,:)); CIncWaSH(Gint,:) ; CCR(Gint,:); Rf(Gint,:)]','Stacked','LineStyle','none');
     for ii=1:length(ColorM(:,1))
         b(ii).FaceColor = 'flat';
         b(ii).CData = ColorM(ii,:);
@@ -169,7 +132,7 @@ for mm=4:6
     subplot('Position',[0.06,0.14+(6-mm)*0.29,0.935,0.27]);
 
     Gint=Gintv(mm);
-    b=bar([(1+maxtau):NW],[(CIncFS(Gint,:)); CIncWaSH(Gint,:) ; CCR(Gint,:)]','Stacked','LineStyle','none');
+    b=bar([(1+maxtau):NW],[(CIncFS(Gint,:)); CIncWaSH(Gint,:) ; CCR(Gint,:); Rf(Gint,:)]','Stacked','LineStyle','none');
     for ii=1:length(ColorM(:,1))
         b(ii).FaceColor = 'flat';
         b(ii).CData = ColorM(ii,:);

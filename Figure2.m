@@ -1,14 +1,26 @@
 close all;
 clear;
 FC=hex2rgb('#28595E');
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenData; % Load the data used to construct the figure
-load('Fit-Vaccination-alpha=0-PercentDataVARY.mat');
-ff=find((CVE+RSSv)==min(CVE+RSSv));
-
+load('Fit-Vaccination-Rainfall-PercentData=80.mat');
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenData;
+[GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,0.8);
+NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+ndata=WI(GNZI(GTF),(maxtau+1):NW);
+ndata=length(ndata(:));
+AIC=zeros(length(CF(1,:)),1);
+fmin=find(CVE==min(CVE));
+if(length(fmin)>1)
+    for ii=1:length(AIC)
+        [k]=RetParameterPS(par(ii,:),XU,CF,RF(:,ii));
+        AIC(ii)= AICScore(k,ndata,RSSv(ii).*ndata);
+    end
+    fmin=find(AIC==min(AIC));
+end
+RF=RF(:,fmin);
 % Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterPS(par(ff,:),XU);
+[~,beta,tau,DB,DA,DBE,DAE,K,n,KP,KV,dV,r,KI,r0,rm]=RetParameterPS(par(fmin,:),XU,CF,RF);
 
-[Yt,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a,VT1(GNZI,1:length(WI(1,:))),VT2(GNZI,1:length(WI(1,:))),KV,dV);
+[Yt,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,tau,maxtau,CF,RC(GNZI),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),KP,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV,r,KI,Rtv(GNZI,1:length(WI(1,:))),RF,r0,rm);
 load('Yemen_Gov_Incidence.mat')
 IData=IData';
 load('PopulationSize_Yemen.mat');
@@ -104,10 +116,10 @@ fA=find(fA==1);
 
 
 
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenDistrictData; % Load the data used to construct the figure
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenDistrictData; % Load the data used to construct the figure
 
 
-[Yt,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,Rtv(GNZI,1:length(WI(1,:))),RIF,rl,RF,rh,tau,maxtau,CF,P(GNZI,1:length(WI(1,:))),RC(GNZI),H(GNZI,1:length(WI(1,:))),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),mln,a,VT1(GNZI,1:length(WI(1,:))),VT2(GNZI,1:length(WI(1,:))),KV,dV);
+[Yt,~]= LogisticModel(beta,WI(GNZI,:),tA(GNZI,1:length(WI(1,:))),DB,DA,DBE,DAE,Ctv(GNZI,1:length(WI(1,:))),K,n,tau,maxtau,CF,RC(GNZI),WPIN(GNZI,1:length(WI(1,:))),FPIN(GNZI,1:length(WI(1,:))),Mt(GNZI,1:length(WI(1,:))),Wheatt(GNZI,1:length(WI(1,:))),Dieselt(GNZI,1:length(WI(1,:))),KP,V1(GNZI,1:length(WI(1,:))),V2(GNZI,1:length(WI(1,:))),KV,dV,r,KI,Rtv(GNZI,1:length(WI(1,:))),RF,r0,rm);
 load('Yemen_District_Incidence.mat')
 IData=IData';
 load('PopulationSize_DistrictYemen.mat'); % Populatino szie for 2016, 2017, 2018 and 2019 for the govneroates

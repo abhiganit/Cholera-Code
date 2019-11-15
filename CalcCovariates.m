@@ -1,4 +1,4 @@
-function [X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,a)
+function [X] = CalcCovariates(WI,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,RF,r0,rm,beta)
 %CALCCOVARIATES Claculates the covariates for the regression model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input
@@ -63,50 +63,27 @@ function [X] = CalcCovariates(WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,m
 % Dieselt - proce of diesel and food insecurity (Indicator)
 % WaSHDieselt- price of diesel and WASH (Indicator)
 
-II=WI./(WI+KP); % Saturated incidence per captia
 
-% Tau is assumed to be fixed here
-PDG=P(:,(1+maxtau-tau(2)):(end-tau(2))).*WI(:,(1+maxtau-tau(2)):(end-tau(2))); % Populatino density
-HFG=H(:,(1+maxtau-tau(3)):(end-tau(3))).*WI(:,(1+maxtau-tau(3)):(end-tau(3))); % Number of health sits per 10,000
-It=(a.*WPIN(:,(1+maxtau-tau(4)):(end-tau(4)))+(1-a).*FPIN(:,(1+maxtau-tau(4)):(end-tau(4)))).*WI(:,(1+maxtau-tau(4)):(end-tau(4))); % Using the past incidence with a lag of tau weeks
-Gt=(a.*WPIN(:,(1+maxtau-tau(5)):(end-tau(5)))+(1-a).*FPIN(:,(1+maxtau-tau(5)):(end-tau(5)))).*P(:,(1+maxtau-tau(5)):(end-tau(5))).*WI(:,(1+maxtau-tau(5)):(end-tau(5))); 
-HWt=(a.*WPIN(:,(1+maxtau-tau(6)):(end-tau(6)))+(1-a).*FPIN(:,(1+maxtau-tau(6)):(end-tau(6)))).*H(:,(1+maxtau-tau(6)):(end-tau(6))).*WI(:,(1+maxtau-tau(6)):(end-tau(6)));
-RCt=(a.*WPIN(:,(1+maxtau-tau(7)):(end-tau(7)))+(1-a).*FPIN(:,(1+maxtau-tau(7)):(end-tau(7)))).*repmat(RC,1,length(WI(1,(1+maxtau-tau(7)):(end-tau(7))))).*WI(:,(1+maxtau-tau(7)):(end-tau(7))); % Rebel control
-% tau is estimated
-ITAt=II(:,(1+maxtau-tau(8)):(end-tau(8))).*(WPIN(:,(1+maxtau-tau(8)):(end-tau(8)))).*ImpactAttack(tA,DB(1),DA(1),tau(8),maxtau); % Product of incidence and attacks 
-ICt=II(:,(1+maxtau-tau(9)):(end-tau(9))).*(a.*WPIN(:,(1+maxtau-tau(9)):(end-tau(9)))+(1-a).*FPIN(:,(1+maxtau-tau(9)):(end-tau(9)))).*ImpactConflict(Ctv(:,(1+maxtau-tau(9)):(end-tau(9))),K(1),n(1),CF(1)); %Product of incidence and conflict
-IAt=II(:,(1+maxtau-tau(10)):(end-tau(10))).*(a.*WPIN(:,(1+maxtau-tau(10)):(end-tau(10)))+(1-a).*FPIN(:,(1+maxtau-tau(10)):(end-tau(10)))).*ImpactAttack(Mt,DBE(1),DAE(1),tau(10),maxtau); % Product of incidence and attacks 
-IRt=WPIN(:,(1+maxtau-tau(11)):(end-tau(11))).*II(:,(1+maxtau-tau(11)):(end-tau(11))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(11)):(end-tau(11))),RIF(1),rl(1)); %Product of incidence and rainfall
-Rt=WPIN(:,(1+maxtau-tau(12)):(end-tau(12))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(12)):(end-tau(12))),RF(1),rh(1)).*WI(:,(1+maxtau-tau(12)):(end-tau(12))); %rainfall
-CRIt=ImpactConflict(Ctv(:,(1+maxtau-tau(13)):(end-tau(13))),K(2),n(2),CF(2)).*ImpactRainfall(Rtv(:,(1+maxtau-tau(13)):(end-tau(13))),RIF(2),rl(2)).*II(:,(1+maxtau-tau(13)):(end-tau(13))); %Product of incidence and conflict
-TARIt=ImpactAttack(tA,DB(2),DA(2),tau(14),maxtau).*ImpactRainfall(Rtv(:,(1+maxtau-tau(14)):(end-tau(14))),RIF(3),rl(3)).*II(:,(1+maxtau-tau(14)):(end-tau(14))); % Product of incidence and attacks 
-ARIt=ImpactAttack(Mt,DBE(2),DAE(2),tau(15),maxtau).*ImpactRainfall(Rtv(:,(1+maxtau-tau(15)):(end-tau(15))),RIF(4),rl(4)).*II(:,(1+maxtau-tau(15)):(end-tau(15))); % Product of incidence and attacks 
+X=zeros(length(tau),length(WPIN(:,1)),length(WPIN(1,(1+maxtau-tau(1)):(end-tau(1)))));
+% WaSH
+X(1,:,:)=WPIN(:,(1+maxtau-tau(1)):(end-tau(1)));
+X(2,:,:)=WPIN(:,(1+maxtau-tau(2)):(end-tau(2))).*ImpactAttack(tA,DB(1),DA(1),tau(2),maxtau).*WI(:,(1+maxtau-tau(2)):(end-tau(2)));%./(WI(:,(1+maxtau-tau(2)):(end-tau(2)))+KI(1));
+X(3,:,:)=WPIN(:,(1+maxtau-tau(3)):(end-tau(3))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(3)):(end-tau(3))),K(1),n(1),CF(1))).*WI(:,(1+maxtau-tau(3)):(end-tau(3)));%./(WI(:,(1+maxtau-tau(3)):(end-tau(3)))+KI(1));
+X(4,:,:)=WPIN(:,(1+maxtau-tau(4)):(end-tau(4))).*ImpactConflict(Mt(:,(1+maxtau-tau(4)):(end-tau(4))),K(3),n(3),CF(1)).*WI(:,(1+maxtau-tau(4)):(end-tau(4)));%./(WI(:,(1+maxtau-tau(4)):(end-tau(4)))+KI(1));
+X(5,:,:)=WPIN(:,(1+maxtau-tau(5)):(end-tau(5))).*max(Dieselt(:,(1+maxtau-tau(5)):(end-tau(5)))-KP(1),0).*WI(:,(1+maxtau-tau(5)):(end-tau(5)));%./(WI(:,(1+maxtau-tau(5)):(end-tau(5)))+KI(1));
+%Food security
+X(6,:,:)=FPIN(:,(1+maxtau-tau(6)):(end-tau(6)));
+X(7,:,:)=FPIN(:,(1+maxtau-tau(7)):(end-tau(7))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(7)):(end-tau(7))),K(2),n(2),CF(2))).*WI(:,(1+maxtau-tau(7)):(end-tau(7)));%./(WI(:,(1+maxtau-tau(7)):(end-tau(7)))+KI(2));
+X(8,:,:)=FPIN(:,(1+maxtau-tau(8)):(end-tau(8))).*ImpactConflict(Mt(:,(1+maxtau-tau(8)):(end-tau(8))),K(4),n(4),CF(2)).*WI(:,(1+maxtau-tau(8)):(end-tau(8)));%./(WI(:,(1+maxtau-tau(8)):(end-tau(8)))+KI(2));
+X(9,:,:)=FPIN(:,(1+maxtau-tau(9)):(end-tau(9))).*max(Dieselt(:,(1+maxtau-tau(9)):(end-tau(9)))-KP(1),0).*WI(:,(1+maxtau-tau(9)):(end-tau(9)));%./(WI(:,(1+maxtau-tau(9)):(end-tau(9)))+KI(2));
+X(10,:,:)=FPIN(:,(1+maxtau-tau(10)):(end-tau(10))).*max(Wheatt(:,(1+maxtau-tau(10)):(end-tau(10)))-KP(2),0).*WI(:,(1+maxtau-tau(10)):(end-tau(10)));%./(WI(:,(1+maxtau-tau(10)):(end-tau(10)))+KI(2));
 
-
-WheatIt=FPIN(:,(1+maxtau-tau(16)):(end-tau(16))).*II(:,(1+maxtau-tau(16)):(end-tau(16))).*Wheatt(:,(1+maxtau-tau(16)):(end-tau(16))); % We can use the impact rainf all function for the threshold of the price
-DieselIt=FPIN(:,(1+maxtau-tau(17)):(end-tau(17))).*II(:,(1+maxtau-tau(17)):(end-tau(17))).*Dieselt(:,(1+maxtau-tau(17)):(end-tau(17))); % We can use the impact rainf all function for the threshold of the price
-WasHDieselIt=WPIN(:,(1+maxtau-tau(18)):(end-tau(18))).*II(:,(1+maxtau-tau(18)):(end-tau(18))).*Dieselt(:,(1+maxtau-tau(18)):(end-tau(18))); % We can use the impact rainf all function for the threshold of the price
-
-X=zeros(18,length(PDG(:,1)),length(PDG(1,:)));
-
-% Constant
-X(1,:,:)=(a.*WPIN(:,(1+maxtau-tau(1)):(end-tau(1)))+(1-a).*FPIN(:,(1+maxtau-tau(1)):(end-tau(1))));
-X(2,:,:)=PDG;
-X(3,:,:)=HFG;
-X(4,:,:)=It;
-X(5,:,:)=Gt;
-X(6,:,:)=HWt;
-X(7,:,:)=RCt;
-X(8,:,:)=ITAt;
-X(9,:,:)=ICt;
-X(10,:,:)=IAt;
-X(11,:,:)=IRt;
-X(12,:,:)=Rt;
-X(13,:,:)=CRIt;
-X(14,:,:)=TARIt;
-X(15,:,:)=ARIt;
-X(16,:,:)=WheatIt;
-X(17,:,:)=DieselIt;
-X(18,:,:)=WasHDieselIt;
+%Rainfall
+if(RF(1)>=0)
+    X(11,:,:)=WPIN(:,(1+maxtau-tau(11)):(end-tau(11))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(11)):(end-tau(11))),RF(1),r0).*WI(:,(1+maxtau-tau(11)):(end-tau(11)));%./(WI(:,(1+maxtau-tau(11)):(end-tau(11)))+KI(1));
+end
+if(RF(2)>=0)
+    X(12,:,:)=WPIN(:,(1+maxtau-tau(12)):(end-tau(12))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(12)):(end-tau(12))),RF(2),rm).*WI(:,(1+maxtau-tau(12)):(end-tau(12)));
+end
 end
 

@@ -1,4 +1,4 @@
-function [par,fvalfit,CVE]=ProFittingGA(XU,PDS,CF,RF,RIF,pars)
+function [par,fvalfit,CVE]=ProFittingGA(XU,PDS,CF,RF,pars)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,27 +43,26 @@ NW=153; % Allow the model to fit the entire outbreak and cross validate among th
 
 
 %% Run the fitting algorithm
-pars([1:(length(XU)-7)]+length(XU))=ceil(4.*pars([1:(length(XU)-7)]+length(XU)));
 
-[lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,pars);
-options = optimoptions('ga','MaxGenerations',25000,'MaxStallGenerations',750,'UseParallel',false,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
-optionsps = optimoptions('patternsearch','UseParallel',false,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
+[lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,pars,CF,RF);
+options = optimoptions('ga','FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
+optionsps = optimoptions('patternsearch','MaxFunEvals',10^5,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
+opts= optimset('MaxIter',10^5,'MaxFunEvals',10^5,'TolFun',10^(-12),'TolX',10^(-12),'Display','off'); 
 
 
-[par] =ga(@(x)OFuncProGA(x,CF,RF,RIF,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW)),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
+[par] =ga(@(x)OFuncProGA(x,CF,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),XU,maxtau,RC(GNZI(GTF)),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),RF),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
 
-[par] = ExpandPar(par,XU,1);
+[par] = ExpandPar(par,XU,CF,RF,1);
 par(XU==0)=-30; % for the recursive componetnt
-par([1:(length(XU)-7)]+length(XU))=par([1:(length(XU)-7)]+length(XU))./4-0.01; % such that they do not push on the boundary
 
-[~,~,~,~,~,par] = BoundsFitting(XU,par);
+[~,~,~,~,~,par] = BoundsFitting(XU,par,CF,RF);
 
-[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,CF,RF,RIF,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW)),par,[],[],[],[],lbps,ubps,[],optionsps); 
-
+[par] =patternsearch(@(x)OFuncProPS(x,CF,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),XU,maxtau,RC(GNZI(GTF)),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),RF),par,[],[],[],[],lbps,ubps,[],optionsps); 
+[par,fvalfit]=fmincon(@(x)OFuncProPS(x,CF,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),XU,maxtau,RC(GNZI(GTF)),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),RF),par,[],[],[],[],lbps,ubps,[],opts);
 % compute cross validation error
-CVE=(OFuncProPS(par,CF,RF,RIF,WI(GNZI(GTCV),1:NW),tA(GNZI(GTCV),1:NW),Ctv(GNZI(GTCV),1:NW),Rtv(GNZI(GTCV),1:NW),XU,maxtau,P(GNZI(GTCV),1:NW),RC(GNZI(GTCV)),H(GNZI(GTCV),1:NW),WPIN(GNZI(GTCV),1:NW),FPIN(GNZI(GTCV),1:NW),Mt(GNZI(GTCV),1:NW),Wheatt(GNZI(GTCV),1:NW),Dieselt(GNZI(GTCV),1:NW),V1(GNZI(GTCV),1:NW),V2(GNZI(GTCV),1:NW)));
+CVE=(OFuncProPS(par,CF,WI(GNZI(GTCV),1:NW),tA(GNZI(GTCV),1:NW),Ctv(GNZI(GTCV),1:NW),XU,maxtau,RC(GNZI(GTCV)),WPIN(GNZI(GTCV),1:NW),FPIN(GNZI(GTCV),1:NW),Mt(GNZI(GTCV),1:NW),Wheatt(GNZI(GTCV),1:NW),Dieselt(GNZI(GTCV),1:NW),V1(GNZI(GTCV),1:NW),V2(GNZI(GTCV),1:NW),Rtv(GNZI(GTCV),1:NW),RF));
 
 
-[par] = ExpandPar(par,XU,1);
+[par] = ExpandPar(par,XU,CF,RF,1);
 par(XU==0)=-30; % for the recursive componetnt
 end
