@@ -70,6 +70,6 @@ XU(f(g))=1; % set non-zero and non-one to one
 [Yt,~]= LogisticModel(beta,WI,tA,DB,DA,DBE,DAE,Ctv,K,n,Rtv,RIF,rl,RF,rh,tau,maxtau,CF,P,RC,H,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,a,V1,V2,KV,dV);
 
 FF=(WI(:,(maxtau+1):end))-(Yt); % Compute the difference for the times and the locations that is tau weeks ahead
-F=mean(sum(FF(:).^2)); % convert the matrix into a vector for the use of lsqnonlin
+F=mean((FF(:).^2)); % convert the matrix into a vector for the use of lsqnonlin
 end
 

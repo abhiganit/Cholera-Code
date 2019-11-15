@@ -46,7 +46,7 @@ NW=153; % Allow the model to fit the entire outbreak and cross validate among th
 pars([1:(length(XU)-7)]+length(XU))=ceil(4.*pars([1:(length(XU)-7)]+length(XU)));
 
 [lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,pars);
-options = optimoptions('ga','MaxGenerations',25000,'MaxStallGenerations',750,'UseParallel',false,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
+options = optimoptions('ga','UseParallel',false,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
 optionsps = optimoptions('patternsearch','UseParallel',false,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
 
 

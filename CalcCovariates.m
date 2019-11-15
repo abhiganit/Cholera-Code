@@ -71,7 +71,7 @@ HFG=H(:,(1+maxtau-tau(3)):(end-tau(3))).*WI(:,(1+maxtau-tau(3)):(end-tau(3))); %
 It=(a.*WPIN(:,(1+maxtau-tau(4)):(end-tau(4)))+(1-a).*FPIN(:,(1+maxtau-tau(4)):(end-tau(4)))).*WI(:,(1+maxtau-tau(4)):(end-tau(4))); % Using the past incidence with a lag of tau weeks
 Gt=(a.*WPIN(:,(1+maxtau-tau(5)):(end-tau(5)))+(1-a).*FPIN(:,(1+maxtau-tau(5)):(end-tau(5)))).*P(:,(1+maxtau-tau(5)):(end-tau(5))).*WI(:,(1+maxtau-tau(5)):(end-tau(5))); 
 HWt=(a.*WPIN(:,(1+maxtau-tau(6)):(end-tau(6)))+(1-a).*FPIN(:,(1+maxtau-tau(6)):(end-tau(6)))).*H(:,(1+maxtau-tau(6)):(end-tau(6))).*WI(:,(1+maxtau-tau(6)):(end-tau(6)));
-RCt=(a.*WPIN(:,(1+maxtau-tau(7)):(end-tau(7)))+(1-a).*FPIN(:,(1+maxtau-tau(7)):(end-tau(7)))).*repmat(RC,1,length(WI(1,(1+maxtau-tau(7)):(end-tau(7))))).*WI(:,(1+maxtau-tau(7)):(end-tau(7))); % Rebel control
+RCt=(a.*WPIN(:,(1+maxtau-tau(7)):(end-tau(7)))+(1-a).*FPIN(:,(1+maxtau-tau(7)):(end-tau(7)))).*repmat(RC,1,length(WI(1,(1+maxtau-tau(7)):(end-tau(7))))).*P(:,(1+maxtau-tau(7)):(end-tau(7))).*WI(:,(1+maxtau-tau(7)):(end-tau(7))); % Rebel control
 % tau is estimated
 ITAt=II(:,(1+maxtau-tau(8)):(end-tau(8))).*(WPIN(:,(1+maxtau-tau(8)):(end-tau(8)))).*ImpactAttack(tA,DB(1),DA(1),tau(8),maxtau); % Product of incidence and attacks 
 ICt=II(:,(1+maxtau-tau(9)):(end-tau(9))).*(a.*WPIN(:,(1+maxtau-tau(9)):(end-tau(9)))+(1-a).*FPIN(:,(1+maxtau-tau(9)):(end-tau(9)))).*ImpactConflict(Ctv(:,(1+maxtau-tau(9)):(end-tau(9))),K(1),n(1),CF(1)); %Product of incidence and conflict
@@ -90,8 +90,8 @@ WasHDieselIt=WPIN(:,(1+maxtau-tau(18)):(end-tau(18))).*II(:,(1+maxtau-tau(18)):(
 X=zeros(18,length(PDG(:,1)),length(PDG(1,:)));
 
 % Constant
-X(1,:,:)=(a.*WPIN(:,(1+maxtau-tau(1)):(end-tau(1)))+(1-a).*FPIN(:,(1+maxtau-tau(1)):(end-tau(1))));
-X(2,:,:)=PDG;
+X(1,:,:)=(a.*WPIN(:,(1+maxtau-tau(1)):(end-tau(1)))+(1-a).*FPIN(:,(1+maxtau-tau(1)):(end-tau(1)))).*P(:,(1+maxtau-tau(1)):(end-tau(1)));
+X(2,:,:)=(a.*WPIN(:,(1+maxtau-tau(2)):(end-tau(2)))+(1-a).*FPIN(:,(1+maxtau-tau(2)):(end-tau(2)))).*repmat(RC,1,length(WI(1,(1+maxtau-tau(2)):(end-tau(2))))).*P(:,(1+maxtau-tau(2)):(end-tau(2))).*WI(:,(1+maxtau-tau(2)):(end-tau(2))); % Rebel control
 X(3,:,:)=HFG;
 X(4,:,:)=It;
 X(5,:,:)=Gt;

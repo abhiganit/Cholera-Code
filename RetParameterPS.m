@@ -140,10 +140,10 @@ if(XU(13)==1) % See if conflict is being used at alls
         K(2)=10.^x(lenbeta+11); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
     else
-        K(1)=0;
+        K(2)=0;
     end
     if(CF(2)==2) % If the full hill function is being used
-        n(1)=10.^x(lenbeta+12); % Hill coefficient estimate
+        n(2)=10.^x(lenbeta+12); % Hill coefficient estimate
         k=k+1; % add to estimated paramters
     else
         n(2)=1; % Hill coefficient ot estimated
