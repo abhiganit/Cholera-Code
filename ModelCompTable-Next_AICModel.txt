@@ -1,0 +1,9 @@
+\begin{sidewaystable}\caption{Model comparison analysis using the Akaike information criterion (AIC) score and cross validation error (CVE)} 
+ \begin{tabular}{c|cccccc} 
+ \backslashbox{CVE}{$\Delta$ AIC}& Targeted& Conflict& Shellings& Wheat\\ 
+ \hline Targeted& \backslashbox{2.78}{ 0.8}& \multicolumn{1}{r}{10.7} & \multicolumn{1}{r}{ 5.1} & \multicolumn{1}{r}{ 6.7} \\ 
+Conflict&  \multicolumn{1}{l}{2.78} &\cellcolor{blue!20} \backslashbox{2.79}{ 0.0}& \multicolumn{1}{r}{11.1} & \multicolumn{1}{r}{11.4} \\ 
+Shellings&  \multicolumn{1}{l}{\cellcolor{blue!20}{2.76}} &  \multicolumn{1}{l}{2.79} & \backslashbox{2.79}{ 0.5}& \multicolumn{1}{r}{10.1} \\ 
+Wheat&  \multicolumn{1}{l}{2.76} &  \multicolumn{1}{l}{2.79} &  \multicolumn{1}{l}{2.80} & \backslashbox{2.79}{ 1.5}
+\end{tabular} 
+ \end{sidewaystable}

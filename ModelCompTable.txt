@@ -1,0 +1,11 @@
+\begin{sidewaystable}\caption{Model comparison analysis using the Akaike information criterion (AIC) score and cross validation error (CVE)} 
+ \begin{tabular}{c|cccccc} 
+ \backslashbox{CVE}{$\Delta$ AIC}& Targeted& Conflict& Shellings& Diesel& Wheat& Rain\\ 
+ \hline Targeted& \backslashbox{3.04}{398.2}& \multicolumn{1}{r}{417.6} & \multicolumn{1}{r}{406.4} & \multicolumn{1}{r}{86.1} & \multicolumn{1}{r}{273.8} & \multicolumn{1}{r}{361.1} \\ 
+Conflict&  \multicolumn{1}{l}{3.05} & \backslashbox{3.06}{408.8}& \multicolumn{1}{r}{418.0} & \multicolumn{1}{r}{91.0} & \multicolumn{1}{r}{253.4} & \multicolumn{1}{r}{339.6} \\ 
+Shellings&  \multicolumn{1}{l}{3.04} &  \multicolumn{1}{l}{3.06} & \backslashbox{3.06}{408.6}& \multicolumn{1}{r}{90.6} & \multicolumn{1}{r}{247.3} & \multicolumn{1}{r}{337.9} \\ 
+Diesel&  \multicolumn{1}{l}{\cellcolor{blue!20}{2.68}} &  \multicolumn{1}{l}{2.71} &  \multicolumn{1}{l}{2.71} & \backslashbox{2.72}{81.5}& \multicolumn{1}{r}{90.8} & \multicolumn{1}{r}{\cellcolor{blue!20}{ 0.0}} \\ 
+Wheat&  \multicolumn{1}{l}{2.83} &  \multicolumn{1}{l}{2.89} &  \multicolumn{1}{l}{2.87} &  \multicolumn{1}{l}{2.72} & \backslashbox{2.86}{241.0}& \multicolumn{1}{r}{151.7} \\ 
+Rain&  \multicolumn{1}{l}{3.26} &  \multicolumn{1}{l}{3.26} &  \multicolumn{1}{l}{3.27} &  \multicolumn{1}{l}{2.78} &  \multicolumn{1}{l}{3.00} & \backslashbox{3.26}{337.0}
+\end{tabular} 
+ \end{sidewaystable}

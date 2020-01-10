@@ -11,6 +11,6 @@ function BIC = BICScore(k,n,RSS)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % AIC - the AIC score
 
-BIC=k.*log(n)+n*log(RSS./n);
+BIC=k.*log(n)+n*log(RSS);
 end
 

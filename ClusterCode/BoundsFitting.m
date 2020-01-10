@@ -1,109 +1,68 @@
-function [lbga,ubga,lbps,ubps,IntC,part] = BoundsFitting(XU,parf)
+function [lbga,ubga,lbps,ubps,IntC,part] = BoundsFitting(XU,parf,CF,maxtau)
 
 
-flbps=[-32.*ones(1,length(XU)) zeros(1,length(XU)-7) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32.*ones(1,9) -32.*ones(1,3)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-fubps=[ 5.*ones(1,length(XU)) ones(1,length(XU)-7) ones(1,7) log10([ones(1,8) 20 1000 20 1000 120 120 120 120 120 1000 1000 1000 1 1000 1000 1])]; % specify the upperbound for the parameters 
+flbps=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 log10(0.5) -32];
+fubps=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152) log10(13.5) log10(152) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(4*52))) 0];
 
-flb=[-32.*ones(1,length(XU)) ones(1,length(XU)-7) zeros(1,7) -32.*ones(1,8) -32.*ones(1,4) -32.*ones(1,9) -32.*ones(1,3)]; % ensuring the lower bound is zero for the last nine paramters and do a log-10 transform to improve searching of paramter space
-fub=[ 5.*ones(1,length(XU)) 4.*ones(1,length(XU)-7) 2.*ones(1,7) log10([ones(1,8) 20 1000 20 1000 120 120 120 120 120 1000 1000 1000 1 1000 1000 1])]; % specify the upperbound for the parameters 
+flb=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 log10(0.5) -32];
+fub=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152.49) log10(13.5) log10(152.49) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(4*52))) 0];
 
-IntCF=[1:(7+(length(XU)-7))]+length(XU);
-nob=length(XU);
 Indx=zeros(size(fub));
-
 Indx(1:length(XU))=XU;
+IntC=[];
+lenbeta=length(XU);
 
-Indx((1+length(XU)):(2.*length(XU)-7))=XU(8:end);
-
-NTE=(length(XU)-7);
-Indx(nob+NTE+[1 2])=XU([ 9 13]);
-Indx(nob+NTE+3)=XU(11);
-Indx(nob+NTE+[4 5 6 7])=XU([11 13 14 15]);
-lenbeta=length(XU)+NTE+7;
-if(sum(Indx(IntCF))>0)
-    IntC=sum(XU)+[1:sum(Indx(IntCF))];
-else
-    IntC=[];
-end
 %% Attack asscoaited paramters
-DA=zeros(2,1);
-DB=zeros(2,1);
-if(XU(8)==1)  
-    Indx(lenbeta+[1 2])=1;
-end
 
-if(XU(14)==1)  
-    
-    Indx(lenbeta+[3 4])=1;
-end
-
-DAE=zeros(2,1);
-DBE=zeros(2,1);
-
-if(XU(10)==1)  % See if attacks being used at all
- 
-    Indx(lenbeta+[5 6])=1;
-
-end
-
-if(XU(15)==1)  % See if attacks being used at all
-
-    Indx(lenbeta+[7 8])=1;
+if(sum(XU(1:maxtau))>=1)  % See if attacks being used at all
+    Indx(lenbeta+1)=1;  %looking after the attack
+     % Add estimated paramter
 end
 
 
 
 %% Conflict associated paramters
-K=zeros(2,1);
-n=zeros(2,1);
-if(XU(9)==1) % See if conflict is being used at alls
-        Indx(lenbeta+[9 10])=1;
+if(sum(XU((maxtau+1):2*maxtau))>=1) % See if conflict is being used at alls
+    if(CF(1)~=0)
+        Indx(lenbeta+2)=1;
+    end
+    if(CF(1)==2) % If the full hill function is being used
+        Indx(lenbeta+3)=1; 
+    end    
 end
 
-if(XU(13)==1) % See if conflict is being used at alls
-    
-        Indx(lenbeta+[11 12])=1;
+% Shellings
+if(sum(XU((2.*maxtau+1):3*maxtau))>=1) % See if conflict is being used at alls
+    if(CF(2)~=0)
+        Indx(lenbeta+4)=1; 
+    end
+    if(CF(2)==2) % If the full hill function is being used
+        Indx(lenbeta+5)=1; 
+    end    
 end
 
 
- %% Rainfall assocaited paramters 
-rl=zeros(4,1);
-if(XU(11)>=1) % See if rainfall is being used at all
-    Indx(lenbeta+[13])=1;
-end
-if(XU(13)>=1) % See if rainfall is being used at all
-    Indx(lenbeta+[14])=1; 
-end
-if(XU(14)>=1) % See if rainfall is being used at all
-    Indx(lenbeta+[15])=1; 
-end
-if(XU(15)>=1) % See if rainfall is being used at all
-    Indx(lenbeta+[16])=1;  
-end
-
- %% Rainfall only
-if(XU(12)>=1) % See if rainfall is being used at all
-    Indx(lenbeta+[17])=1;
+% Diesel price
+if(sum(XU((3.*maxtau+1):4*maxtau))>=1)
+    Indx(lenbeta+6)=1;
     
 end
 
-% Threshold for Wheat
-mln=zeros(3,1);
-if(XU(16)>=1)
-    Indx(lenbeta+[18])=1;
-end
-% Price threshold diesel
-if(XU(17)>=1)
-    Indx(lenbeta+[19])=1;
-end
-% Price threshold diesel
-if(XU(18)>=1)
-    Indx(lenbeta+[20])=1;
+% Wheat price
+if(sum(XU((4.*maxtau+1):5*maxtau))>=1)
+    Indx(lenbeta+7)=1;
+    
 end
 
-% Weight of WASH vs Food security
-Indx(lenbeta+[21:24])=1;
+if(sum(XU((5.*maxtau+1):6*maxtau))>=1)
+    Indx(lenbeta+[8])=1;
+end
+% Vaccination
+Indx(lenbeta+[9])=1;
+Indx(lenbeta+10)=1;
 
+
+Indx(lenbeta+11)=1;
 
 lbga=flb(Indx==1);
 ubga=fub(Indx==1);

@@ -1,22 +1,16 @@
-% if(isempty(gcp('nocreate')))
-%     pobj=parpool(20);
-% end
-PDS=0.8;
-XUv=ones(1,13);
-[parv,RSSv,CVE]=ProFittingGA(XUv,PDS,[-16.*ones(1,13) ones(1,5) 0 0 0 -16.*ones(1,8)]);
-[kv,~]=RetParameterPS(parv,XUv);
+clear;
+clc;
+%% Calibrates the saturation function only to imporove the fitting
+C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
+ 
 
-atest=0;
-[XUr,RSSr,CVEr,parr,kr] = BackwardsSelection(XUv,RSSv,CVE,kv,atest,PDS);
-
-save(['BackwardsSelection-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
-while(~isempty(XUr))
-    RSSv=[RSSv; RSSr];
-    XUv=[XUv; XUr];
-    parv=[parv; parr];
-    kv=[kv; kr];
-    CVE=[CVE; CVEr];
-    [XUr,RSSr,CVEr,parr,kr] = BackwardsSelection(XUv(end,:),RSSv(end),CVE(end),kv(end),atest,PDS);   
-    save(['BackwardsSelection-PercentDataSet=' num2str(PDS*100) '-alpha=' num2str(atest*100) '.mat']);
-end
-% delete pobj;
+indx=[1 2 3 5];
+    for yy=1:4 
+        for ss=yy:4
+            load(['Fit-Vaccination-PercentData=80-IncidenceperCapita-Diesel-Rain' C(unique([indx(ss) indx(yy)])).N '.mat']);
+            [par,DAR,RSSv,CVE]=ProFitting(XU,0.8,CF,RF,par);
+            save(['Fit-Vaccination-PercentData=80-IncidenceperCapita-Diesel-Rain' C(unique([indx(ss) indx(yy)])).N '-Calibrate-DAR.mat'],'par','RSSv','CVE','XU','CF','RF','X','DAR');
+        end
+    end
+   
+ 

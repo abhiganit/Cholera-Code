@@ -1,4 +1,4 @@
-function Y = ImpactConflict(Ct,K,n,CF)
+function Y = ImpactConflict(Ct,K,CF)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Y = ImpactConflict(Ct,K,n)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,8 +24,5 @@ if(CF==0) % Conduct linear growth of the effect of conflict
 else
    Y=Ct-K; % The Hill function for the effects of conflict become saturated 
    Y(Y<0)=0;
-   if(CF==2)
-    Y=1-exp(-Y.*n);
-   end
 end
 end

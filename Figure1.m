@@ -1,6 +1,12 @@
 close all;
 clear;
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,GNZI,maxtau] = LoadYemenData; % Load the data used to construct the figure
+[WI,~,tA,Rtv,~,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,GNZI,maxtau] = LoadYemenData; % Load the data used to construct the figure
+% Need to show the conflict without the transformation
+S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
+Ctv=GLevelConflict(ProC,S,153);
+load('Yemen_Air_Shelling.mat');
+Mt=GLevelConflict(YASt,S,153); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
 
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
@@ -17,7 +23,7 @@ Pop=sum(PopS,1);
 Test=10000.*sum(IData,1)./Pop;
 
 subplot('Position',[0.05,0.6,0.945,0.39]); 
-plot([1:153],Test,'color',hex2rgb('#C60000'),'Linewidth',2);
+bar([1:153],Test,'Facecolor',hex2rgb('#C60000'),'LineStyle','none');
 startDateofSim = datenum('10-03-2016');% Start date
 dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
@@ -28,7 +34,7 @@ box off;
 yh=ylabel({'Incidence per 10,000'},'Fontsize',18);
 text(1.1*yh.Extent(1),0.99*max(ylim),'A','Fontsize',32,'FontWeight','bold');
 subplot('Position',[0.05,0.16,0.945,0.39]); 
-plot([1:153],sum(Rtv,1),'color',[5,112,176]./255,'Linewidth',2);
+bar([1:153],sum(Rtv,1),'Facecolor',[5,112,176]./255,'LineStyle','none');
 startDateofSim = datenum('10-03-2016');% Start date
 dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
@@ -45,16 +51,14 @@ figure('units','normalized','outerposition',[0 0 1 1]);
 load('PopulationSize_Yemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
-% External effect due to IDP
 PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
 Pop=sum(PopS,1);
 Test=10000.*sum(IData,1)./Pop;
 
 subplot('Position',[0.05,0.6,0.945,0.39]); 
-plot([1:153],sum(Ctv,1),'k','Linewidth',2); hold on;
 
-plot([1:153],sum(Mt,1),'color',[0.65 0.65 0.65],'Linewidth',2);
-
+plot([1:153],sum(Ctv,1),'color',hex2rgb('#DE7A22'),'LineWidth',2); hold on; 
+plot([1:153],sum(Mt,1),'color',hex2rgb('#4C3F54'),'LineWidth',2); hold on;
 legend({'Weekly conflict events','Air and shelling attacks'});
 legend boxoff;
 ylim([0 350]);
@@ -70,7 +74,7 @@ text(1.1*yh.Extent(1),0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.05,0.16,0.945,0.39]); 
 
-plot([1:153],sum(tA,1),'color',[221,28,119]./255,'Linewidth',2);
+bar([1:153],sum(tA,1),'Facecolor',[221,28,119]./255,'LineStyle','none');
 startDateofSim = datenum('10-03-2016');% Start date
 dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
@@ -191,63 +195,36 @@ ylim([11.7   19.0978]);
 
 axis off;
 text(min(xlim),max(ylim)*0.98,'iii)','Fontsize',24);
-% %% Diesel
+%% Diesel
 
-% 
-% MAR=mean(Dieselt,2);
-% MART=MAR(MAR>0);
-% MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
-% for ii=1:length(S)
-%     if(MAR(ii)>=0)
-%         mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
-%     else
-%         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
-%     end
-% end
-% box off;
-% xlim([41.7741   54.6472]);
-% dA=linspace(min(MART),max(MART),100);
-% dX=linspace(min(xlim),max(xlim),100);
-% ii=1;
-% h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
-% 
-% scatter(XSRC,YSRC,3,'k','filled');
-% for ii=2:100
-%     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[153,52,4]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
-%     if(rem(ii,5)==0)
-%         h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
-%     end
-% end
-% text(mean(xlim),10.78,'Price of diesel','Fontsize',16,'HorizontalAlignment','center');
-% ylim([11.7   19.0978]);
-% 
-% axis off;
-% text(min(xlim),max(ylim)*0.98,'iv)','Fontsize',24);
-%% Populatino Desnity
-subplot('Position',[0.47,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
-MAR=mean(P,2);
-MART=MAR;
-MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+subplot('Position',[0.47,0.12,0.4,0.4]); 
+
+MAR=mean(Dieselt,2);
+MART=MAR(MAR>0);
+MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',[136,86,167]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(MAR(ii)>=0)
+        mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 box off;
 xlim([41.7741   54.6472]);
-
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,num2str(round(dA(ii),2)),'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
-    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[136,86,167]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[153,52,4]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,num2str(round(dA(ii),1)),'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
     end
 end
-text(mean(xlim),10.78,'People per km^2','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.78,'Price of diesel','Fontsize',16,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -255,66 +232,42 @@ text(min(xlim),max(ylim)*0.98,'iv)','Fontsize',24);
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 
-%% Hospital
+%% Wheat
 
 subplot('Position',[0.035,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
-MAR=mean(H,2);
-MART=MAR;
-MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+MAR=mean(Wheatt,2);
+MART=MAR(MAR>0);
+MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',[254,217,118]/255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(MAR(ii)>=0)
+        mapshow(S(ii),'FaceColor',hex2rgb('#FAAF08'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
-    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[254,217,118]/255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#FAAF08'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
     end
 end
-text(mean(xlim),10.78,'Health facilities per 10,000','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.78,'Price of wheat','Fontsize',16,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
 text(min(xlim),max(ylim)*0.98,'v)','Fontsize',24);
-%% Targeted attacks
 
-subplot('Position',[0.47,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-
-MAR=sum(tA,2);
-MART=MAR;
-MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
-for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
-end
-box off;
-xlim([41.7741   54.6472]);
-dA=min(MART):max(MART);
-dX=linspace(min(xlim),max(xlim),length(dA));
-ii=1;
-h=text(dX(ii), 11.68,[num2str((dA(ii))) ],'Rotation',270,'Fontsize',14);
-
-scatter(XSRC,YSRC,3,'k','filled');
-for ii=2:length(dA)
-    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[221,28,119]./255,'Facealpha',(ii-1)./length(dA),'Edgealpha',0);    
-    if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str((dA(ii)))],'Rotation',270,'Fontsize',14);
-    end
-end
-text(mean(xlim),10.78,'Total number of attacks on water systems','Fontsize',16,'HorizontalAlignment','center');
-ylim([11.7   19.0978]);
-
-axis off;
-text(min(xlim),max(ylim)*0.98,'vi)','Fontsize',24);
 %% Rainfall
-subplot('Position',[0.035,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.47,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 
 MAR=mean(Rtv,2);
@@ -345,9 +298,98 @@ text(mean(xlim),10.78,'Rainfall (mm)','Fontsize',16,'HorizontalAlignment','cente
 ylim([11.7   19.0978]);
 
 axis off;
-text(min(xlim),max(ylim)*0.98,'vii)','Fontsize',24);
+text(min(xlim),max(ylim)*0.98,'vi)','Fontsize',24);
 
-% Legend for the location
+%% Conflict
+subplot('Position',[0.035,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=sum(Ctv,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',hex2rgb('#DE7A22'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+end
+scatter(XSRC,YSRC,3,'k','filled');
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',14);
+
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#DE7A22'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Total number of conflict events','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'vii)','Fontsize',24);
+%% Shelling and air attacks
+subplot('Position',[0.47,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=sum(Mt,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#4C3F54'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Total number of shelling and air attaks','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'viii)','Fontsize',24);
+
+
+%% Targeted attacks
+
+figure('units','normalized','outerposition',[0 0 1 1]);
+subplot('Position',[0.035,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+
+MAR=sum(tA,2);
+MART=MAR;
+MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
+for ii=1:length(S)
+    mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=min(MART):max(MART);
+dX=linspace(min(xlim),max(xlim),length(dA));
+ii=1;
+h=text(dX(ii), 11.68,[num2str((dA(ii))) ],'Rotation',270,'Fontsize',14);
+
+scatter(XSRC,YSRC,3,'k','filled');
+for ii=2:length(dA)
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[221,28,119]./255,'Facealpha',(ii-1)./length(dA),'Edgealpha',0);    
+    if(rem(ii,5)==0)
+        h=text(dX(ii), 11.68,[num2str((dA(ii)))],'Rotation',270,'Fontsize',14);
+    end
+end
+text(mean(xlim),10.78,'Total number of attacks on water systems','Fontsize',16,'HorizontalAlignment','center');
+ylim([11.7   19.0978]);
+
+axis off;
+text(min(xlim),max(ylim)*0.98,'ix)','Fontsize',24);
+
+%% Legend for the location
 subplot('Position',[0.47,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 for ii=1:length(S)
         mapshow(S(ii),'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2); hold on
@@ -378,66 +420,7 @@ xlim([41.7741   54.6472]);
 ylim([11.7   19.0978]);
 
 axis off;
-text(min(xlim),max(ylim)*0.98,'viii)','Fontsize',24);
+text(min(xlim),max(ylim)*0.98,'x)','Fontsize',24);
 
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-%% Conflict
-subplot('Position',[0.035,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-
-MAR=sum(Ctv,2);
-MART=MAR;
-MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
-for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',hex2rgb('#FAAF08'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
-end
-scatter(XSRC,YSRC,3,'k','filled');
-box off;
-xlim([41.7741   54.6472]);
-dA=linspace(min(MART),max(MART),100);
-dX=linspace(min(xlim),max(xlim),100);
-ii=1;
-h=text(dX(ii), 11.68,num2str(dA(ii)),'Rotation',270,'Fontsize',14);
-
-for ii=2:100
-    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#FAAF08'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
-    if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',14);
-    end
-end
-text(mean(xlim),10.78,'Total number of conflict events','Fontsize',16,'HorizontalAlignment','center');
-ylim([11.7   19.0978]);
-
-axis off;
-text(min(xlim),max(ylim)*0.98,'i)','Fontsize',24);
-
-text(min(xlim)*0.98,max(ylim)*0.98,'E','Fontsize',32,'Fontweight','bold');
-%% Shelling and air attacks
-subplot('Position',[0.47,0.6,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-
-MAR=sum(Mt,2);
-MART=MAR;
-MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
-for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
-end
-box off;
-xlim([41.7741   54.6472]);
-dA=linspace(min(MART),max(MART),100);
-dX=linspace(min(xlim),max(xlim),100);
-ii=1;
-h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
-
-scatter(XSRC,YSRC,3,'k','filled');
-for ii=2:100
-    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#4C3F54'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
-    if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
-    end
-end
-text(mean(xlim),10.78,'Total number of shelling and air attaks','Fontsize',16,'HorizontalAlignment','center');
-ylim([11.7   19.0978]);
-
-axis off;
-text(min(xlim),max(ylim)*0.98,'ii)','Fontsize',24);
 clear;

@@ -1,7 +1,4 @@
-function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameterGA(x,XU)
-%Based on the input-x and functions used we return the proper paramters to
-%evalaute the regression model
-
+function [k,beta,tau,DB,DA,K,n,KP,KV,dV,r0,DAR,w]=RetParameterGA(x,XU,CF,maxtau)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,150 +59,88 @@ function [k,beta,tau,DB,DA,DBE,DAE,K,n,rl,rh,CF,RIF,RF,mln,a,KV,dV]=RetParameter
 % RF - rainfall function for rainfall * incidence
 % mln - the threshold price for wheat, diesel
 % a- the weight for the number of people in need WASH vs Food security
-
+% KV - saturation value for the hill finction
+% dV - deca yrate of the effect of vaccination
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The parameters for the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the coefficients fo rthe regression model
 
 beta=[10.^x(1:length(XU))].*XU;
-nob=length(XU);
-tau=[ones(1,7) x(nob+[1:(length(XU)-7)])];
-NTE=(length(XU)-7);
-CF=x(nob+NTE+[1 2]);
-RF=x(nob+NTE+3);
-RIF=x(nob+NTE+[4 5 6 7]);
-lenbeta=length(XU)+NTE+7;
-k=sum(XU)+ sum(XU([8:length(XU)])); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
+tau=repmat([1:maxtau],1,length(XU)/maxtau);
+lenbeta=length(XU);
+k=sum(XU); % Count the number of coefficients being estimated the second sum is for estimating the lag of the different components
 
 
 %% Attack asscoaited paramters
-DA=zeros(2,1);
-DB=zeros(2,1);
-if(XU(8)==1)  % See if attacks being used at all
-    DB(1)=10.^x(lenbeta+1); %looking befroe the attack
+DA=zeros(1,1);
+DB=zeros(1,1);
+if(sum(XU(1:maxtau))>=1)  % See if attacks being used at all
+    DA(1)=10.^x(lenbeta+1);  %looking after the attack
     k=k+1; % Add estimated paramter
-    DA(1)=10.^x(lenbeta+2);  %looking after the attack
-    k=k+1; % Add estimated paramter
-end
-
-if(XU(14)==1)  % See if attacks being used at all
-        DB(2)=10.^x(lenbeta+3); %looking befroe the attack
-        k=k+1; % Add estimated paramter
-
-        DA(2)=10.^x(lenbeta+4);  %looking after the attack
-        k=k+1; % Add estimated paramter
-end
-
-DAE=zeros(2,1);
-DBE=zeros(2,1);
-
-if(XU(10)==1)  % See if attacks being used at all
- 
-        DBE(1)=10.^x(lenbeta+5); %looking befroe the attack
-        k=k+1; % Add estimated paramter
-        DAE(1)=10.^x(lenbeta+6);  %looking after the attack
-        k=k+1; % Add estimated paramter
-
-end
-
-if(XU(15)==1)  % See if attacks being used at all
-
-        DBE(2)=10.^x(lenbeta+7); %looking befroe the attack
-        k=k+1; % Add estimated paramter
-        DAE(2)=10.^x(lenbeta+8);  %looking after the attack
-        k=k+1; % Add estimated paramter
 end
 
 
 
 %% Conflict associated paramters
-K=zeros(2,1);
-n=zeros(2,1);
-if(XU(9)==1) % See if conflict is being used at alls
+K=ones(2,1);
+n=ones(2,1);
+if(sum(XU((maxtau+1):2*maxtau))>=1) % See if conflict is being used at alls
     if(CF(1)~=0)
-        K(1)=10.^x(lenbeta+9); % Set rate of change for the paramter of the effects of conflict
+        K(1)=10.^x(lenbeta+2); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
     else
         K(1)=0;
     end
     if(CF(1)==2) % If the full hill function is being used
-        n(1)=10.^x(lenbeta+10); % Hill coefficient estimate
+        n(1)=round(10.^x(lenbeta+3)); % Hill coefficient estimate
         k=k+1; % add to estimated paramters
     else
         n(1)=1; % Hill coefficient ot estimated
     end    
 end
 
-if(XU(13)==1) % See if conflict is being used at alls
+% Shellings
+if(sum(XU((2.*maxtau+1):3*maxtau))>=1)  % See if attacks being used at all
     if(CF(2)~=0)
-        K(2)=10.^x(lenbeta+11); % Set rate of change for the paramter of the effects of conflict
+        K(2)=10.^x(lenbeta+4); % Set rate of change for the paramter of the effects of conflict
         k=k+1; % add a paramter
     else
-        K(1)=0;
+        K(2)=0;
     end
     if(CF(2)==2) % If the full hill function is being used
-        n(1)=10.^x(lenbeta+12); % Hill coefficient estimate
+        n(2)=round(10.^x(lenbeta+5)); % Hill coefficient estimate
         k=k+1; % add to estimated paramters
     else
         n(2)=1; % Hill coefficient ot estimated
-    end    
+    end
 end
 
-
- %% Rainfall assocaited paramters 
-rl=zeros(4,1);
-if(XU(11)>=1) % See if rainfall is being used at all
-    rl(1)=10.^x(lenbeta+13);
-    k=k+1; % add paramrter    
-end
-if(XU(13)>=1) % See if rainfall is being used at all
-    rl(2)=10.^x(lenbeta+14);
-    k=k+1; % add paramrter    
-end
-if(XU(14)>=1) % See if rainfall is being used at all
-    rl(3)=10.^x(lenbeta+15);
-    k=k+1; % add paramrter    
-end
-if(XU(15)>=1) % See if rainfall is being used at all
-    rl(4)=10.^x(lenbeta+16);
-    k=k+1; % add paramrter    
-end
-
- %% Rainfall only
-if(XU(12)>=1) % See if rainfall is being used at all
-    rh=10.^x(lenbeta+17);
-    k=k+1; % add paramrter
-    
-else % Rainfall is not being used at all
-    rh=0;
-end
-
-% Threshold for Wheat
-mln=zeros(3,1);
-if(XU(16)>=1)
-    mln(1)=10.^x(lenbeta+18);
-    k=k+1;
-end
-% Price threshold diesel
-if(XU(17)>=1)
-    mln(2)=10.^x(lenbeta+19);
-    k=k+1;
-end
-% Price threshold diesel
-if(XU(18)>=1)
-    mln(3)=10.^x(lenbeta+20);
+KP=zeros(2,1);
+% Diesel price
+if(sum(XU((3.*maxtau+1):4*maxtau))>=1)
+    KP(1)=10.^x(lenbeta+6);
     k=k+1;
 end
 
-% Weight of WASH vs Food security
-a=10.^x(lenbeta+21);
-k=k+1;
+% Wheat price
+if(sum(XU((4.*maxtau+1):5*maxtau))>=1)
+    KP(2)=10.^x(lenbeta+7);
+    k=k+1;
+end
 
-
+%Rainfall
+if(sum(XU((5.*maxtau+1):6*maxtau))>=1)
+    r0=10.^x(lenbeta+8);
+    k=k+1;
+else
+    r0=0;
+end
 % Vaccination
-KV=10.^x(lenbeta+[22:23]);
-dV=10.^x(lenbeta+24);
-k=k+3;
-end
 
+KV=10.^x(lenbeta+[9]);
+dV=[10.^x(lenbeta+10); exp(log(26/56)/(4*52)) ];
+k=k+2;
+w=10.^x(lenbeta+[11]);
+DAR=10; % https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-018-6299-3 (50% asymp. 0.05-0.1 disease burden, then need to sautrate ontop by multiplying by 100 i.e. if all the population is infected the saturation function is less than 1%. Thus, if 50% cases are asymptomatic this implies 2 cases for every confirmed. Of the reported cases up to 0.05% are asscoaited wit hthe disease burded. thus, 0.1*100=10)
+end

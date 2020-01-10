@@ -106,7 +106,7 @@ GTF=zeros(NGS,1); % We use the top and bottom gov wrt incidence in the fitting o
            GTF(ii)=f; % Record index
         end
     end
-GTF=sort(GTF)'; % Gov. to used in the fitting of the model. We sort to keep order consistent with GNZI
+GTF=sort(unique(GTF))'; % Gov. to used in the fitting of the model. We sort to keep order consistent with GNZI
 GTCV=zeros(length(GNZI)-NGS,1); 
 cc=1;
 for ii=1:length(GNZI)

@@ -1,4 +1,4 @@
-function [par,fvalfit,CVE]=ProFittingGA(XU,PDS,pars)
+function [par,fvalfit]=ProFittingGA(XU,CF,RF,pars)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,38 +36,21 @@ close all;
 clc;
 
 %% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau] = LoadYemenData;
-[GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,PDS);
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
 
 
 %% Run the fitting algorithm
-pars([1:(length(XU)-7)]+length(XU))=ceil(4.*pars([1:(length(XU)-7)]+length(XU)));
-pars([1:7]+2.*length(XU)-7)=ceil(3.*pars([1:7]+2.*length(XU)-7))-1;
+for mm=1:length(pars(:,1))
+[lb,ub,lbps,ubps,IntC,parst(mm,:)] = BoundsFitting(XU,pars(mm,:),CF,maxtau);
+end
+optionsps = optimoptions('patternsearch','MaxFunEvals',10^5,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-12),'UseCompleteSearch',true,'Display','off','UseParallel',true);
 
-[lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,pars);
-options = optimoptions('ga','MaxGenerations',25000,'MaxStallGenerations',500,'UseParallel',false,'FunctionTolerance',10^(-8),'InitialPopulationMatrix',pars); %
-optionsps = optimoptions('patternsearch','UseParallel',false,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-10),'UseCompleteSearch',true);
-
-[par] =ga(@(x)OFuncProGA(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW)),length(pars),[],[],[],[],lb,ub,[],IntC,options); 
-
-[par] = ExpandPar(par,XU,1);
-par(XU==0)=-30; % for the recursive componetnt
-par([1:(length(XU)-7)]+length(XU))=par([1:(length(XU)-7)]+length(XU))./4-0.01; % such that they do not push on the boundary
-par([1:7]+2.*length(XU)-7)= (par([1:7]+2.*length(XU)-7)+1)./3-0.01; % such that they do not push on the boundary
-
-[~,~,~,~,~,par] = BoundsFitting(XU,par);
-
-[par,fvalfit] =patternsearch(@(x)OFuncProPS(x,WI(GNZI(GTF),1:NW),tA(GNZI(GTF),1:NW),Ctv(GNZI(GTF),1:NW),Rtv(GNZI(GTF),1:NW),XU,maxtau,P(GNZI(GTF),1:NW),RC(GNZI(GTF)),H(GNZI(GTF),1:NW),WPIN(GNZI(GTF),1:NW),FPIN(GNZI(GTF),1:NW),Mt(GNZI(GTF),1:NW),Wheatt(GNZI(GTF),1:NW),Dieselt(GNZI(GTF),1:NW),V1(GNZI(GTF),1:NW),V2(GNZI(GTF),1:NW)),par,[],[],[],[],lbps,ubps,[],optionsps); 
-
-% Calculate the cross-validation error by calculating error for all areas
-% w/ non-zero incidence and then subtracting the value of fvalfit
-
-% Load data for the cross-Validation at the district level
-CVE=(OFuncProPS(par,WI(GNZI(GTCV),1:NW),tA(GNZI(GTCV),1:NW),Ctv(GNZI(GTCV),1:NW),Rtv(GNZI(GTCV),1:NW),XU,maxtau,P(GNZI(GTCV),1:NW),RC(GNZI(GTCV)),H(GNZI(GTCV),1:NW),WPIN(GNZI(GTCV),1:NW),FPIN(GNZI(GTCV),1:NW),Mt(GNZI(GTCV),1:NW),Wheatt(GNZI(GTCV),1:NW),Dieselt(GNZI(GTCV),1:NW),V1(GNZI(GTCV),1:NW),V2(GNZI(GTCV),1:NW)));
-
-
-[par] = ExpandPar(par,XU,1);
+options = optimoptions('ga','MaxGenerations',10^4,'FunctionTolerance',10^(-10),'InitialPopulationMatrix',parst,'Display','off','UseParallel',true,'HybridFcn',{@patternsearch,optionsps}); %
+    [par,fvalfit] =ga(@(x)OFuncProGA(x,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW)),length(parst(1,:)),[],[],[],[],lb,ub,[],IntC,options); 
+    
+    [par] = ExpandPar(par,XU,CF,maxtau,1);
+    
 par(XU==0)=-30; % for the recursive componetnt
 end

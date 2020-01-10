@@ -1,46 +1,69 @@
-load('Yemen_Gov_Incidence.mat'); % Incidence data
-PDS=0.8;
-WI=IData'; % Transpose the data set such that the number of areas is the row
-maxtau=4;
-%Find areas where we have non-zero incidence over course of epidemic
-GNZI=find(sum(WI,2)~=0); % Critical if we are estimating beta_0 otherwise does not make a difference
-NWF=153;
-NGS=floor(length(GNZI)*PDS);
-Itemp=sum(WI(GNZI,:),2);
-GTF=zeros(length(NGS),1); % We use the top and bottom gov wrt incidence in the fitting of the model and cross validate to the remaining ones in the middle
-% Find the top max
-for ii=1:ceil(NGS/2)
-f=find(Itemp==max(Itemp)); % Find the maximum
-Itemp(f)=0; % set maximum to zero for it is no longer selected
-GTF(ii)=f; % Record index
+%% Produces table of AIC and Cross validatino Error
+
+
+C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
+[WI,~,~,~,~,~,RC,~,~,~,~,~,~,~,GNZI,GV,maxtau,~,~] = LoadYemenData;
+[GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,0.8);
+nd=WI(GNZI(GTF),(maxtau+1):end);
+nd=length(nd(:));
+AIC=zeros(4,4);
+BIC=zeros(4,4);
+CV=zeros(4,4);
+indx=[2 3 5 6];
+for yy=1:4
+    for ss=yy:4
+        load(['Fit-Vaccination-PercentData=80-IncidenceperCapita-Targeted-Diesel' C(unique([indx(ss) indx(yy)])).N '-Calibrate-DAR.mat']);
+        [k]=RetParameterPS(par,XU,CF,4);
+            CV(yy,ss)=CVE;
+            CV(ss,yy)=CVE;
+            AIC(yy,ss)=AICScore(k+1,nd,RSSv); % add one as DAR is estimated after
+            AIC(ss,yy)=AICScore(k+1,nd,RSSv); % add one as DAR is estimated after
+            BIC(yy,ss)=BICScore(k+1,nd,RSSv); % add one as DAR is estimated after
+            BIC(ss,yy)=BICScore(k+1,nd,RSSv); % add one as DAR is estimated after
+    end
 end
-Itemp=sum(WI(GNZI,:),2); % Recalc number of cases
-% Find the minimum contributors
-for ii=(ceil(NGS/2)+1):NGS
-f=find(Itemp==min(Itemp)); % Select minimum
-Itemp(f)=max(Itemp); % Set to maximum for not selected again
-GTF(ii)=f; % Record index
+
+clearvars -except AIC CV BIC indx
+AIC=AIC-min(AIC(:));
+
+f1=fopen('ModelCompTable-Next_CVEModel.txt','w');
+
+C=struct('N',{'Targeted','Conflict','Shellings','Diesel','Wheat','Rain'});
+
+fprintf(f1,'\\begin{sidewaystable}\\caption{Model comparison analysis using the Akaike information criterion (AIC) score and cross validation error (CVE)} \n \\begin{tabular}{c|cccccc} \n \\backslashbox{CVE}{$\\Delta$ AIC}');
+for ii=1:4
+    fprintf(f1,['& ' C(indx(ii)).N]);
 end
-GTF=sort(GTF)';
-WI=WI(GNZI(GTF),(1+maxtau):NWF);
-N=length(WI(:));
+fprintf(f1,'\\\\ \n \\hline ');
 
-%% Compute AIC for the models starting from the Incidence model
-
-AIC=zeros(4,1);
-
-load('ForwardSelectionNoConflictNoRain-PercentDataSet=80-alpha=0.mat')
-AIC(1)=AICScore(kv(end),N,RSSv(end));
-
-
-load('ForwardSelectionNoRain-PercentDataSet=80-alpha=0.mat')
-AIC(2)=AICScore(kv(end),N,RSSv(end));
-
-
-load('ForwardSelectionNoConflict-PercentDataSet=80-alpha=0.mat')
-AIC(3)=AICScore(kv(end),N,RSSv(end));
-
-load('ForwardSelection-PercentDataSet=80-alpha=0.mat')
-AIC(4)=AICScore(kv(end),N,RSSv(end));
-
-dAIC=AIC-min(AIC)
+for yy=1:4
+    fprintf(f1,C(indx(yy)).N);
+    for ss=1:4
+        if(yy==ss)
+            if((AIC(yy,ss)==min(AIC(:)))||(CV(yy,ss)==min(CV(:)))) 
+                fprintf(f1,['&\\cellcolor{blue!20} \\backslashbox{%3.2f}{%4.1f}'],[CV(yy,ss) AIC(yy,ss)]);
+            else
+                fprintf(f1,['& \\backslashbox{%3.2f}{%4.1f}'],[CV(yy,ss) AIC(yy,ss)]);
+            end
+        elseif(yy<ss)
+            if((AIC(yy,ss)==min(AIC(:))))
+                fprintf(f1,['& \\multicolumn{1}{r}{\\cellcolor{blue!20}{%4.1f}} '],[AIC(yy,ss)]);                 
+            else
+                fprintf(f1,['& \\multicolumn{1}{r}{%4.1f} '],[AIC(yy,ss)]);    
+            end            
+        else
+            if((CV(yy,ss)==min(CV(:))))                
+                fprintf(f1,['&  \\multicolumn{1}{l}{\\cellcolor{blue!20}{%3.2f}} '],[CV(yy,ss)]);
+            else            
+                fprintf(f1,['&  \\multicolumn{1}{l}{%3.2f} '],[CV(yy,ss)]);
+            end
+        end
+    end
+    if(yy<4)
+        fprintf(f1,['\\\\ \n']);
+    else
+        fprintf(f1,['\n']);
+    end
+end
+fprintf(f1,'\\end{tabular} \n \\end{sidewaystable}');
+fclose(f1);

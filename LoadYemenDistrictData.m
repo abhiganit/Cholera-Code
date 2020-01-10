@@ -1,4 +1,4 @@
-function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenDistrictData
+function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData
 % Loads the Data needed to rum the regression model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,6 +26,8 @@ TruncV=ceil((1+endDateofSim-startDateofSim)./7);
 
 
 load('Yemen_District_Incidence.mat'); % Incidence data
+CI=cumsum(IData',2);
+CI=[zeros(size(CI(:,1))) CI(:,1:end-1)];
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 % Record the names for the IDP calculation
@@ -187,6 +189,9 @@ Wheatt=Wheattemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
 Dieselt=Dieseltemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
 %% Comput the attack rate per 10,000
 WI=10000.*WI./PopS;
+
+Ctv=log(1+Ctv./repmat(A,1,length(Ctv(1,:))).*PopS);
+Mt=log(1+Mt./repmat(A,1,length(Mt(1,:))).*PopS);
 
 % Vaccination doses 
 [V1,V2]= VaccinationTime(2,153);

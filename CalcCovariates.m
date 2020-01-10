@@ -1,4 +1,4 @@
-function [X] = CalcCovariates(WI,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,RF,r0,rm,beta)
+function [X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,RF,r0,WI,Pop,CI,DAR,w)
 %CALCCOVARIATES Claculates the covariates for the regression model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input
@@ -65,25 +65,43 @@ function [X] = CalcCovariates(WI,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Whe
 
 
 X=zeros(length(tau),length(WPIN(:,1)),length(WPIN(1,(1+maxtau-tau(1)):(end-tau(1)))));
-% WaSH
-X(1,:,:)=WPIN(:,(1+maxtau-tau(1)):(end-tau(1)));
-X(2,:,:)=WPIN(:,(1+maxtau-tau(2)):(end-tau(2))).*ImpactAttack(tA,DB(1),DA(1),tau(2),maxtau).*WI(:,(1+maxtau-tau(2)):(end-tau(2)));%./(WI(:,(1+maxtau-tau(2)):(end-tau(2)))+KI(1));
-X(3,:,:)=WPIN(:,(1+maxtau-tau(3)):(end-tau(3))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(3)):(end-tau(3))),K(1),n(1),CF(1))).*WI(:,(1+maxtau-tau(3)):(end-tau(3)));%./(WI(:,(1+maxtau-tau(3)):(end-tau(3)))+KI(1));
-X(4,:,:)=WPIN(:,(1+maxtau-tau(4)):(end-tau(4))).*ImpactConflict(Mt(:,(1+maxtau-tau(4)):(end-tau(4))),K(3),n(3),CF(1)).*WI(:,(1+maxtau-tau(4)):(end-tau(4)));%./(WI(:,(1+maxtau-tau(4)):(end-tau(4)))+KI(1));
-X(5,:,:)=WPIN(:,(1+maxtau-tau(5)):(end-tau(5))).*max(Dieselt(:,(1+maxtau-tau(5)):(end-tau(5)))-KP(1),0).*WI(:,(1+maxtau-tau(5)):(end-tau(5)));%./(WI(:,(1+maxtau-tau(5)):(end-tau(5)))+KI(1));
-%Food security
-X(6,:,:)=FPIN(:,(1+maxtau-tau(6)):(end-tau(6)));
-X(7,:,:)=FPIN(:,(1+maxtau-tau(7)):(end-tau(7))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(7)):(end-tau(7))),K(2),n(2),CF(2))).*WI(:,(1+maxtau-tau(7)):(end-tau(7)));%./(WI(:,(1+maxtau-tau(7)):(end-tau(7)))+KI(2));
-X(8,:,:)=FPIN(:,(1+maxtau-tau(8)):(end-tau(8))).*ImpactConflict(Mt(:,(1+maxtau-tau(8)):(end-tau(8))),K(4),n(4),CF(2)).*WI(:,(1+maxtau-tau(8)):(end-tau(8)));%./(WI(:,(1+maxtau-tau(8)):(end-tau(8)))+KI(2));
-X(9,:,:)=FPIN(:,(1+maxtau-tau(9)):(end-tau(9))).*max(Dieselt(:,(1+maxtau-tau(9)):(end-tau(9)))-KP(1),0).*WI(:,(1+maxtau-tau(9)):(end-tau(9)));%./(WI(:,(1+maxtau-tau(9)):(end-tau(9)))+KI(2));
-X(10,:,:)=FPIN(:,(1+maxtau-tau(10)):(end-tau(10))).*max(Wheatt(:,(1+maxtau-tau(10)):(end-tau(10)))-KP(2),0).*WI(:,(1+maxtau-tau(10)):(end-tau(10)));%./(WI(:,(1+maxtau-tau(10)):(end-tau(10)))+KI(2));
+
+if(CF(1)==2)
+    Ctv(:,1:n(1))=0;
+end
+if(CF(2)==2)
+    Mt(:,1:n(2))=0;
+end
+
+% Targeted Attacks
+for ii=1:maxtau
+    X(ii,:,:)=WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii))).*(ImpactAttack(tA,DB(1),DA(1),tau(ii),maxtau)).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
+% General conflict
+for ii=(maxtau+1):2*maxtau
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(ii)):(end-tau(ii))),K(1),CF(1))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
+%Shelling and air attacks
+for ii=(2.*maxtau+1):3*maxtau
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactConflict(Mt(:,(1+maxtau-tau(ii)):(end-tau(ii))),K(2),CF(2))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
+% Diesel prices
+for ii=(3.*maxtau+1):4*maxtau
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*max(Dieselt(:,(1+maxtau-tau(ii)):(end-tau(ii)))-KP(1),0).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
+
+% Wheat prices
+for ii=(4.*maxtau+1):5*maxtau
+    X(ii,:,:)=FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii))).*max(Wheatt(:,(1+maxtau-tau(ii)):(end-tau(ii)))-KP(2),0).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
 
 %Rainfall
-if(RF(1)>=0)
-    X(11,:,:)=WPIN(:,(1+maxtau-tau(11)):(end-tau(11))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(11)):(end-tau(11))),RF(1),r0).*WI(:,(1+maxtau-tau(11)):(end-tau(11)));%./(WI(:,(1+maxtau-tau(11)):(end-tau(11)))+KI(1));
-end
-if(RF(2)>=0)
-    X(12,:,:)=WPIN(:,(1+maxtau-tau(12)):(end-tau(12))).*ImpactRainfall(Rtv(:,(1+maxtau-tau(12)):(end-tau(12))),RF(2),rm).*WI(:,(1+maxtau-tau(12)):(end-tau(12)));
-end
+for ii=(5.*maxtau+1):6*maxtau
+    X(ii,:,:)=WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii))).*(ImpactRainfall(Rtv(:,(1+maxtau-tau(ii)):(end-tau(ii))),RF,r0)).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
 end
 
+%Incidence per capita
+for ii=(6.*maxtau+1):7*maxtau
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
+end

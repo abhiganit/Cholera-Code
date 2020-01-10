@@ -1,4 +1,4 @@
-function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau] = LoadYemenData
+function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData
 % Loads the Data needed to rum the regression model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,6 +23,8 @@ function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,max
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 load('Yemen_Gov_Incidence.mat'); % Incidence data
+CI=cumsum(IData',2);
+CI=[zeros(size(CI(:,1))) CI(:,1:end-1)];
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 % Record the names for the IDP calculation
@@ -75,11 +77,26 @@ PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repm
 %% Comput the attack rate per 10,000
 WI=10000.*WI./PopS;
 
+Ctv=log(1+Ctv./repmat(A,1,length(Ctv(1,:))).*PopS);
+Mt=log(1+Mt./repmat(A,1,length(Mt(1,:))).*PopS);
+
+W = shaperead([ pwd '\ShapeFile\WATERPRO_WORKING.shp']); % Shape file for Yemen
+N = shaperead([ pwd '\ShapeFile\WATERPRO_NOTWORKING.shp']); % Shape file for Yemen7
+S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+tot=zeros(22,1);
+for ii=1:22
+inN = inpolygon([N.X]',[N.Y]',S(ii).X, S(ii).Y);
+inW = inpolygon([W.X]',[W.Y]',S(ii).X, S(ii).Y);
+tot(ii)=sum(inN)+sum(inW);
+end
+
+%tA=log(1+tA./repmat(A,1,length(tA(1,:))).*PopS);
+
 %% Diesel and Wheat prices
 load('Diesel_Gov_Yemen.mat')
 load('Wheat_Gov_Yemen.mat')
-Diesel=Diesel';
-Wheat=Wheat';
+Diesel=Diesel'-min(Diesel(Diesel>0));
+Wheat=Wheat'-min(Wheat(Wheat>0));
 Wheatt=zeros(size(WI));
 Dieselt=zeros(size(WI));
 
