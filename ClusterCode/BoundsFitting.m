@@ -2,10 +2,10 @@ function [lbga,ubga,lbps,ubps,IntC,part] = BoundsFitting(XU,parf,CF,maxtau)
 
 
 flbps=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 log10(0.5) -32];
-fubps=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152) log10(13.5) log10(152) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(4*52))) 0];
+fubps=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152) log10(13.5) log10(152) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(3*52))) 0];
 
 flb=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 log10(0.5) -32];
-fub=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152.49) log10(13.5) log10(152.49) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(4*52))) 0];
+fub=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152.49) log10(13.5) log10(152.49) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(3*52))) 0];
 
 Indx=zeros(size(fub));
 Indx(1:length(XU))=XU;

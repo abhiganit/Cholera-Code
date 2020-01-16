@@ -9,6 +9,7 @@ INN=[1:64];
 nd=WI(GNZI,(maxtau+1):end);
 nd=length(nd(:));
 CVE=10^6.*ones(length(INN),1);
+BIC=10^6.*ones(length(INN),1);
 AIC=10^6.*ones(length(INN),1);
 MSE=10^6.*ones(length(INN),1);
 Targeted=zeros(length(INN),1);
@@ -23,12 +24,13 @@ k=zeros(length(INN),1);
 NW=length(WI(1,:));
 load('Combo.mat');
 for ii=1:length(INN)
-    if(isfile(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '.mat']))
-        load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '.mat']);
+    if(isfile(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '-CalibratedDAR.mat']))
+        load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '-CalibratedDAR.mat']);
         [lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,par,CF,maxtau);
         MSE(ii)=RSSv;
         [k(ii)]=RetParameterPS(par,XU,CF,4);
         AIC(ii)=AICScore(k(ii),nd,RSSv);
+        BIC(ii)=BICScore(k(ii),nd,RSSv);
         CVE(ii)=OFuncDistrict(pars,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW));
         if(ismember(1,INC{INN(ii)}))
             Targeted(ii)=1;
@@ -63,8 +65,12 @@ for ii=1:length(INN)
     end
 end
  AIC=AIC-min(AIC);
+ wAIC=exp(-AIC./2)./sum(exp(-AIC./2));
+ 
+ BIC=BIC-min(BIC);
+ wBIC=exp(-BIC./2)./sum(exp(-BIC./2));
 
- T=table(Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,CVE,k,AIC);
+ T=table(Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,CVE,k,AIC,wAIC,BIC,wBIC);
  
  writetable(T,'ModelFit.csv','Delimiter',',');
  
@@ -72,7 +78,7 @@ end
  
  clearvars -except BestM INC INN C
  
- load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(BestM)}).N '.mat']);
+ load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(BestM)}).N '-CalibratedDAR.mat']);
  
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
  % Governoerate 

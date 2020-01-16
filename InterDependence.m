@@ -1,8 +1,8 @@
 %% Runs the mediation analysis for diesel
 close all;
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
-load('Fit-Vaccination-IncidenceperCapita-Conflict.mat')
-[~,beta,tau,DB,DA,K2,n2,KP,KV,dV,r0,DAR,w]=RetParameterGA(par,XU,CF,maxtau);
+load('Fit-Vaccination-IncidenceperCapita-Conflict-CalibratedDAR.mat')
+[~,beta,tau,DB,DA,K2,n2,KP,KV,dV,r0,~,w]=RetParameterGA(par,XU,CF,maxtau);
 betaN=beta;
 %%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
 % Determine model predicted incidence
@@ -12,8 +12,8 @@ betaN=beta;
 XC=Xt((1+maxtau):2.*maxtau,:,:);
 
 
-load('Fit-Vaccination-IncidenceperCapita-Shellings.mat')
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,DAR,w]=RetParameterGA(par,XU,CF,maxtau);
+load('Fit-Vaccination-IncidenceperCapita-Shellings-CalibratedDAR.mat')
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,~,w]=RetParameterGA(par,XU,CF,maxtau);
 K2(2)=K(2);
 n2(2)=n(2);
 %%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
@@ -23,8 +23,8 @@ n2(2)=n(2);
 [Yt,Xt]=  LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
 XS=Xt((1+2.*maxtau):3.*maxtau,:,:);
 
-load('Fit-Vaccination-IncidenceperCapita-Diesel.mat')
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,DAR,w]=RetParameterGA(par,XU,CF,maxtau);
+load('Fit-Vaccination-IncidenceperCapita-Diesel-CalibratedDAR.mat')
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,~,w]=RetParameterGA(par,XU,CF,maxtau);
 
 %%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
 % Determine model predicted incidence
@@ -145,4 +145,42 @@ test=0;
 [bd,fval3]=fmincon(@(x)(mean((D-(10.^x(1)+10.^x(2).*C+10.^x(3).*S)).^2)),[2.1 1.2 0.2],[],[],[],[],[-32 -32 -32],[3 3 3],[],opts);
 bd=10.^bd;
 save('DieselrepresentedthroughConflictShellings.mat','bd','XC','XS');
+
+
+%% District
+
+startDateofSim = datenum('10-03-2016');% Start date
+endDateofSim = datenum('5-01-2017');% End date
+TruncV=ceil((1+endDateofSim-startDateofSim)./7)-1;
+
+[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData;
+load('Fit-Vaccination-IncidenceperCapita-Conflict-CalibratedDAR.mat')
+[~,beta,tau,DB,DA,K2,n2,KP,KV,dV,r0,~,w]=RetParameterGA(par,XU,CF,maxtau);
+betaN=beta;
+n2=n2-TruncV;
+n2(n2<1)=1;
+
+%%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
+% Determine model predicted incidence
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+[Yt,Xt]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K2,n2,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
+XC=Xt((1+maxtau):2.*maxtau,:,:);
+
+
+load('Fit-Vaccination-IncidenceperCapita-Shellings-CalibratedDAR.mat')
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,~,w]=RetParameterGA(par,XU,CF,maxtau);
+n=n-TruncV;
+n(n<1)=1;
+
+K2(2)=K(2);
+n2(2)=n(2);
+%%%%%%%%%%%%%%%%%%%%%%5%%%%%%%%%%%%%%%%%%%%%%
+% Determine model predicted incidence
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+[Yt,Xt]=  LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
+XS=Xt((1+2.*maxtau):3.*maxtau,:,:);
+
+save('DieselrepresentedthroughConflictShellings_District.mat','bd','XC','XS');
 

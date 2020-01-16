@@ -9,10 +9,11 @@ RF=2;
 
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 [GTF,GTCV] = SelectGov(WI,GNZI,GV,RC,1);
-
+INDXs=[1 3 5 6];
+INDX= [1 2 3 5 6];
 % AIC Selected Model pair
-load('Fit-Vaccination-IncidenceperCapita-Shellings.mat','par')
-INDX=[3];
+load(['Fit-Vaccination-IncidenceperCapita' C(unique([INDXs])).N '.mat'],'par')
+
 parf=par;
         XU=zeros(1,28);
         XU([25:28])=1; 

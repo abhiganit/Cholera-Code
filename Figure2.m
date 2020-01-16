@@ -1,12 +1,12 @@
 close all;
 clear;
 FC=hex2rgb('#28595E');
-load('Fit-Vaccination-IncidenceperCapita-Targeted-Conflict-Diesel-Rain.mat');
+load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat');
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
 % Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,DAR,w]=RetParameterPS(par,XU,CF,maxtau);
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,~,w]=RetParameterPS(par,XU,CF,maxtau);
 
 
 [Yt,~]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
@@ -238,45 +238,6 @@ VGI=[29 31 71];
 for yy=1:1
     for xx=1:2
         subplot('Position',[0.565+0.225.*(xx-1),0.28-0.175*(yy-1),0.205,0.20]);
-        NW=length(WI(1,:));
-        bar([(1+maxtau):NW],MI(cc(xx),:),'Facecolor',FC,'LineStyle','none','Facealpha',0.85); hold on
-        scatter([1:NW],IData(cc(xx),:),10,'k','filled'); 
-        box off;
-        dW=20;
-        XTL=datestr([endDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-        xlim([0.5 length(WI(1,:))+0.5]);
-%         if(yy~=5)
-%             if(xx==1)
-%                 set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel','','Fontsize',12,'Xminortick','on','YTick',[0:250:1750],'YMinortick','on');
-%                 
-%             ylabel({'Suscpeted cholera cases'},'Fontsize',12);
-%             else
-%                 set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel','','Fontsize',12,'Xminortick','on','YTick',[0:250:1750],'YMinortick','on','YTickLabel','');
-%             end
-%         else
-            xlabel('Week reported','Fontsize',12);
-            if(xx==1)
-                set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',12,'Xminortick','on','YTick',[0:500:2500],'YMinortick','on');
-                
-             ylabel({'Suscpeted cholera cases'},'Fontsize',12);
-            else
-                set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',12,'Xminortick','on','YTick',[0:500:2500],'YMinortick','on','YTickLabel','');
-            end
-%         end
-        % Sets the y-axis to not have 10^n
-        ax=gca; % finds the current axis
-        ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
-        xtickangle(90);
-        ylim([0 2500]);
-        text(1.5,2400,SD(VGI(cc(xx))).ADM2_EN,'Fontsize',14);
-        
-    end
-end
-cc=[1 3];
-VGI=[29 31 71];
-for yy=1:1
-    for xx=2:2
-        subplot('Position',[0.095+0.225.*(xx-1),0.28-0.175*(yy-1),0.205,0.20]);
         NW=length(WI(1,:));
         bar([(1+maxtau):NW],MI(cc(xx),:),'Facecolor',FC,'LineStyle','none','Facealpha',0.85); hold on
         scatter([1:NW],IData(cc(xx),:),10,'k','filled'); 

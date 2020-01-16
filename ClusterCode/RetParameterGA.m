@@ -139,8 +139,9 @@ end
 % Vaccination
 
 KV=10.^x(lenbeta+[9]);
-dV=[10.^x(lenbeta+10); exp(log(26/56)/(4*52)) ];
+dV=[10.^x(lenbeta+10); exp(log(26/56)/(3*52)) ];
 k=k+2;
 w=10.^x(lenbeta+[11]);
+k=k+1;
 DAR=10; % https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-018-6299-3 (50% asymp. 0.05-0.1 disease burden, then need to sautrate ontop by multiplying by 100 i.e. if all the population is infected the saturation function is less than 1%. Thus, if 50% cases are asymptomatic this implies 2 cases for every confirmed. Of the reported cases up to 0.05% are asscoaited wit hthe disease burded. thus, 0.1*100=10)
 end

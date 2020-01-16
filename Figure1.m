@@ -1,6 +1,13 @@
 close all;
 clear;
-[WI,~,tA,Rtv,~,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,GNZI,maxtau] = LoadYemenData; % Load the data used to construct the figure
+[WI,~,tA,Rtv,~,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
+% Need to increase the diesel price as we transformed it by subtracting the
+% minimum
+load('Diesel_Gov_Yemen.mat')
+Dieselt=Dieselt+min(Diesel(Diesel>0));
+load('Wheat_Gov_Yemen.mat')
+Wheatt=Wheatt+min(Wheat(Wheat>0));
+
 % Need to show the conflict without the transformation
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
@@ -392,7 +399,11 @@ text(min(xlim),max(ylim)*0.98,'ix)','Fontsize',24);
 %% Legend for the location
 subplot('Position',[0.47,0.12,0.4,0.4]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 for ii=1:length(S)
-        mapshow(S(ii),'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2); hold on
+        if(GV(ii)==0)
+            mapshow(S(ii),'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2); hold on
+        else
+            mapshow(S(ii),'FaceColor',[229,245,224]./255,'Edgecolor',[0 0 0],'LineWidth',2); hold on
+        end
         polyin = polyshape(S(ii).X,S(ii).Y);
         [x,y] = centroid(polyin);
         if(ii==19)

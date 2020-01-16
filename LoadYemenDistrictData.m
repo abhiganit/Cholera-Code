@@ -24,10 +24,15 @@ startDateofSim = datenum('10-03-2016');% Start date
 endDateofSim = datenum('5-01-2017');% End date
 TruncV=ceil((1+endDateofSim-startDateofSim)./7);
 
-
+load('Yemen_Gov_Incidence.mat'); % Incidence data
+CItemp=cumsum(IData',2);
+CItemp=[zeros(size(CItemp(:,1))) CItemp(:,1:end-1)];
+CItemp=CItemp(:,TruncV:end);
 load('Yemen_District_Incidence.mat'); % Incidence data
 CI=cumsum(IData',2);
 CI=[zeros(size(CI(:,1))) CI(:,1:end-1)];
+CI(end-1,:)=CItemp(9,:);
+CI(end,:)=CItemp(2,:);
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 % Record the names for the IDP calculation
@@ -137,10 +142,10 @@ PopS=PopS(:,TruncV:end); % Incidence data for the districts starts at may 1 2017
 load('Yemen_Gov_Incidence.mat'); % Incidence data
 load('Diesel_Gov_Yemen.mat')
 load('Wheat_Gov_Yemen.mat')
-Diesel=Diesel';
-Wheat=Wheat';
-Wheattemp=zeros(size(IData'));
-Dieseltemp=zeros(size(IData'));
+Diesel=Diesel'-min(Diesel(Diesel>0));
+Wheat=Wheat'-min(Wheat(Wheat>0));
+Wheatt=zeros(size(IData'));
+Dieselt=zeros(size(IData'));
 
 % The dates for the prices being used
 startData = [ ];
@@ -177,13 +182,14 @@ for yy=2016:2019
 end
 
 EndFirstEpiWeek= datenum('10-09-2016');% Start of second epiweek is oct 10, 2016
-for ii=1:length(WI(1,:))
+for ii=1:length(IData(:,1))
     f=find(EndFirstEpiWeek+7*(ii-1)<=endData,1);% Need the first one to satisfy this condition as we increase over time and will elminate the other past months
-    Wheattemp(:,ii)=Wheat(:,f);
-    Dieseltemp(:,ii)=Diesel(:,f);
+    Wheatt(:,ii)=Wheat(:,f);
+    Dieselt(:,ii)=Diesel(:,f);
 end
-Wheattemp=Wheattemp(:,TruncV:end);
-Dieseltemp=Dieseltemp(:,TruncV:end);
+
+Wheattemp=Wheatt(:,TruncV:end);
+Dieseltemp=Dieselt(:,TruncV:end);
 
 Wheatt=Wheattemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
 Dieselt=Dieseltemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
