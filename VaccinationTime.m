@@ -19,7 +19,7 @@ function [V1,V2]= VaccinationTime(Scale,NW)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 startDateofSim = datenum('10-03-2016');% Start date
 if(Scale==1)
-    S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+    S = shaperead(['C:\Users\chadr\Desktop\Cholera-Methods\Cholera-Code\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
     S={S.ADM1_EN};
     V1=zeros(22,NW);   
     V2=zeros(22,NW);   
@@ -31,7 +31,7 @@ if(Scale==1)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Aden'},S(ii)); 
     end
-    V1(ff==1,indx)=306462;    
+    V1(ff==1,indx)=70629+235833;    
     V2(ff==1,indx)=235833;
     
     
@@ -44,7 +44,7 @@ if(Scale==1)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Al Hudaydah'},S(ii)); 
     end
-    V1(ff==1,indx)=312652;
+    V1(ff==1,indx)=127626+185026;
     V2(ff==1,indx)=185026;
     
     % Ibb
@@ -52,7 +52,7 @@ if(Scale==1)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Ibb'},S(ii)); 
     end
-    V1(ff==1,indx)=105886;
+    V1(ff==1,indx)=12457+93429;
     V2(ff==1,indx)=93429;
     
     % Vaccination Taizz, Al Dhale and Aden
@@ -93,7 +93,7 @@ elseif(Scale==2)
     
     V1=zeros(24,NW);   
     V2=zeros(24,NW);   
-    SD = shaperead([ pwd '\ShapeFile\yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
+    SD = shaperead(['C:\Users\chadr\Desktop\Cholera-Methods\Cholera-Code\ShapeFile\yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
     
     
     fS=zeros(length(SD),1);
@@ -119,21 +119,21 @@ elseif(Scale==2)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Al Buraiqeh'},SD(ii)); 
     end
-    V1(ff==1,indx)=79447;    
+    V1(ff==1,indx)=30396+49051;    
     V2(ff==1,indx)=49051;
     
     ff=zeros(length(SD),1);
     for ii=1:length(ff)
         ff(ii)=strcmp({'Attawahi'},SD(ii)); 
     end
-    V1(ff==1,indx)=59589;    
+    V1(ff==1,indx)=15872+43717;    
     V2(ff==1,indx)=43717;
     
     ff=zeros(length(SD),1);
     for ii=1:length(ff)
         ff(ii)=strcmp({'Al Mualla'},SD(ii)); 
     end
-    V1(ff==1,indx)=50534;    
+    V1(ff==1,indx)=5978+44556;    
     V2(ff==1,indx)=44556;
     
     
@@ -141,7 +141,7 @@ elseif(Scale==2)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Khur Maksar'},SD(ii)); 
     end
-    V1(ff==1,indx)=52960;    
+    V1(ff==1,indx)=14644+38316;    
     V2(ff==1,indx)=38316;
     
     
@@ -149,7 +149,7 @@ elseif(Scale==2)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Craiter'},SD(ii)); 
     end
-    V1(ff==1,indx)=63932;    
+    V1(ff==1,indx)=3739+60193;    
     V2(ff==1,indx)=60193;
     
     % Vaccination in Al Hodeidah
@@ -161,7 +161,7 @@ elseif(Scale==2)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Al Hali'},SD(ii)); 
     end
-    V1(ff==1,indx)=144991;
+    V1(ff==1,indx)=95581+49410;
     V2(ff==1,indx)=49410;
     
     
@@ -169,7 +169,7 @@ elseif(Scale==2)
     for ii=1:length(ff)
         ff(ii)=strcmp({'Al Marawi''ah'},SD(ii)); 
     end
-    V1(ff==1,indx)=167661;
+    V1(ff==1,indx)=32045+135616;
     V2(ff==1,indx)=135616;
     
     %  Aden

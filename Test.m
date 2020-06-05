@@ -15,7 +15,7 @@ for ii=length(INN):-1:2
     for jj=1:length(f)
         load(['Fit-Vaccination-IncidenceperCapita' C(f(jj,:)).N '.mat'],'RSSv');
         if(MSE>RSSv)
-            fprintf([C(INC{ii}).N ' --> ' C(f(jj,:)).N  ' %7.6f \n'],[(MSE-RSSv)./RSSv]);
+            fprintf([C(INC{ii}).N ' --> ' C(f(jj,:)).N  ' %7.6f \n'],[(MSE-RSSv)]);
         end
     end
 end

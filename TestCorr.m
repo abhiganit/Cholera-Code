@@ -17,8 +17,8 @@ k=zeros(length(INN),1);
 NW=length(WI(1,:));
 load('Combo.mat');
 for ii=1:length(INN)
-    if(isfile(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '-CalibratedDAR.mat']))
-        load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '-CalibratedDAR.mat']);
+    if(isfile(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '.mat']))
+        load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '.mat']);
         [lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,par,CF,maxtau);
         MSS(ii)=RSSv;
         [k]=RetParameterPS(par,XU,CF,4);

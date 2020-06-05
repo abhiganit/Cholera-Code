@@ -1,5 +1,23 @@
 function [lbga,ubga,lbps,ubps,IntC,part] = BoundsFitting(XU,parf,CF,maxtau)
+% BoundsFitting(XU,parf,CF,maxtau) returns the bounds for the geneatic
+% algorithm and pattern search based on the input vector XU
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+% Input
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+% XU - vector of covairiates to include
+% parf - vector of all parameters in the model
+% CF - conflict function being used
+% maxtau - the maximum lag considered in the model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+% Output
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+%lbga - lowbound for genetic algiritm
+%ubga - upperbound for genetic algiritm
+%lbps - lowbound for pattern search
+%ubps - uppoer bound for pattern search
+%IntC - Integer contraints
+%part - truncated paramters based on XU
 
 flbps=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 log10(0.5) -32];
 fubps=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152) log10(13.5) log10(152) log10(783) log10(400) log10(95.5) 5 log10(exp(log(26/56)/(3*52))) 0];

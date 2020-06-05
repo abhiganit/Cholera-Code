@@ -1,6 +1,7 @@
 close all;
 clear;
-FC=hex2rgb('#28595E');
+FC=[hex2rgb('#F5BE41');
+    hex2rgb('#a6bddb');];
 load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat');
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
@@ -23,7 +24,7 @@ MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
 figure('units','normalized','outerposition',[0 0 1 1]);
 subplot('Position',[0.065,0.62,0.93,0.35]);
 NW=length(WI(1,:));
-bar([(1+maxtau):NW],sum(MI),'Facecolor',FC,'LineStyle','none','Facealpha',0.35); hold on
+bar([(1+maxtau):NW],sum(MI),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
 scatter([1:NW],sum(IData),40,'k','filled'); 
 box off;
 startDateofSim = datenum('10-03-2016');% Start date
@@ -52,7 +53,7 @@ subplot('Position',[0.065,0.62,0.46,0.35]);
 dW=10;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 NW=length(WI(1,:));
-bar([(1+maxtau):NW],MI(2,:),'Facecolor',FC,'LineStyle','none','Facealpha',0.6); hold on
+bar([(1+maxtau):NW],MI(2,:),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
 scatter([1:NW],IData(2,:),20,'k','filled'); 
 box off;
 xlim([0.5 length(WI(1,:))+0.5]);
@@ -71,7 +72,7 @@ text(hy.Extent(1),8000,'B','Fontsize',32,'FontWeight','bold');
 subplot('Position',[0.535,0.62,0.46,0.35]);
 
 NW=length(WI(1,:));
-bar([(1+maxtau):NW],MI(9,:),'Facecolor',FC,'LineStyle','none','Facealpha',0.6); hold on
+bar([(1+maxtau):NW],MI(9,:),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
 scatter([1:NW],IData(9,:),20,'k','filled'); 
 box off;
 xlim([0.5 length(WI(1,:))+0.5]);
@@ -81,7 +82,7 @@ ax=gca; % finds the current axis
 ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
 xtickangle(90);
 ylim([0 8000]);
-text(1.5,7700,'Sanaa City','Fontsize',18);
+text(1.5,7700,'Amanat Al Asimah','Fontsize',18);
 
             xlabel('Week reported','Fontsize',18);
 
@@ -136,7 +137,7 @@ for yy=1:1
     for xx=1:2
         subplot('Position',[0.095+0.225.*(xx-1),0.28-0.175*(yy-1),0.205,0.20]);
         NW=length(WI(1,:));
-        bar([(1+maxtau):NW],MI(3+length(fS)+cc(xx),:),'Facecolor',FC,'LineStyle','none','Facealpha',0.85); hold on
+        bar([(1+maxtau):NW],MI(3+length(fS)+cc(xx),:),'Facecolor',FC(2,:),'LineStyle','none','Facealpha',1); hold on
         scatter([1:NW],IData(3+length(fS)+cc(xx),:),10,'k','filled'); 
         box off;
         dW=20;
@@ -178,7 +179,7 @@ for yy=1:1
     for xx=1:2
         subplot('Position',[0.565+0.225.*(xx-1),0.28-0.175*(yy-1),0.205,0.20]);
         NW=length(WI(1,:));
-        bar([(1+maxtau):NW],MI(3+cc(xx),:),'Facecolor',FC,'LineStyle','none','Facealpha',0.85); hold on
+        bar([(1+maxtau):NW],MI(3+cc(xx),:),'Facecolor',FC(2,:),'LineStyle','none','Facealpha',1); hold on
         scatter([1:NW],IData(3+cc(xx),:),10,'k','filled'); 
         box off;
         dW=20;
@@ -218,7 +219,7 @@ dW=10;
 subplot('Position',[0.535,0.62,0.46,0.35]);
 
 NW=length(WI(1,:));
-bar([(1+maxtau):NW],MI(3+length(fS)+length(fA)+1,:),'Facecolor',FC,'LineStyle','none','Facealpha',0.6); hold on
+bar([(1+maxtau):NW],MI(3+length(fS)+length(fA)+1,:),'Facecolor',FC(2,:),'LineStyle','none','Facealpha',1); hold on
 scatter([1:NW],IData(3+length(fS)+length(fA)+1,:),20,'k','filled'); 
 box off;
 xlim([0.5 length(WI(1,:))+0.5]);
@@ -239,7 +240,7 @@ for yy=1:1
     for xx=1:2
         subplot('Position',[0.565+0.225.*(xx-1),0.28-0.175*(yy-1),0.205,0.20]);
         NW=length(WI(1,:));
-        bar([(1+maxtau):NW],MI(cc(xx),:),'Facecolor',FC,'LineStyle','none','Facealpha',0.85); hold on
+        bar([(1+maxtau):NW],MI(cc(xx),:),'Facecolor',FC(2,:),'LineStyle','none','Facealpha',1); hold on
         scatter([1:NW],IData(cc(xx),:),10,'k','filled'); 
         box off;
         dW=20;

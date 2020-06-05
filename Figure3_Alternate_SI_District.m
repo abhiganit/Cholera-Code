@@ -1,12 +1,12 @@
 %% Inlcudes the effwects of conflict and shellngs on the diesel prices
 % Read table of past fitsclose all;
 close all;
-load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain.mat')
+load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
 % Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,DAR,w]=RetParameterPS(par,XU,CF,maxtau);
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,~,w]=RetParameterPS(par,XU,CF,maxtau);
 
 startDateofSim = datenum('10-03-2016');% Start date
 endDateofSim = datenum('5-01-2017');% End date
@@ -103,7 +103,7 @@ IData=IData(:,GNZI)';
 NW=length(IData(1,:));
 dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-Gintv=[1 4 7 2 5 7 3 6 9 10 13 16 11 14 17 12 15 18 19 22 20 23 21 24];
+Gintv=[1 4 7 2 5 8 3 6 9 10 13 16 11 14 17 12 15 18 19 22 20 23 21 24];
 for nn=1:6
     figure('units','normalized','outerposition',[0 0 1 1]);
 
