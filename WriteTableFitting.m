@@ -110,6 +110,7 @@ fA=find(fA==1);
 SD=SD([29 31 71 fS' fA']);
 
 MSE=zeros(length(Sm)+length(SD)+1,1);
+Mean_Data=zeros(length(Sm)+length(SD)+1,1);
 R2=zeros(length(Sm)+length(SD)+1,1);
 
 
@@ -122,6 +123,7 @@ NW=153; % Allow the model to fit the entire outbreak and cross validate among th
 [Yt,~]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
 
 MSE(1:length(Sm))=mean((Yt-WI(GNZI,(maxtau+1):end)).^2,2);
+Mean_Data(1:length(Sm))=mean(WI(GNZI,(maxtau+1):end),2);
 for ii=1:length(Sm)
     R2(ii)=corr(Yt(ii,:)',WI(GNZI(ii),(maxtau+1):end)').^2;
 end
@@ -143,15 +145,17 @@ n(n<1)=1;
 [Yt,~]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
 
 MSE((1+length(Sm)):end)=mean((Yt(1:end-2,:)-WI(GNZI(1:end-2,:),(maxtau+1):end)).^2,2);
+Mean_Data((1+length(Sm)):end)=mean(WI(GNZI(1:end-2,:),2));
+
 for ii=(1+length(Sm)):length(MSE)
     R2(ii)=corr(Yt(ii-length(Sm),:)',WI(GNZI(ii-length(Sm)),(maxtau+1):end)').^2;
 end
 
-
+Norm_MSE=MSE./Mean_Data;
 Location={Sm{:},SD.ADM2_EN,'Hodeidah City'}';
 
 
- T=table(Location,MSE,R2);
+ T=table(Location,MSE,Mean_Data,Norm_MSE,R2);
  
  writetable(T,'AICModelStat.csv','Delimiter',',');
         

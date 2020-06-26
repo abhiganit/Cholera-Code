@@ -26,8 +26,55 @@ C=Ctv(GNZI,:);
 S=Mt(GNZI,:);
 Ws=WPINm(GNZI,:);
 Fs=FPINm(GNZI,:);
+WsA=zeros(length(GNZI),4);
+FsA=zeros(length(GNZI),4);
+
+WsCA=zeros(length(GNZI),4);
+FsCA=zeros(length(GNZI),4);
+
+
+WsSA=zeros(length(GNZI),4);
+FsSA=zeros(length(GNZI),4);
+
+
+WsTA=zeros(length(GNZI),4);
+FsTA=zeros(length(GNZI),4);
+
+
+WsDA=zeros(length(GNZI),4);
+FsDA=zeros(length(GNZI),4);
+
+
+WsWA=zeros(length(GNZI),4);
+FsWA=zeros(length(GNZI),4);
+
+
 TA=tA(GNZI,:);
 
+for ii=1:length(GNZI)
+    WsA(ii,:)=unique(Ws(ii,:),'stable');
+    for jj=1:4
+       WsCA(ii,jj)=mean(C(ii,WsA(ii,jj)==Ws(ii,:)));
+       WsSA(ii,jj)=mean(S(ii,WsA(ii,jj)==Ws(ii,:)));       
+       WsTA(ii,jj)=mean(TA(ii,WsA(ii,jj)==Ws(ii,:)));
+       
+       WsDA(ii,jj)=mean(D(ii,WsA(ii,jj)==Ws(ii,:)));
+       
+       WsWA(ii,jj)=mean(W(ii,WsA(ii,jj)==Ws(ii,:)));
+    end
+    FsA(ii,:)=unique(Fs(ii,:),'stable');
+    
+    for jj=1:4
+       FsCA(ii,jj)=mean(C(ii,FsA(ii,jj)==Fs(ii,:)));
+       FsSA(ii,jj)=mean(S(ii,FsA(ii,jj)==Fs(ii,:)));
+       FsTA(ii,jj)=mean(TA(ii,FsA(ii,jj)==Fs(ii,:)));
+       
+       FsDA(ii,jj)=mean(D(ii,FsA(ii,jj)==Fs(ii,:)));
+       
+       FsWA(ii,jj)=mean(W(ii,FsA(ii,jj)==Fs(ii,:)));
+    end
+end
+save('Test_Corr_WASH_Mal.mat','WsA','FsA','WsCA','FsCA','WsSA','FsSA','WsTA','FsTA','WsWA','FsWA','WsDA','FsDA');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
 % Gov. level
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555

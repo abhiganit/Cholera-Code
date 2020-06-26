@@ -60,6 +60,10 @@ PopH=sum(PopS(RC2==1,:),1);
 PopG=sum(PopS(RC2==0,:),1);
 TestH=10000.*sum(IData(RC2==1,:),1)./PopH;
 TestG=10000.*sum(IData(RC2==0,:),1)./PopG;
+
+Test=mean(TestH)./mean(TestG)
+
+
 Test=TestH./TestG;
 
 Test=Test(Test~=Inf);
