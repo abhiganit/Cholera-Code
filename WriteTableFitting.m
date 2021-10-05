@@ -1,6 +1,8 @@
 %% AIC MSE CVE for the various models
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
-NW=length(WI(1,:));
+[WIF,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZIF,GV,maxtau,PopS,CI] = LoadYemenData;
+NW=length(WIF(1,:));
+
+[WIVal,CtvVal,tAVal,RtvVal,MtVal,PVal,RCVal,HVal,WPINVal,FPINVal,DieseltVal,WheattVal,V1Val,V2Val,GNZIVal,GVVal,maxtauVal,PopSVal,CIVal] = LoadYemenDataVal;
 % The last two are governoerates that were used in the training of the
 % model, we do not include them in the calcualtion of the cross validation
 close all;
@@ -8,10 +10,14 @@ C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
 INN=[1:64];
 nd=WI(GNZI,(maxtau+1):end);
 nd=length(nd(:));
-CVE=10^6.*ones(length(INN),1);
+CVES=10^6.*ones(length(INN),1);
+CVET=10^6.*ones(length(INN),1);
 BIC=10^6.*ones(length(INN),1);
 AIC=10^6.*ones(length(INN),1);
 MSE=10^6.*ones(length(INN),1);
+MeanDataFit=10^6.*ones(length(INN),1);
+MeanDataCVS=10^6.*ones(length(INN),1);
+MeanDataCVT=10^6.*ones(length(INN),1);
 Targeted=zeros(length(INN),1);
 Conflict=zeros(length(INN),1);
 Shellings=zeros(length(INN),1);
@@ -28,10 +34,21 @@ for ii=1:length(INN)
         load(['Fit-Vaccination-IncidenceperCapita' C(INC{INN(ii)}).N '-CalibratedDAR.mat']);
         [lb,ub,lbps,ubps,IntC,pars] = BoundsFitting(XU,par,CF,maxtau);
         MSE(ii)=RSSv;
+        
+        tempD=WIF(GNZIF,(maxtau+1):end);
+        MeanDataFit(ii)=mean(tempD(:));
+        
+        tempD=WI(GNZI,(maxtau+1):end);        
+        MeanDataCVS(ii)=mean(tempD(:));
+        
+        tempD=WIVal(GNZIVal,(154):end);        
+        MeanDataCVT(ii)=mean(tempD(:));
+        
         [k(ii)]=RetParameterPS(par,XU,CF,4);
         AIC(ii)=AICScore(k(ii),nd,RSSv);
         BIC(ii)=BICScore(k(ii),nd,RSSv);
-        CVE(ii)=OFuncDistrict(pars,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW));
+        CVES(ii)=OFuncDistrict(pars,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW));
+        CVET(ii)=OFuncProGA_TempVal(pars,CF,WIVal(GNZIVal,1:end),tAVal(GNZIVal,1:end),CtvVal(GNZIVal,1:end),XU,maxtau,WPINVal(GNZIVal,1:end),FPINVal(GNZIVal,1:end),MtVal(GNZIVal,1:end),WheattVal(GNZIVal,1:end),DieseltVal(GNZIVal,1:end),V1Val(GNZIVal,1:end),V2Val(GNZIVal,1:end),RtvVal(GNZIVal,1:end),RF,PopSVal(GNZIVal,1:end),CIVal(GNZIVal,1:end));
         if(ismember(1,INC{INN(ii)}))
             Targeted(ii)=1;
         else
@@ -69,8 +86,12 @@ end
  
  BIC=BIC-min(BIC);
  wBIC=exp(-BIC./2)./sum(exp(-BIC./2));
+ 
+ NormMSE=MSE./MeanDataFit;
+ NormCVS=CVES./MeanDataCVS;
+ NormCVT=CVET./MeanDataCVT;
 
- T=table(Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,CVE,k,AIC,wAIC,BIC,wBIC);
+ T=table(Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,MeanDataFit,CVES,MeanDataCVS,CVET,MeanDataCVT,NormMSE,NormCVS,NormCVT,k,AIC,wAIC,BIC,wBIC);
  
  writetable(T,'ModelFit.csv','Delimiter',',');
  
@@ -145,7 +166,7 @@ n(n<1)=1;
 [Yt,~]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,CF,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),RF,r0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
 
 MSE((1+length(Sm)):end)=mean((Yt(1:end-2,:)-WI(GNZI(1:end-2,:),(maxtau+1):end)).^2,2);
-Mean_Data((1+length(Sm)):end)=mean(WI(GNZI(1:end-2,:),2));
+Mean_Data((1+length(Sm)):end)=mean(WI(GNZI(1:end-2),:),2);
 
 for ii=(1+length(Sm)):length(MSE)
     R2(ii)=corr(Yt(ii-length(Sm),:)',WI(GNZI(ii-length(Sm)),(maxtau+1):end)').^2;

@@ -45,7 +45,8 @@ Mt=GLevelConflict(YASt,S,153); % Send conflict data (time, latitude, longatude) 
 
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
-figure('units','normalized','outerposition',[0 0 1 1]);
+
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
 %% Incidence
 load('Yemen_Gov_Incidence.mat')
 IData=IData';
@@ -56,6 +57,7 @@ NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
 % External effect due to IDP
 PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
+PopS=PopS(GNZI,:);
 PopH=sum(PopS(RC2==1,:),1);
 PopG=sum(PopS(RC2==0,:),1);
 TestH=10000.*sum(IData(RC2==1,:),1)./PopH;
@@ -72,23 +74,23 @@ Test=Test(~isnan(Test));
 mean(Test)
 median(Test)
 
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 plot([1:153],TestH,'color',hex2rgb('#C60000'),'LineWidth',2); hold on;
 plot([1:153],TestG,'color',hex2rgb('#C60000'),'LineWidth',2,'LineStyle','-.');
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-yh=ylabel({'Incidence per 10,000'},'Fontsize',18);
-legend('Rebel control','Government control')
+yh=ylabel({'Incidence per 10,000'},'Fontsize',22);
+legend({'Rebel control','Government control'},'Fontsize',20)
 legend boxoff;
-text(-13.9,0.99*max(ylim),'A','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'A','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 XS=linspace(41.7741,54.6472,101);
 YS=linspace(11.7,19.0978,101);
 [XSRCt,YSRCt]=meshgrid(XS,YS);
@@ -112,7 +114,11 @@ MAR=mean(WI,2);
 MART=MAR;
 MAR=MAR./max(MAR);
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',hex2rgb('#C60000'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+    if(ii~=21)
+        mapshow(S(ii),'FaceColor',hex2rgb('#C60000'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 scatter(XSRC,YSRC,3,'k','filled');
 box off;
@@ -120,15 +126,15 @@ xlim([41.7741   54.6472]);
 dA=linspace(0,max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,num2str(dA(ii)),'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,num2str(dA(ii)),'Rotation',270,'Fontsize',20);
 
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#C60000'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,num2str(round(dA(ii),1)),'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,num2str(round(dA(ii),1)),'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Incidence per 10,000','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Incidence per 10,000','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -136,30 +142,30 @@ print(gcf,['Figure1_Incidence.png'],'-dpng','-r600');
 %% Rainfall
 TestH=mean(Rtv2(RC2==1,:),1);
 TestG=mean(Rtv2(RC2==0,:),1);
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 plot([1:153],TestH,'color',[5,112,176]./255,'LineWidth',2); hold on;
 plot([1:153],TestG,'color',[5,112,176]./255,'LineWidth',2,'LineStyle','-.');
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
 box off;
-xlabel('Week of report','Fontsize',18);
-ylabel('Rainfall (mm)','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
+ylabel('Rainfall (mm)','Fontsize',22);
 
-text(-13.9,0.99*max(ylim),'B','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'B','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 MAR=mean(Rtv,2);
 MART=MAR(MAR>0);
 MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    if(MAR(ii)>=0)
+    if(ii~=21)
         mapshow(S(ii),'FaceColor',[5,112,176]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
@@ -170,16 +176,16 @@ xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[5,112,176]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Rainfall (mm)','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Rainfall (mm)','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -196,30 +202,34 @@ TestH=mean(Ctv2(RC2==1,:),1);
 TestG=mean(Ctv2(RC2==0,:),1);
 
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 plot([1:153],TestH,'color',hex2rgb('#DE7A22'),'LineWidth',2); hold on; 
 plot([1:153],TestG,'color',hex2rgb('#DE7A22'),'LineWidth',2,'LineStyle','-.'); hold on; 
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-ylabel('Number of conflict evetns','Fontsize',18);
+ylabel('Number of conflict events','Fontsize',22);
 
-text(-13.9,0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 MAR=sum(Ctv,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',hex2rgb('#DE7A22'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+    if(ii~=21)
+        mapshow(S(ii),'FaceColor',hex2rgb('#DE7A22'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 scatter(XSRC,YSRC,3,'k','filled');
 box off;
@@ -227,22 +237,22 @@ xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',20);
 
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#DE7A22'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,num2str(round(dA(ii))),'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Total number of conflict events','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Total number of conflict events','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
 print(gcf,['Figure1_Conflict.png'],'-dpng','-r600');
 %% Shelling
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 TestH=mean(Mt2(RC2==1,:),1);
 TestG=mean(Mt2(RC2==0,:),1);
@@ -251,41 +261,45 @@ plot([1:153],TestH,'color',hex2rgb('#4C3F54'),'LineWidth',2); hold on;
 plot([1:153],TestG,'color',hex2rgb('#4C3F54'),'LineWidth',2,'LineStyle','-.'); hold on; 
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-ylabel('Number of shelling attacks','Fontsize',18);
+ylabel('Number of shelling attacks','Fontsize',22);
 
-text(-13.9,0.99*max(ylim),'D','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'D','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 
 MAR=sum(Mt,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)
+        mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#4C3F54'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Total number of shelling and air attaks','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Total number of shelling and air attacks','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -298,30 +312,30 @@ TestH=mean(Dieselt2(RC2==1,:),1);
 TestG=mean(Dieselt2(RC2==0,:),1);
 
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 plot([1:153],TestH,'color',[153,52,4]./255,'LineWidth',2); hold on; 
 plot([1:153],TestG,'color',[153,52,4]./255,'LineWidth',2,'LineStyle','-.'); hold on; 
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-ylabel('Diesel price','Fontsize',18);
+ylabel('Diesel price','Fontsize',22);
 
-text(-13.9,0.99*max(ylim),'E','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'E','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 MAR=mean(Dieselt,2);
 MART=MAR(MAR>0);
 MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    if(MAR(ii)>=0)
+    if(ii~=21)
         mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
@@ -332,23 +346,23 @@ xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[153,52,4]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Price of diesel','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Price of diesel','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
 print(gcf,['Figure1_Diesel.png'],'-dpng','-r600');
 %% Wheat
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 TestH=mean(Wheatt2(RC2==1,:),1);
 TestG=mean(Wheatt2(RC2==0,:),1);
@@ -357,23 +371,23 @@ plot([1:153],TestH,'color',hex2rgb('#FAAF08'),'LineWidth',2); hold on;
 plot([1:153],TestG,'color',hex2rgb('#FAAF08'),'LineWidth',2,'LineStyle','-.'); hold on; 
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-ylabel('Wheat price','Fontsize',18);
+ylabel('Wheat price','Fontsize',22);
 
-text(-13.9,0.99*max(ylim),'F','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'F','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 MAR=mean(Wheatt,2);
 MART=MAR(MAR>0);
 MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    if(MAR(ii)>=0)
+    if(ii~=21)
         mapshow(S(ii),'FaceColor',hex2rgb('#FAAF08'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
@@ -384,16 +398,16 @@ xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#FAAF08'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(dA(ii)))],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Price of wheat','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Price of wheat','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -406,22 +420,22 @@ load('PopulationSize_Yemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 TestH=mean(tA2(RC2==1,:),1);
 TestG=mean(tA2(RC2==0,:),1);
 b=bar([1:153],[TestH; TestG]','stacked');
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-ylabel('Number of attacks','Fontsize',18);
+ylabel('Number of attacks','Fontsize',22);
 
 ColorM=[[221,28,119]./255; [1 1 1]];
 for ii=1:2
@@ -435,31 +449,35 @@ b(2).LineStyle='-.';
 legend('Rebel control','Government control');
 legend boxoff;
 
-text(-13.9,0.99*max(ylim),'G','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'G','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 MAR=sum(tA,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)
+        mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 box off;
 xlim([41.7741   54.6472]);
 dA=min(MART):max(MART);
 dX=linspace(min(xlim),max(xlim),length(dA));
 ii=1;
-h=text(dX(ii), 11.68,[num2str((dA(ii))) ],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str((dA(ii))) ],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:length(dA)
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[221,28,119]./255,'Facealpha',(ii-1)./length(dA),'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str((dA(ii)))],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str((dA(ii)))],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Total number of attacks on water systems','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Total number of attacks on water systems','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -471,8 +489,8 @@ NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
 % External effect due to IDP
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 load('WASH_PIN_Yemen.mat')
 WPIN=WPIN(GNZI,:);
 AP=AP(GNZI,:);
@@ -481,11 +499,11 @@ TestG=sum(WPIN(RC2==0,:),1)./sum(AP(RC2==0,:));
 b=bar([2016 2017 2018 2019],[TestH;TestG]');
 
 xlim([2015.5 2019.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[2016:2019],'Fontsize',16,'YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[2016:2019],'Fontsize',22,'YMinortick','on');
 xtickangle(45);
-xlabel('Year','Fontsize',18);
+xlabel('Year','Fontsize',22);
 box off;
-ylabel('Proportion in need of WaSH','Fontsize',18);
+ylabel({'Proportion in need','of WaSH'},'Fontsize',22);
 
 ColorM=[[0 0.6 0.6]; [1 1 1]];
 for ii=1:2
@@ -497,31 +515,35 @@ end
 b(1).LineStyle='none'; 
 b(2).LineStyle='-.';
 
-text(2015.14,0.99*max(ylim),'H','Fontsize',32,'FontWeight','bold');
+text(2014.92,0.99*max(ylim),'H','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 MAR=mean(WPINm,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',[0 0.6 0.6],'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)
+        mapshow(S(ii),'FaceColor',[0 0.6 0.6],'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[0 0.6 0.6],'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Percentage of population in need of WaSH','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Percentage of population in need of WaSH','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -530,8 +552,8 @@ load('PopulationSize_Yemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
 %% Food security
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 load('Food_PIN_Yemen.mat')
 FPIN=FPIN(GNZI,:);
 AP=AP(GNZI,:);
@@ -540,11 +562,11 @@ TestG=sum(FPIN(RC2==0,:),1)./sum(AP(RC2==0,:));
 b=bar([2016 2017 2018 2019],[TestH;TestG]');
 
 xlim([2015.5 2019.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[2016:2019],'Fontsize',16,'YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[2016:2019],'Fontsize',22,'YMinortick','on');
 xtickangle(45);
-xlabel('Year','Fontsize',18);
+xlabel('Year','Fontsize',22);
 box off;
-ylabel('Proportion in need of food security','Fontsize',18);
+ylabel({'Proportion in need','of food security'},'Fontsize',22);
 
 ColorM=[hex2rgb('#2E4600'); [1 1 1]];
 for ii=1:2
@@ -556,31 +578,35 @@ end
 b(1).LineStyle='none'; 
 b(2).LineStyle='-.';
 
-text(2015.15,0.99*max(ylim),'I','Fontsize',32,'FontWeight','bold');
+text(2014.92,0.99*max(ylim),'I','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 MAR=mean(FPINm,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    mapshow(S(ii),'FaceColor',hex2rgb('#2E4600'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)
+        mapshow(S(ii),'FaceColor',hex2rgb('#2E4600'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
 end
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(MART),max(MART),100);
 dX=linspace(min(xlim),max(xlim),100);
 ii=1;
-h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',20);
 
 scatter(XSRC,YSRC,3,'k','filled');
 for ii=2:100
     fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],hex2rgb('#2E4600'),'Facealpha',(ii-1)./99,'Edgealpha',0);    
     if(rem(ii,5)==0)
-        h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',14);
+        h=text(dX(ii), 11.68,[num2str(round(100.*dA(ii))) '%'],'Rotation',270,'Fontsize',20);
     end
 end
-text(mean(xlim),10.78,'Percentage of population in need of food security','Fontsize',16,'HorizontalAlignment','center');
+text(mean(xlim),10.387196460176991,'Percentage of population in need of food security','Fontsize',22,'HorizontalAlignment','center');
 ylim([11.7   19.0978]);
 
 axis off;
@@ -591,25 +617,25 @@ V1=V1(GNZI,:); % Received at least one dose
 TempH=cumsum(sum(V1(RC2==1,:),1))./PopH;
 TempG=cumsum(sum(V1(RC2==0,:),1))./PopG;
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-subplot('Position',[0.047268907563025,0.603900000000001,0.511631092436975,0.3861]); 
+figure('units','normalized','outerposition',[0 0.1 1 0.6]);
+subplot('Position',[0.070903361344538,0.281879194630872,0.49062268907563,0.69221476510067]); 
 
 plot([1:153],100.*TempH,'color',hex2rgb('#80BD9E'),'LineWidth',2); hold on; 
 plot([1:153],100.*TempG,'color',hex2rgb('#80BD9E'),'LineWidth',2,'LineStyle','-.'); hold on; 
 
 startDateofSim = datenum('10-03-2016');% Start date
-dW=5;
+dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',20,'Xminortick','on','YMinortick','on');
 xtickangle(45);
-xlabel('Week of report','Fontsize',18);
+xlabel('Week of report','Fontsize',22);
 box off;
-ylabel('Vaccination uptake','Fontsize',18);
+ylabel('Vaccination uptake','Fontsize',22);
 
-text(-13.9,0.99*max(ylim),'J','Fontsize',32,'FontWeight','bold');
+text(-21.107,0.99*max(ylim),'J','Fontsize',32,'FontWeight','bold');
 
-subplot('Position',[0.565,0.55,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
+subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 for ii=1:length(S)
         if(GV(ii)==0)
@@ -623,10 +649,10 @@ for ii=1:length(S)
            text(44.453655324154,15.2224960733724, num2str(ii),'HorizontalAlignment','center','Fontsize',12);
         elseif(ii==9)
             text(45.48567644535073,17.95860286252535, num2str(ii),'HorizontalAlignment','center','Fontsize',12);
-            annotation(gcf,'arrow',[0.701680672268907 0.668067226890756],[0.918959473150965 0.789260385005066]);
+            annotation(gcf,'arrow',[0.695903361344538 0.661764705882353],[0.836036036036036 0.609080204824885]);
         elseif(ii==2)
              text(44.11595235285771,12.064063924702339, num2str(ii),'HorizontalAlignment','center','Fontsize',12);
-             annotation(gcf,'arrow',[0.664390756302521 0.682247899159664],[0.578520770010134 0.619047619047619]);
+             annotation(gcf,'arrow',[0.658088235294118 0.676470588235293],[0.227027027027027 0.294723294723295]);
         else            
             text(x,y, num2str(ii),'HorizontalAlignment','center','Fontsize',12);
         end
