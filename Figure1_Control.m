@@ -1,6 +1,7 @@
 close all;
 clear;
 [WI2,~,tA2,Rtv2,~,P2,RC2,H2,WPINm2,FPINm2,Dieselt2,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
+RC=RC2;
 WI2=WI2(GNZI,:);
 tA2=tA2(GNZI,:);
 Rtv2=Rtv2(GNZI,:);
@@ -28,20 +29,6 @@ Mt2=GLevelConflict(YASt,S,153); % Send conflict data (time, latitude, longatude)
 Ctv2=Ctv2(GNZI,:);
 Mt2=Mt2(GNZI,:);
 
-[WI,~,tA,Rtv,~,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
-% Need to increase the diesel price as we transformed it by subtracting the
-% minimum
-load('Diesel_Gov_Yemen.mat')
-Dieselt=Dieselt+min(Diesel(Diesel>0));
-load('Wheat_Gov_Yemen.mat')
-Wheatt=Wheatt+min(Wheat(Wheat>0));
-
-% Need to show the conflict without the transformation
-S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
-load('Conflict_Yemen_Time_Location_Project_Forward.mat'); % Load the conflict in the area for the projection
-Ctv=GLevelConflict(ProC,S,153);
-load('Yemen_Air_Shelling.mat');
-Mt=GLevelConflict(YASt,S,153); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
 
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
@@ -110,12 +97,16 @@ for ii=1:length(S)
 end
 XSRC=XSRC(in>0);        
 YSRC=YSRC(in>0);
-MAR=mean(WI,2);
+MAR=mean(WI2,2);
 MART=MAR;
 MAR=MAR./max(MAR);
 for ii=1:length(S)
     if(ii~=21)
-        mapshow(S(ii),'FaceColor',hex2rgb('#C60000'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',hex2rgb('#C60000'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+        else
+            mapshow(S(ii),'FaceColor',hex2rgb('#C60000'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on    
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -161,12 +152,16 @@ ylabel('Rainfall (mm)','Fontsize',22);
 text(-21.107,0.99*max(ylim),'B','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-MAR=mean(Rtv,2);
-MART=MAR(MAR>0);
+MAR=mean(Rtv2,2);
+MART=MAR;
 MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
     if(ii~=21)
-        mapshow(S(ii),'FaceColor',[5,112,176]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',[5,112,176]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',[5,112,176]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -221,12 +216,16 @@ ylabel('Number of conflict events','Fontsize',22);
 text(-21.107,0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-MAR=sum(Ctv,2);
+MAR=sum(Ctv2,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',hex2rgb('#DE7A22'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on    
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',hex2rgb('#DE7A22'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',hex2rgb('#DE7A22'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -275,12 +274,17 @@ text(-21.107,0.99*max(ylim),'D','Fontsize',32,'FontWeight','bold');
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 
-MAR=sum(Mt,2);
+MAR=sum(Mt2,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',hex2rgb('#4C3F54'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -331,12 +335,16 @@ ylabel('Diesel price','Fontsize',22);
 text(-21.107,0.99*max(ylim),'E','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-MAR=mean(Dieselt,2);
-MART=MAR(MAR>0);
+MAR=mean(Dieselt2,2);
+MART=MAR;
 MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',[153,52,4]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -383,12 +391,16 @@ ylabel('Wheat price','Fontsize',22);
 text(-21.107,0.99*max(ylim),'F','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
-MAR=mean(Wheatt,2);
+MAR=mean(Wheatt2,2);
 MART=MAR(MAR>0);
 MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',hex2rgb('#FAAF08'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',hex2rgb('#FAAF08'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',hex2rgb('#FAAF08'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -453,12 +465,16 @@ text(-21.107,0.99*max(ylim),'G','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
-MAR=sum(tA,2);
+MAR=sum(tA2,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -519,12 +535,16 @@ text(2014.92,0.99*max(ylim),'H','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
-MAR=mean(WPINm,2);
+MAR=mean(WPINm2,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',[0 0.6 0.6],'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',[0 0.6 0.6],'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',[0 0.6 0.6],'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
@@ -582,12 +602,16 @@ text(2014.92,0.99*max(ylim),'I','Fontsize',32,'FontWeight','bold');
 
 subplot('Position',[0.574054621848739,0.178378378378378,0.424663865546217,0.814414414414414]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
-MAR=mean(FPINm,2);
+MAR=mean(FPINm2,2);
 MART=MAR;
 MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
-    if(ii~=21)
-        mapshow(S(ii),'FaceColor',hex2rgb('#2E4600'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+    if(ii~=21)        
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',hex2rgb('#2E4600'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',hex2rgb('#2E4600'),'Edgecolor',[0 0 0],'LineWidth',2,'FaceAlpha',MAR(ii-1)); hold on
+        end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end

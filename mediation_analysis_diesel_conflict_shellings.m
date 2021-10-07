@@ -1,4 +1,4 @@
-%% Runs the mediation analysis for diesel
+%% Runs the mediation analysis for conflict & shellings via diesel
 close all;
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 % Dieslel

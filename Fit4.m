@@ -5,11 +5,11 @@ X=struct('N',{'WaSH and Targeted Attacks ','WaSH, Food security, and Conflict ',
 C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
 
     CF=[2 ;2];
-    RF=1;    
+    RF=2;    
     
     [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
     load('Combo.mat');
-    for nn=17:32
+    for nn=49:64
             indx=INC{nn};
             XU=zeros(1,28);
             XU([25:28])=1;

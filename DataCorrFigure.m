@@ -1,3 +1,5 @@
+% Computes the correlation used in the construction of the hierarchical
+% flow diagram
 close all;
 clc;
 

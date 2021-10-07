@@ -28,268 +28,268 @@ XTL={datestr(datenum('March 30, 2020')+7.*[-18:6:55],'mmm dd, yyyy')};
 [yp,xp]=meshgrid(yp,xp);
 xp=xp(:);
 yp=yp(:);
-% for ii=1:22
-%     dx1=linspace(0,max(CC19(ii,37:end)),41);
-%     dx2=dx1+(dx1(2)-dx1(1))./2;
-%     dx2=dx2(1:end-1);
-%     if(ii==1)||(ii==13)
-%         if(ii==13)
-%             print(gcf,['COVID-19_Incidence_1.png'],'-dpng','-r600');
-%         end
-%         figure('units','normalized','outerposition',[0 0 1 1]);
-%     end
-%     if(ii>=13)
-%         iin=ii-12;
-%     else
-%         iin=ii;
-%     end
-%     if(ii<21)
-%         subplot('Position',[xp(iin) yp(iin) w h])
-%         b=bar([-18:55],CC19(ii,37:end),'LineStyle','none','FaceColor',hex2rgb('#C60000')); hold on;      
-%         
-%         b.FaceColor = 'flat';
-%         for mm=1:19
-%             b.CData(mm,:) = [0.7 0.7 0.7];
-%         end
-%         if(RC(ii)==1)
-%             for mm=-18:55
-%                  for jj=1:3
-%                     if((jj==1)||(jj==3))
-%                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<CC19(ii,37+18+mm)))),dx1(dx1<CC19(ii,37+18+mm)),2,'k','filled');
-%                     else
-%                         scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<CC19(ii,37+18+mm)))),dx2(dx2<CC19(ii,37+18+mm)),2,'k','filled');
-%                     end
-%                  end
-%             end
-%         end
-%         text(55,max(1+CC19(ii,37:end))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
-%         if(ii<19)
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[-18:6:55],'XTickLabel',{},'Xminortick','on');
-%         else
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[-18:6:55],'XTickLabel',XTL,'Xminortick','on');
-%             xtickangle(90);
-%             xlabel('Week of report','Fontsize',20);
-%         end
-%         xlim([-18.5 55.5]);
-%         ylim([0 max(1+CC19(ii,37:end))]);
-%         box off;
-%     elseif(ii==22)        
-%         subplot('Position',[xp(9) yp(9) w h])
-%         b=bar([-18:55],CC19(ii,37:end),'LineStyle','none','FaceColor',hex2rgb('#C60000')); hold on;   
-%         
-%         b.FaceColor = 'flat';
-%         for mm=1:19
-%             b.CData(mm,:) = [0.7 0.7 0.7];
-%         end
-%         if(RC(ii)==1)
-%             for mm=-18:55
-%                  for jj=1:3
-%                     if((jj==1)||(jj==3))
-%                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<CC19(ii,37+18+mm)))),dx1(dx1<CC19(ii,37+18+mm)),2,'k','filled');
-%                     else
-%                         scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<CC19(ii,37+18+mm)))),dx2(dx2<CC19(ii,37+18+mm)),2,'k','filled');
-%                     end
-%                  end
-%             end
-%         end
-%         text(55,max(1+CC19(ii,37:end))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
-%         set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[-18:6:55],'XTickLabel',XTL,'Xminortick','on');
-%         xtickangle(90);
-%         xlabel('Week of report','Fontsize',20);
-%         xlim([-18.5 55.5]);
-%         ylim([0 max(1+CC19(ii,37:end))]);
-%         box off;
-%     end
-%     if(ii==10)       
-%         ylabel('Incidence per 10,000','Fontsize',20); 
-%     end
-% end
-% print(gcf,['COVID-19_Incidence_2.png'],'-dpng','-r600');
-% 
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-% % Weekly conflict
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-% 
-% S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
-% load('Conflict_COVID-19_Timeline.mat'); % Load the conflict in the area for the projection
-% Ctv=GLevelConflict(ProC,S,258);
-% 
-% 
-% XTL={datestr(datenum('April 6, 2020')+7.*[165:6:238]-7.*184,'mmm dd, yyyy')};
-% 
-% for ii=1:22
-%     dx1=linspace(0,max(Ctv(ii,165:238)),41);
-%     dx2=dx1+(dx1(2)-dx1(1))./2;
-%     dx2=dx2(1:end-1);
-%     if(ii==1)||(ii==13)
-%         if(ii==13)
-%             print(gcf,['COVID-19_conflict_1.png'],'-dpng','-r600');
-%         end
-%         figure('units','normalized','outerposition',[0 0 1 1]);
-%     end
-%     if(ii>=13)
-%         iin=ii-12;
-%     else
-%         iin=ii;
-%     end
-%     if(ii<21)
-%         subplot('Position',[xp(iin) yp(iin) w h])
-%         b=bar([165:238],Ctv(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#DE7A22')); hold on;      
-%         
-%         b.FaceColor = 'flat';
-%         for mm=1:19
-%             b.CData(mm,:) = [0.7 0.7 0.7];
-%         end
-%         if(RC(ii)==1)
-%             for mm=165:238
-%                  for jj=1:3
-%                     if((jj==1)||(jj==3))
-%                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Ctv(ii,mm)))),dx1(dx1<Ctv(ii,mm)),2,'k','filled');
-%                     else
-%                         scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Ctv(ii,mm)))),dx2(dx2<Ctv(ii,mm)),2,'k','filled');
-%                     end
-%                  end
-%             end
-%         end
-%         text(234,max(1+Ctv(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
-%         if(ii<19)
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',{},'Xminortick','on');
-%         else
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
-%             xtickangle(90);
-%             xlabel('Week of report','Fontsize',20);
-%         end
-%         xlim([164.5 238.5]);
-%         ylim([0 max(1+Ctv(ii,165:238))]);
-%         box off;
-%     elseif(ii==22)        
-%         subplot('Position',[xp(9) yp(9) w h])
-%         b=bar([165:238],Ctv(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#DE7A22')); hold on;      
-%         
-%         b.FaceColor = 'flat';
-%         for mm=1:19
-%             b.CData(mm,:) = [0.7 0.7 0.7];
-%         end
-%         if(RC(ii)==1)
-%             for mm=165:238
-%                  for jj=1:3
-%                     if((jj==1)||(jj==3))
-%                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Ctv(ii,mm)))),dx1(dx1<Ctv(ii,mm)),2,'k','filled');
-%                     else
-%                         scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Ctv(ii,mm)))),dx2(dx2<Ctv(ii,mm)),2,'k','filled');
-%                     end
-%                  end
-%             end
-%         end
-%         text(234,max(1+Ctv(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
-%         
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
-%             xtickangle(90);
-%             xlabel('Week of report','Fontsize',20);
-%         
-%         xlim([164.5 238.5]);
-%         ylim([0 max(1+Ctv(ii,165:238))]);
-%         box off;
-%     end
-%     if(ii==10)       
-%         ylabel('Number of conflict events','Fontsize',20); 
-%     end
-% end
-% print(gcf,['COVID-19_Conflict_2.png'],'-dpng','-r600');
-% 
-% 
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-% % Shelling
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-% 
-% load('Yemen_Air_Shelling_COVID-19.mat');
-% Mt=GLevelConflict(YASt,S,258);
-% 
-% 
-% XTL={datestr(datenum('April 6, 2020')+7.*[165:6:238]-7.*184,'mmm dd, yyyy')};
-% 
-% for ii=1:22
-%     dx1=linspace(0,max(Mt(ii,165:238)),41);
-%     dx2=dx1+(dx1(2)-dx1(1))./2;
-%     dx2=dx2(1:end-1);
-%     if(ii==1)||(ii==13)
-%         if(ii==13)
-%             print(gcf,['COVID-19_shelling_1.png'],'-dpng','-r600');
-%         end
-%         figure('units','normalized','outerposition',[0 0 1 1]);
-%     end
-%     if(ii>=13)
-%         iin=ii-12;
-%     else
-%         iin=ii;
-%     end
-%     if(ii<21)
-%         subplot('Position',[xp(iin) yp(iin) w h])
-%         b=bar([165:238],Mt(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#4C3F54')); hold on;      
-%         
-%         b.FaceColor = 'flat';
-%         for mm=1:19
-%             b.CData(mm,:) = [0.7 0.7 0.7];
-%         end
-%         if(RC(ii)==1)
-%             for mm=165:238
-%                  for jj=1:3
-%                     if((jj==1)||(jj==3))
-%                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Mt(ii,mm)))),dx1(dx1<Mt(ii,mm)),2,'k','filled');
-%                     else
-%                         scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Mt(ii,mm)))),dx2(dx2<Mt(ii,mm)),2,'k','filled');
-%                     end
-%                  end
-%             end
-%         end
-%         text(234,max(1+Mt(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
-%         if(ii<19)
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',{},'Xminortick','on');
-%         else
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
-%             xtickangle(90);
-%             xlabel('Week of report','Fontsize',20);
-%         end
-%         xlim([164.5 238.5]);
-%         ylim([0 max(1+Mt(ii,165:238))]);
-%         box off;
-%     elseif(ii==22)        
-%         subplot('Position',[xp(9) yp(9) w h])
-%         b=bar([165:238],Mt(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#4C3F54')); hold on;      
-%         
-%         b.FaceColor = 'flat';
-%         for mm=1:19
-%             b.CData(mm,:) = [0.7 0.7 0.7];
-%         end
-%         if(RC(ii)==1)
-%             for mm=165:238
-%                  for jj=1:3
-%                     if((jj==1)||(jj==3))
-%                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Mt(ii,mm)))),dx1(dx1<Mt(ii,mm)),2,'k','filled');
-%                     else
-%                         scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Mt(ii,mm)))),dx2(dx2<Mt(ii,mm)),2,'k','filled');
-%                     end
-%                  end
-%             end
-%         end
-%         text(234,max(1+Mt(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
-%         
-%             set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
-%             xtickangle(90);
-%             xlabel('Week of report','Fontsize',20);
-%         
-%         xlim([164.5 238.5]);
-%         ylim([0 max(1+Mt(ii,165:238))]);
-%         box off;
-%     end
-%     if(ii==7)       
-%         ylabel('Number of shelling/attacks','Fontsize',20); 
-%     end
-% end
-% print(gcf,['COVID-19_Shelling_2.png'],'-dpng','-r600');
-% 
+for ii=1:22
+    dx1=linspace(0,max(CC19(ii,37:end)),41);
+    dx2=dx1+(dx1(2)-dx1(1))./2;
+    dx2=dx2(1:end-1);
+    if(ii==1)||(ii==13)
+        if(ii==13)
+            print(gcf,['COVID-19_Incidence_1.png'],'-dpng','-r600');
+        end
+        figure('units','normalized','outerposition',[0 0 1 1]);
+    end
+    if(ii>=13)
+        iin=ii-12;
+    else
+        iin=ii;
+    end
+    if(ii<21)
+        subplot('Position',[xp(iin) yp(iin) w h])
+        b=bar([-18:55],CC19(ii,37:end),'LineStyle','none','FaceColor',hex2rgb('#C60000')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=-18:55
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<CC19(ii,37+18+mm)))),dx1(dx1<CC19(ii,37+18+mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<CC19(ii,37+18+mm)))),dx2(dx2<CC19(ii,37+18+mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(55,max(1+CC19(ii,37:end))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
+        if(ii<19)
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[-18:6:55],'XTickLabel',{},'Xminortick','on');
+        else
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[-18:6:55],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        end
+        xlim([-18.5 55.5]);
+        ylim([0 max(1+CC19(ii,37:end))]);
+        box off;
+    elseif(ii==22)        
+        subplot('Position',[xp(9) yp(9) w h])
+        b=bar([-18:55],CC19(ii,37:end),'LineStyle','none','FaceColor',hex2rgb('#C60000')); hold on;   
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=-18:55
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<CC19(ii,37+18+mm)))),dx1(dx1<CC19(ii,37+18+mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<CC19(ii,37+18+mm)))),dx2(dx2<CC19(ii,37+18+mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(55,max(1+CC19(ii,37:end))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
+        set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[-18:6:55],'XTickLabel',XTL,'Xminortick','on');
+        xtickangle(90);
+        xlabel('Week of report','Fontsize',20);
+        xlim([-18.5 55.5]);
+        ylim([0 max(1+CC19(ii,37:end))]);
+        box off;
+    end
+    if(ii==10)       
+        ylabel('Incidence per 10,000','Fontsize',20); 
+    end
+end
+print(gcf,['COVID-19_Incidence_2.png'],'-dpng','-r600');
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% Weekly conflict
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+load('Conflict_COVID-19_Timeline.mat'); % Load the conflict in the area for the projection
+Ctv=GLevelConflict(ProC,S,258);
+
+
+XTL={datestr(datenum('April 6, 2020')+7.*[165:6:238]-7.*184,'mmm dd, yyyy')};
+
+for ii=1:22
+    dx1=linspace(0,max(Ctv(ii,165:238)),41);
+    dx2=dx1+(dx1(2)-dx1(1))./2;
+    dx2=dx2(1:end-1);
+    if(ii==1)||(ii==13)
+        if(ii==13)
+            print(gcf,['COVID-19_conflict_1.png'],'-dpng','-r600');
+        end
+        figure('units','normalized','outerposition',[0 0 1 1]);
+    end
+    if(ii>=13)
+        iin=ii-12;
+    else
+        iin=ii;
+    end
+    if(ii<21)
+        subplot('Position',[xp(iin) yp(iin) w h])
+        b=bar([165:238],Ctv(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#DE7A22')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=165:238
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Ctv(ii,mm)))),dx1(dx1<Ctv(ii,mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Ctv(ii,mm)))),dx2(dx2<Ctv(ii,mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(234,max(1+Ctv(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
+        if(ii<19)
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',{},'Xminortick','on');
+        else
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        end
+        xlim([164.5 238.5]);
+        ylim([0 max(1+Ctv(ii,165:238))]);
+        box off;
+    elseif(ii==22)        
+        subplot('Position',[xp(9) yp(9) w h])
+        b=bar([165:238],Ctv(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#DE7A22')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=165:238
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Ctv(ii,mm)))),dx1(dx1<Ctv(ii,mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Ctv(ii,mm)))),dx2(dx2<Ctv(ii,mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(234,max(1+Ctv(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
+        
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        
+        xlim([164.5 238.5]);
+        ylim([0 max(1+Ctv(ii,165:238))]);
+        box off;
+    end
+    if(ii==10)       
+        ylabel('Number of conflict events','Fontsize',20); 
+    end
+end
+print(gcf,['COVID-19_Conflict_2.png'],'-dpng','-r600');
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% Shelling
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+load('Yemen_Air_Shelling_COVID-19.mat');
+Mt=GLevelConflict(YASt,S,258);
+
+
+XTL={datestr(datenum('April 6, 2020')+7.*[165:6:238]-7.*184,'mmm dd, yyyy')};
+
+for ii=1:22
+    dx1=linspace(0,max(Mt(ii,165:238)),41);
+    dx2=dx1+(dx1(2)-dx1(1))./2;
+    dx2=dx2(1:end-1);
+    if(ii==1)||(ii==13)
+        if(ii==13)
+            print(gcf,['COVID-19_shelling_1.png'],'-dpng','-r600');
+        end
+        figure('units','normalized','outerposition',[0 0 1 1]);
+    end
+    if(ii>=13)
+        iin=ii-12;
+    else
+        iin=ii;
+    end
+    if(ii<21)
+        subplot('Position',[xp(iin) yp(iin) w h])
+        b=bar([165:238],Mt(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#4C3F54')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=165:238
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Mt(ii,mm)))),dx1(dx1<Mt(ii,mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Mt(ii,mm)))),dx2(dx2<Mt(ii,mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(234,max(1+Mt(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
+        if(ii<19)
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',{},'Xminortick','on');
+        else
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        end
+        xlim([164.5 238.5]);
+        ylim([0 max(1+Mt(ii,165:238))]);
+        box off;
+    elseif(ii==22)        
+        subplot('Position',[xp(9) yp(9) w h])
+        b=bar([165:238],Mt(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#4C3F54')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=165:238
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Mt(ii,mm)))),dx1(dx1<Mt(ii,mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Mt(ii,mm)))),dx2(dx2<Mt(ii,mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(234,max(1+Mt(ii,165:238))*0.95,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','right');
+        
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        
+        xlim([164.5 238.5]);
+        ylim([0 max(1+Mt(ii,165:238))]);
+        box off;
+    end
+    if(ii==7)       
+        ylabel('Number of shelling/attacks','Fontsize',20); 
+    end
+end
+print(gcf,['COVID-19_Shelling_2.png'],'-dpng','-r600');
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
@@ -433,7 +433,7 @@ for ii=1:22
             xtickangle(90);
             xlabel('Week of report','Fontsize',20);
         end
-        xlim([160.5 221.5]);
+        xlim([164.5 221.5]);
         ylim([0 max(1+Rtv(ii,165:221))]);
         box off;
     elseif(ii==22)        
@@ -461,7 +461,7 @@ for ii=1:22
             xtickangle(90);
             xlabel('Week of report','Fontsize',20);
         
-        xlim([160.5 221.5]);
+        xlim([164.5 221.5]);
         ylim([0 max(1+Rtv(ii,165:221))]);
         box off;
     end
