@@ -30,6 +30,22 @@ MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
     CCR{mm}=tempmat;
  end
 
+ %% Conflict indirect effect
+load('DieselrepresentedthroughConflictShellings.mat','bd','XC','XS');
+mmt=4;
+tempmat=zeros(size(squeeze(X(1,:,:))));
+tempmat2=zeros(size(squeeze(X(1,:,:))));
+XC2=zeros(size(squeeze(X(1,:,:))));
+for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
+    for gg=1:21
+        XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
+    end
+    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+end
+CCR{2}=CCR{2}+tempmat;
+CCR{3}=CCR{3}+tempmat2;
+CCR{4}=CCR{4}-tempmat-tempmat2;
 
 
 IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model

@@ -1,0 +1,13 @@
+ModelBase,CovariatePrice,CovariateConflict,Effectone,Effecttwo,Effectthree,Effectfour
+Diesel,Diesel,Conflict,0.03658 \mbox{**},0.02131,-2.051e-13,0.008926
+Conflict,Diesel,Conflict,0.0427 \mbox{**},0.02581 \mbox{*},-5.891e-14,0.007638
+Conflict-Diesel,Diesel,Conflict,0.03741 \mbox{**},0.02148,-7.229e-15,0.009282
+Diesel,Diesel,Shellings,0.02875 \mbox{*},0.01812 \mbox{*},-1.198e-13,0.01919 \mbox{*}
+Shellings,Diesel,Shellings,0.03175 \mbox{**},0.02071 \mbox{*},3.261e-24 \mbox{***},0.01735 \mbox{*}
+Shellings-Diesel,Diesel,Shellings,0.02916 \mbox{*},0.01824 \mbox{*},7.585e-08,0.01965 \mbox{*}
+Wheat,Wheat,Conflict,0.03843 \mbox{**},0.02317,-3.813e-14,0.01072
+Conflict,Wheat,Conflict,0.0427 \mbox{**},0.02581 \mbox{*},-8.036e-15,0.007638
+Conflict-Wheat,Wheat,Conflict,0.03853 \mbox{**},0.0232,-2.085e-12,0.01074
+Wheat,Wheat,Shellings,0.03047 \mbox{*},0.02073 \mbox{*},0.001045,0.01987 \mbox{*}
+Shellings,Wheat,Shellings,0.03175 \mbox{**},0.02071 \mbox{*},-1.043e-16,0.01735 \mbox{*}
+Shellings-Wheat,Wheat,Shellings,0.03047 \mbox{*},0.02071 \mbox{*},0.001146,0.01992 \mbox{*}

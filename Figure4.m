@@ -36,8 +36,8 @@ for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
     for gg=1:21
         XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
     end
-    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
-    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
+    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
 end
 CCR{2}=CCR{2}+tempmat;
 CCR{3}=CCR{3}+tempmat2;
@@ -105,7 +105,7 @@ for mm=1:21
 end
 xlabel('Average relative contribution per week','Fontsize',18);
 h=ylabel('Governorate','Fontsize',18);
-text(h.Extent(1),max(ylim),'A','Fontsize',32,'Fontweight','bold');
+text(-0.14637462142461,23.263291139240508,'A','Fontsize',32,'Fontweight','bold');
 xlim([0 0.45]);
 ylim([0.5 21.5]);
 box off;
@@ -182,8 +182,8 @@ for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
     for gg=1:length(GNZI)
         XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
     end
-    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
-    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
+    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
 end
 CCR{2}=CCR{2}+tempmat;
 CCR{3}=CCR{3}+tempmat2;
@@ -266,7 +266,7 @@ for mm=1:length(GNZI)
 end
 xlabel('Average relative contribution per week','Fontsize',18);
 h=ylabel('Districts in Amanat Al Asimah','Fontsize',18);
-text(h.Extent(1),max(ylim),'B','Fontsize',32,'Fontweight','bold');
+text(-0.1632,12.592405063291142,'B','Fontsize',32,'Fontweight','bold');
 xlim([0 0.45]);
 ylim([0.5 length(GNZI)+.5]);
 box off;
@@ -343,8 +343,8 @@ for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
     for gg=1:length(GNZI)
         XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
     end
-    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
-    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
+    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
 end
 CCR{2}=CCR{2}+tempmat;
 CCR{3}=CCR{3}+tempmat2;
@@ -427,7 +427,7 @@ for mm=1:length(GNZI)
 end
 xlabel('Average relative contribution per week','Fontsize',18);
 h=ylabel('Districts in Aden','Fontsize',18);
-text(h.Extent(1),max(ylim),'C','Fontsize',32,'Fontweight','bold');
+text(-0.1632,10.111392405063292,'C','Fontsize',32,'Fontweight','bold');
 xlim([0 0.45]);
 ylim([0.5 length(GNZI)+.5]);
 box off;
@@ -446,3 +446,6 @@ xlim([10^2 10^5])
 set(ax2,'LineWidth',2,'tickdir','out','XScale','log','YTick',[1:length(GNZI)],'YTickLabel',{},'Fontsize',16);
 ax2.XColor=[0.5 0.5 0.5];
 xlabel('Cumulative incidence','Fontsize',18,'Color',[0.5 0.5 0.5]);
+
+
+print(gcf,'Figure4.png','-dpng','-r600');

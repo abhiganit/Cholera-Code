@@ -1,0 +1,13 @@
+ModelBase,CovariateConflict,betaone,betatwo,betathree,betafour
+Diesel,Conflict,0.03658 \mbox{***},0.02131 \mbox{*},1.806e-15,0.008926
+Conflict,Conflict,0.0427 \mbox{***},0.02581 \mbox{*},2.078e-15,0.007638
+Conflict-Diesel,Conflict,0.03741 \mbox{***},0.02148 \mbox{*},2.219e-19,0.009282
+Diesel,Shellings,0.02875 \mbox{**},0.01812 \mbox{*},2.572e-18,0.01919 \mbox{*}
+Shellings,Shellings,0.03175 \mbox{***},0.02071 \mbox{*},3.261e-24,0.01735 \mbox{*}
+Shellings-Diesel,Shellings,0.02916 \mbox{**},0.01824 \mbox{*},7.585e-08,0.01965 \mbox{*}
+Wheat,Conflict,0.03843 \mbox{***},0.02317 \mbox{*},2.699e-15,0.01072
+Conflict,Conflict,0.0427 \mbox{***},0.02581 \mbox{*},2.078e-15,0.007638
+Conflict-Wheat,Conflict,0.03853 \mbox{***},0.0232 \mbox{*},8.494e-15,0.01074
+Wheat,Shellings,0.03047 \mbox{**},0.02073 \mbox{*},0.001045,0.01987 \mbox{*}
+Shellings,Shellings,0.03175 \mbox{***},0.02071 \mbox{*},3.261e-24,0.01735 \mbox{*}
+Shellings-Wheat,Shellings,0.03047 \mbox{**},0.02071 \mbox{*},0.001146,0.01992 \mbox{*}

@@ -1,0 +1,13 @@
+ModelBase,CovariatePrice,CovariateConflict,betaz,betao
+Diesel,Diesel,Conflict,169.5 \mbox{***},31 \mbox{***}
+Conflict,Diesel,Conflict,173.6 \mbox{***},31.19 \mbox{***}
+Conflict-Diesel,Diesel,Conflict,169.4 \mbox{***},30.99 \mbox{***}
+Diesel,Diesel,Shellings,197.7 \mbox{***},32.48 \mbox{***}
+Shellings,Diesel,Shellings,203.8 \mbox{***},32.79 \mbox{***}
+Shellings-Diesel,Diesel,Shellings,197.7 \mbox{***},32.49 \mbox{***}
+Wheat,Wheat,Conflict,24.77 \mbox{***},13.95 \mbox{***}
+Conflict,Wheat,Conflict,25.09 \mbox{***},13.86 \mbox{***}
+Conflict-Wheat,Wheat,Conflict,24.76 \mbox{***},13.95 \mbox{***}
+Wheat,Wheat,Shellings,38.14 \mbox{***},14.43 \mbox{***}
+Shellings,Wheat,Shellings,38.94 \mbox{***},14.31 \mbox{***}
+Shellings-Wheat,Wheat,Shellings,38.17 \mbox{***},14.43 \mbox{***}

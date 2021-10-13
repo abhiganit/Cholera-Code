@@ -1,0 +1,9 @@
+ModelBase,CovariatePrice,CovariateConflict,betaone,betatwo,betathree,betafour
+Diesel,Diesel,Conflict,1.342e-16,1.284e-12,7.767e-13,1.113e-12
+Conflict,Diesel,Conflict,1.638e-11,2.143e-17,2.967e-14,4.653e-14
+Diesel,Diesel,Shellings,5.167e-10,5.825e-18,1.246e-16,5.497e-13
+Shellings,Diesel,Shellings,1.159e-14,3.298e-08,4.35e-12,1.709e-09
+Wheat,Wheat,Conflict,6.706e-09,0.001638,1.339e-21,1.925e-10
+Conflict,Wheat,Conflict,4.912e-10,1.853e-08,8.336e-17,5.968e-11
+Wheat,Wheat,Shellings,3.02e-13,3.196e-13,7.23e-16,1.943e-13
+Shellings,Wheat,Shellings,3.302e-16,6.111e-14,5.672e-14,5.302e-14

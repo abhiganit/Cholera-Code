@@ -37,29 +37,22 @@ for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
     for gg=1:21
         XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
     end
-    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
-    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))+bd(4).*squeeze(XC2));
+    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
 end
 CCR{2}=CCR{2}+tempmat;
 CCR{3}=CCR{3}+tempmat2;
 CCR{4}=CCR{4}-tempmat-tempmat2;
-P=zeros(6,length(tempmat));
-PCC=P;
-for mm=1:6
-    P(mm,:)=sum((CCR{mm}),1)./sum(MI,1);
-end
-PCC(:,1)=P(:,1);
-for ii=2:length(P(1,:))
-   PCC(:,ii)=  PCC(:,ii-1)+(1-PCC(:,ii-1)).*P(:,ii);
-end
+
 IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model
 WW=zeros(4,length(GNZI),6);
-WWRC=zeros(4,1,6);
+WWRC=zeros(4,2,6);
 for ww=1:4
     for mm=1:6
        WW(ww,:,mm) = (sum((CCR{mm}(:,IndW(ww,1):IndW(ww,2))),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2));
        
-       WWRC(ww,1,mm) = sum(sum((CCR{mm}(:,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(:,IndW(ww,1):IndW(ww,2)),2));
+       WWRC(ww,1,mm) = sum(sum((CCR{mm}(RC(GNZI)==1,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==1,IndW(ww,1):IndW(ww,2)),2));
+       WWRC(ww,2,mm) = sum(sum((CCR{mm}(RC(GNZI)==0,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==0,IndW(ww,1):IndW(ww,2)),2));
     end   
 end
 
@@ -102,14 +95,13 @@ Gintv=[2 5 9 11 19 21];
 CCRC=cell(6,1);
 for ii=1:6
     Temp=[CCR{ii}];
-    TempR=sum(Temp,1);
-    CCRC{ii}=[TempR];
+    TempR=sum(Temp(RC(GNZI)==1,:),1);
+    TempG=sum(Temp(RC(GNZI)==0,:),1);
+    CCRC{ii}=[TempR;TempG];
 end
 
-figure('units','normalized','outerposition',[0 0 1 1]);
-
-for mm=1:1
-    subplot('Position',[0.06,0.14+(3-1)*0.29,0.935,0.27]);
+for mm=1:2
+    subplot('Position',[0.06,0.14+(2-mm)*0.29,0.935,0.27]);
 
     Gint=Gintv(mm);
     b=bar([(1+maxtau):NW],[squeeze(CCRC{1}(mm,:)); squeeze(CCRC{2}(mm,:)); squeeze(CCRC{3}(mm,:)); squeeze(CCRC{4}(mm,:)); squeeze(CCRC{5}(mm,:)); squeeze(CCRC{6}(mm,:))]','Stacked','LineStyle','none');
@@ -120,8 +112,11 @@ for mm=1:1
     yh=ylabel('Suspected cases','Fontsize',18);
     xlim([0.5 NW+0.5]);
      ylim([0 8500]./7000.*(1.4*10^4));
-        text(NW+0.5,(1.4*10^4),'Yemen','Fontsize',16,'HorizontalAlignment','right');
-     
+     if(mm==1)
+        text(NW+0.5,(1.4*10^4),'Rebel','Fontsize',16,'HorizontalAlignment','right');
+     else
+         text(NW+0.5,(1.4*10^4),'Government','Fontsize',16,'HorizontalAlignment','right');
+     end
     set(gca,'linewidth',2,'tickdir','out','XTick','','XTickLabel','','Fontsize',16,'XMinortick','off','YminorTick','on','YTick',[0:2000:(1.4*10^4)]);
     box off;
     hold on;
@@ -153,7 +148,11 @@ for mm=1:1
          set(ht,'Rotation',90);
          end
     end
-     text(yh.Extent(1)*0.95,max(ylim)*0.975,char(64+mm),'Fontsize',32,'fontweight','bold');
+     text(yh.Extent(1)*0.95,max(ylim)*0.975,char(65+mm),'Fontsize',32,'fontweight','bold');
 end
+set(gca,'linewidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'XMinortick','on','YTick',[0:2000:(1.4*10^4)]);
+xlabel('Week of report','Fontsize',18);
+xtickangle(45);
 box off;
-Figure3_RebelControl
+
+print(gcf,['Figure3.png'],'-dpng','-r600');
