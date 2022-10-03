@@ -2,7 +2,7 @@
 close all;
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 % Dieslel
-load('Fit-Vaccination-IncidenceperCapita-Diesel-Rain-CalibratedDAR.mat')
+load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
 [~,~,~,~,~,~,~,KP,~,~,~,~,~]=RetParameterGA(par,XU,CF,maxtau);
  
 % Conflict

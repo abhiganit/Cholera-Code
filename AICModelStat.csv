@@ -1,44 +1,44 @@
 Governorate,District,MSE,MeanData,NormMSE,R
-Abyan,,3.762,3.598,1.046,0.953
-Aden,,1.158,1.958,0.591,0.910
-Al Bayda,,4.684,7.172,0.653,0.866
-Al Dhale'e,,6.214,5.610,1.108,0.946
-Al Hudaydah,,3.902,6.543,0.596,0.903
-Al Jawf,,2.706,3.436,0.788,0.874
-Al Maharah,,0.569,0.695,0.818,0.850
-Al Mahwit,,12.520,10.246,1.222,0.931
-Amanat Al Asimah,,3.959,5.040,0.786,0.841
-Amran,,11.198,11.400,0.982,0.936
-Dhamar,,3.269,6.590,0.496,0.932
-Hadramaut,,0.007,0.049,0.136,0.608
-Hajjah,,4.309,5.916,0.728,0.927
-Ibb,,1.516,3.527,0.430,0.870
-Lahj,,1.884,2.109,0.893,0.913
-Marib,,0.760,1.679,0.453,0.921
-Raymah,,4.291,3.366,1.275,0.880
-Sa'ada,,5.012,2.941,1.704,0.861
-Sana'a,,9.290,9.039,1.028,0.859
-Shabwah,,0.142,0.265,0.535,0.673
-Taizz,,1.262,2.615,0.483,0.899
-Al Hudaydah,Al Hali,1417.727,33.693,42.078,0.330
-Al Hudaydah,Al Hawak,45.696,10.521,4.343,0.724
-Al Hudaydah,Al Mina,220.066,16.672,13.200,0.810
-Al Hudaydah,Hodeidah City,303.014,20.281,14.941,0.636
-Amanat Al Asimah,Al Wahdah,6.780,4.115,1.648,0.604
-Amanat Al Asimah,As Sabain,4.254,5.140,0.828,0.741
-Amanat Al Asimah,Assafi'yah,12.421,8.793,1.413,0.715
-Amanat Al Asimah,At Tahrir,13.556,5.031,2.694,0.613
-Amanat Al Asimah,Ath'thaorah,3.703,4.865,0.761,0.715
-Amanat Al Asimah,Az'zal,10.970,7.052,1.555,0.604
-Amanat Al Asimah,Bani Al Harith,19.381,8.909,2.175,0.799
-Amanat Al Asimah,Ma'ain,6.110,6.099,1.002,0.753
-Amanat Al Asimah,Old City,17.219,6.618,2.602,0.734
-Amanat Al Asimah,Shu'aub,4.996,5.072,0.985,0.781
-Aden,Al Buraiqeh,2.983,1.685,1.770,0.874
-Aden,Al Mansura,0.875,1.169,0.748,0.764
-Aden,Al Mualla,3.317,2.405,1.379,0.894
-Aden,Ash Shaikh Outhman,3.050,2.840,1.074,0.873
-Aden,Attawahi,2.376,1.537,1.546,0.788
-Aden,Craiter,0.614,1.166,0.527,0.911
-Aden,Dar Sad,12.896,5.658,2.279,0.907
-Aden,Khur Maksar,2.095,1.661,1.261,0.772
+Abyan,,3.729,3.598,1.037,0.951
+Aden,,1.228,1.958,0.627,0.904
+Al Bayda,,4.674,7.172,0.652,0.865
+Al Dhale'e,,6.482,5.61,1.155,0.944
+Al Hudaydah,,3.631,6.543,0.555,0.909
+Al Jawf,,2.753,3.436,0.801,0.875
+Al Maharah,,0.582,0.695,0.837,0.849
+Al Mahwit,,12.485,10.246,1.219,0.932
+Amanat Al Asimah,,3.481,5.04,0.691,0.851
+Amran,,11.343,11.4,0.995,0.936
+Dhamar,,3.177,6.59,0.482,0.935
+Hadramaut,,0.007,0.049,0.139,0.604
+Hajjah,,4.119,5.916,0.696,0.928
+Ibb,,1.489,3.527,0.422,0.872
+Lahj,,1.933,2.109,0.916,0.91
+Marib,,0.786,1.679,0.468,0.923
+Raymah,,4.241,3.366,1.26,0.881
+Sa'ada,,5.053,2.941,1.718,0.864
+Sana'a,,9.141,9.039,1.011,0.862
+Shabwah,,0.142,0.265,0.536,0.673
+Taizz,,1.288,2.615,0.492,0.901
+Al Hudaydah,Al Hali,1418.646,33.693,42.105,0.333
+Al Hudaydah,Al Hawak,44.428,10.521,4.223,0.731
+Al Hudaydah,Al Mina,220.203,16.672,13.208,0.813
+Al Hudaydah,Hodeidah City,288.113,20.281,14.206,0.67
+Amanat Al Asimah,Al Wahdah,6.526,4.115,1.586,0.62
+Amanat Al Asimah,As Sabain,3.932,5.14,0.765,0.757
+Amanat Al Asimah,Assafi'yah,12.465,8.793,1.418,0.717
+Amanat Al Asimah,At Tahrir,13.264,5.031,2.636,0.627
+Amanat Al Asimah,Ath'thaorah,3.569,4.865,0.734,0.717
+Amanat Al Asimah,Az'zal,11.238,7.052,1.593,0.595
+Amanat Al Asimah,Bani Al Harith,20.321,8.909,2.281,0.796
+Amanat Al Asimah,Ma'ain,6.069,6.099,0.995,0.754
+Amanat Al Asimah,Old City,15.821,6.618,2.39,0.721
+Amanat Al Asimah,Shu'aub,4.946,5.072,0.975,0.782
+Aden,Al Buraiqeh,2.975,1.685,1.766,0.868
+Aden,Al Mansura,0.909,1.169,0.777,0.756
+Aden,Al Mualla,3.44,2.405,1.43,0.889
+Aden,Ash Shaikh Outhman,3.173,2.84,1.117,0.866
+Aden,Attawahi,2.422,1.537,1.576,0.787
+Aden,Craiter,0.661,1.166,0.566,0.905
+Aden,Dar Sad,13.145,5.658,2.323,0.903
+Aden,Khur Maksar,2.15,1.661,1.294,0.767

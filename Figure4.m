@@ -2,6 +2,7 @@ close all;
 clc;
 load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
+CI=10000.*CI./PopS;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 RC=RC(GNZI);
 % Evaluate the number of paramters that are being used in the estimation 
@@ -70,7 +71,7 @@ ColorM=[[221,28,119]./255; % Targeted attacks
         hex2rgb('#FAAF08'); %Wheat
         [5,112,176]./255; %Rainfall
         ]; 
-    labels = {'Targeted','Conflict','Shellings','Diesel','Wheat','Rainfall'};
+    
     
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
@@ -81,6 +82,8 @@ WS=WS(:,1:6);
 figure('units','normalized','outerposition',[0 0 1 1]);
 subplot('Position',[0.117121848739496,0.109422492401216,0.347689075630252,0.8]);
 b=barh([1:21],WS,'stacked','LineStyle','none'); 
+
+
 for ii=1:6
    b(ii).FaceColor=ColorM(ii,:); 
 end
@@ -120,17 +123,31 @@ ax2 = axes('Position',ax1_pos,...
     'Color','none');
 line((CI(GNZI(indexs),end)),[1:21],'Parent',ax2,'Color',[0.5 0.5 0.5],'LineWidth',2)
 ylim([0.5 21.5]);
-xlim([10^2 10^6])
+xlim([10^0.5 10^4])
 set(ax2,'LineWidth',2,'tickdir','out','XScale','log','YTick',[1:21],'YTickLabel',{},'Fontsize',16);
 ax2.XColor=[0.5 0.5 0.5];
-xlabel('Cumulative incidence','Fontsize',18,'Color',[0.5 0.5 0.5]);
+xlabel('Cumulative incidence per 10,000','Fontsize',18,'Color',[0.5 0.5 0.5]);
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2));
+
+fprintf('Pearson Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4));
+
+fprintf('Pearson Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6));
+
+fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 %% District
 clear;
-clc;
 load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
 
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData; % Load the data used to construct the figure
+CI=10000.*CI./PopS;
 GNZI=[4:13];
 NW=123; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 RC=RC(GNZI);
@@ -240,7 +257,10 @@ XGL={SD(GNZI).ADM2_EN};
 WWT=[WW(:,1:6) sum(WW(:,2:3),2)];
 [WS, indexs]=sortrows(WWT,7);
 WS=WS(:,1:6);
+
+
 subplot('Position',[0.6,0.59,0.347689075630252,0.32]);
+
 b=barh([1:length(GNZI)],WS,'stacked','LineStyle','none'); 
 for ii=1:6
    b(ii).FaceColor=ColorM(ii,:); 
@@ -281,17 +301,34 @@ ax2 = axes('Position',ax1_pos,...
     'Color','none');
 line((CI(GNZI(indexs),end)),[1:length(GNZI)],'Parent',ax2,'Color',[0.5 0.5 0.5],'LineWidth',2)
 ylim([0.5 length(GNZI)+.5]);
-xlim([10^2 10^5])
+xlim([10^0.5 10^4])
 set(ax2,'LineWidth',2,'tickdir','out','XScale','log','YTick',[1:length(GNZI)],'YTickLabel',{},'Fontsize',16);
 ax2.XColor=[0.5 0.5 0.5];
-xlabel('Cumulative incidence','Fontsize',18,'Color',[0.5 0.5 0.5]);
+xlabel('Cumulative incidence per 10,000','Fontsize',18,'Color',[0.5 0.5 0.5]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2));
+
+
+fprintf('(Amanat Al Asimah) Pearson Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4));
+
+fprintf('Pearson Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6));
+
+fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 %% District (Aden)
 clear;
-clc;
 load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
 
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData; % Load the data used to construct the figure
+CI=10000.*CI./PopS;
 GNZI=[14:21];
 NW=123; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 RC=RC(GNZI);
@@ -402,9 +439,14 @@ WWT=[WW(:,1:6) sum(WW(:,2:3),2)];
 [WS, indexs]=sortrows(WWT,7);
 WS=WS(:,1:6);
 subplot('Position',[0.6,0.109422492401216,0.347689075630252,0.32]);
+labels = {'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall'};
+shd=[0 0 1 2 2 3];
 b=barh([1:length(GNZI)],WS,'stacked','LineStyle','none'); 
 for ii=1:6
    b(ii).FaceColor=ColorM(ii,:); 
+   if(ii==2 || ii==3 || ii==4 ||ii==6)
+      text(0.355,8-shd(ii), labels{ii},'Fontsize',20,'Color',ColorM(ii,:));
+   end
 end
 XGL2=XGL;
 for ii=1:length(GNZI)
@@ -442,10 +484,24 @@ ax2 = axes('Position',ax1_pos,...
     'Color','none');
 line((CI(GNZI(indexs),end)),[1:length(GNZI)],'Parent',ax2,'Color',[0.5 0.5 0.5],'LineWidth',2)
 ylim([0.5 length(GNZI)+.5]);
-xlim([10^2 10^5])
+xlim([10^0.5 10^4])
 set(ax2,'LineWidth',2,'tickdir','out','XScale','log','YTick',[1:length(GNZI)],'YTickLabel',{},'Fontsize',16);
 ax2.XColor=[0.5 0.5 0.5];
-xlabel('Cumulative incidence','Fontsize',18,'Color',[0.5 0.5 0.5]);
+xlabel('Cumulative incidence per 10,000','Fontsize',18,'Color',[0.5 0.5 0.5]);
 
+[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2));
+
+fprintf('(Aden) Pearson Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4));
+
+fprintf('Pearson Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6));
+
+fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 print(gcf,'Figure4.png','-dpng','-r600');

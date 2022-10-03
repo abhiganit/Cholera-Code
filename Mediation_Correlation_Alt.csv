@@ -1,0 +1,49 @@
+ModelNum,CovariatePrice,CovariateConflict,betacz,betaco,betasz,betaso
+3,Diesel,Conflict-Incidence,173.6 \mbox{***},31.19 \mbox{***},0,0
+4,Diesel,Shellings-Incidence,0,0,203.8 \mbox{***},32.79 \mbox{***}
+19,Diesel,Shellings-Rain-Incidence,0,0,120.3 \mbox{***},28.66 \mbox{***}
+18,Diesel,Shellings-Wheat-Incidence,0,0,294.4 \mbox{***},54.18 \mbox{***}
+16,Diesel,Conflict-Rain-Incidence,80.16 \mbox{***},27.57 \mbox{***},0,0
+15,Diesel,Conflict-Wheat-Incidence,290.6 \mbox{***},26.46 \mbox{***},0,0
+13,Diesel,Conflict-Shellings-Incidence,162.3 \mbox{***},31.08 \mbox{***},296.8 \mbox{***},29.32 \mbox{***}
+9,Diesel,Targeted-Shellings-Incidence,0,0,203.8 \mbox{***},32.8 \mbox{***}
+8,Diesel,Targeted-Conflict-Incidence,162.4 \mbox{***},31.08 \mbox{***},0,0
+24,Diesel,Shellings-Wheat-Rain-Incidence,0,0,256.7 \mbox{***},49.15 \mbox{***}
+27,Diesel,Conflict-Wheat-Rain-Incidence,87.01 \mbox{***},22.48 \mbox{***},0,0
+30,Diesel,Conflict-Shellings-Rain-Incidence,130.8 \mbox{***},30.23 \mbox{***},273.9 \mbox{***},53.2 \mbox{***}
+31,Diesel,Conflict-Shellings-Wheat-Incidence,288.5 \mbox{***},26.14 \mbox{***},294.8 \mbox{***},53.62 \mbox{***}
+36,Diesel,Targeted-Shellings-Rain-Incidence,0,0,98.68 \mbox{***},27.18 \mbox{***}
+37,Diesel,Targeted-Shellings-Wheat-Incidence,0,0,295 \mbox{***},53.74 \mbox{***}
+39,Diesel,Targeted-Conflict-Rain-Incidence,80.11 \mbox{***},27.58 \mbox{***},0,0
+40,Diesel,Targeted-Conflict-Wheat-Incidence,293.8 \mbox{***},28.29 \mbox{***},0,0
+42,Diesel,Targeted-Conflict-Shellings-Incidence,162.2 \mbox{***},31.08 \mbox{***},299.3 \mbox{***},31.39 \mbox{***}
+56,Diesel,Targeted-Conflict-Shellings-Wheat-Incidence,288.6 \mbox{***},26.15 \mbox{***},294.9 \mbox{***},53.71 \mbox{***}
+55,Diesel,Targeted-Conflict-Shellings-Rain-Incidence,127.8 \mbox{***},30.09 \mbox{***},270.8 \mbox{***},52.31 \mbox{***}
+52,Diesel,Targeted-Conflict-Wheat-Rain-Incidence,261.7 \mbox{***},60.4 \mbox{***},0,0
+49,Diesel,Targeted-Shellings-Wheat-Rain-Incidence,0,0,265.7 \mbox{***},49.9 \mbox{***}
+45,Diesel,Conflict-Shellings-Wheat-Rain-Incidence,282 \mbox{***},779.5,274.7 \mbox{***},52.02 \mbox{***}
+60,Diesel,Targeted-Conflict-Shellings-Wheat-Rain-Incidence,276.6 \mbox{***},777.5,270.2 \mbox{***},50.3 \mbox{***}
+3,Wheat,Conflict-Incidence,25.22 \mbox{***},13.88 \mbox{***},0,0
+4,Wheat,Shellings-Incidence,0,0,38.9 \mbox{***},14.31 \mbox{***}
+19,Wheat,Shellings-Rain-Incidence,0,0,36.87 \mbox{***},13.65 \mbox{***}
+17,Wheat,Shellings-Diesel-Incidence,0,0,165.6 \mbox{***},27.39 \mbox{***}
+16,Wheat,Conflict-Rain-Incidence,23.11 \mbox{***},12.49 \mbox{***},0,0
+14,Wheat,Conflict-Diesel-Incidence,165.3 \mbox{***},15.53 \mbox{***},0,0
+13,Wheat,Conflict-Shellings-Incidence,22.38 \mbox{***},13.3 \mbox{***},80.08 \mbox{***},12.15 \mbox{***}
+9,Wheat,Targeted-Shellings-Incidence,0,0,38.91 \mbox{***},14.3 \mbox{***}
+8,Wheat,Targeted-Conflict-Incidence,22.42 \mbox{***},13.31 \mbox{***},0,0
+25,Wheat,Shellings-Diesel-Rain-Incidence,0,0,77.22 \mbox{***},12.13 \mbox{***}
+28,Wheat,Conflict-Diesel-Rain-Incidence,164.7 \mbox{***},15.5 \mbox{***},0,0
+30,Wheat,Conflict-Shellings-Rain-Incidence,26.8 \mbox{***},12.86 \mbox{***},88.42 \mbox{***},17.5 \mbox{***}
+32,Wheat,Conflict-Shellings-Diesel-Incidence,165.4 \mbox{***},15.53 \mbox{***},166 \mbox{***},26.62 \mbox{***}
+36,Wheat,Targeted-Shellings-Rain-Incidence,0,0,36.88 \mbox{***},13.64 \mbox{***}
+38,Wheat,Targeted-Shellings-Diesel-Incidence,0,0,72.52 \mbox{***},13.57 \mbox{***}
+39,Wheat,Targeted-Conflict-Rain-Incidence,21.85 \mbox{***},12.36 \mbox{***},0,0
+41,Wheat,Targeted-Conflict-Diesel-Incidence,0.1 \mbox{***},0.1 \mbox{***},0,0
+42,Wheat,Targeted-Conflict-Shellings-Incidence,22.38 \mbox{***},13.3 \mbox{***},81.31 \mbox{***},12.2 \mbox{***}
+57,Wheat,Targeted-Conflict-Shellings-Diesel-Incidence,165.4 \mbox{***},15.53 \mbox{***},166.1 \mbox{***},26.65 \mbox{***}
+55,Wheat,Targeted-Conflict-Shellings-Rain-Incidence,26.49 \mbox{***},12.83 \mbox{***},88.18 \mbox{***},17.08 \mbox{***}
+53,Wheat,Targeted-Conflict-Diesel-Rain-Incidence,0.1 \mbox{***},0.1 \mbox{***},0,0
+50,Wheat,Targeted-Shellings-Diesel-Rain-Incidence,0,0,80.8 \mbox{***},2.725
+46,Wheat,Conflict-Shellings-Diesel-Rain-Incidence,77.54 \mbox{***},18.22 \mbox{***},76.26 \mbox{***},12.18 \mbox{***}
+59,Wheat,Targeted-Conflict-Shellings-Diesel-Rain-Incidence,77.76 \mbox{***},18.07 \mbox{***},76.28 \mbox{***},12.17 \mbox{***}

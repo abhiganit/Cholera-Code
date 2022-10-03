@@ -8,7 +8,7 @@ load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-Calibrat
 
 % Returns sum not average (will correct after adjusting the CVE)
 MSE=OFuncProGAGLevel(pars,CF,WI(GNZI,1:NWF),tA(GNZI,1:NWF),Ctv(GNZI,1:NWF),XU,maxtau,WPIN(GNZI,1:NWF),FPIN(GNZI,1:NWF),Mt(GNZI,1:NWF),Wheatt(GNZI,1:NWF),Dieselt(GNZI,1:NWF),V1(GNZI,1:NWF),V2(GNZI,1:NWF),Rtv(GNZI,1:NWF),RF,PopS(GNZI,1:NWF),CI(GNZI,1:NWF));
-MeanData_Fit=mean(WI(GNZI,1:NWF),2);
+MeanData_Fit=mean(WI(GNZI,(maxtau+1):NWF),2);
 
 
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDataVal;

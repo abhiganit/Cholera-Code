@@ -113,9 +113,9 @@ for mm=1:2
     xlim([0.5 NW+0.5]);
      ylim([0 8500]./7000.*(1.4*10^4));
      if(mm==1)
-        text(NW+0.5,(1.4*10^4),'Rebel','Fontsize',16,'HorizontalAlignment','right');
+        text(NW+0.5,(1.4*10^4),'\it{\bf{Rebel}}','Fontsize',18,'HorizontalAlignment','right');
      else
-         text(NW+0.5,(1.4*10^4),'Government','Fontsize',16,'HorizontalAlignment','right');
+         text(NW+0.5,(1.4*10^4),'\it{\bf{Government}}','Fontsize',18,'HorizontalAlignment','right');
      end
     set(gca,'linewidth',2,'tickdir','out','XTick','','XTickLabel','','Fontsize',16,'XMinortick','off','YminorTick','on','YTick',[0:2000:(1.4*10^4)]);
     box off;

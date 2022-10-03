@@ -42,11 +42,16 @@ IW=[1 21; 22 74; 75 121; 122 149];
 WN=struct('N',{'First wave','Second wave','Third wave','Fourth wave'});
 for ii=1:3
     plot((maxtau+mean([IW(ii,2) IW(ii+1,1)])).*ones(1001,1),linspace(0,55005,1001),'k-.','LineWidth',2);
-    text((mean(IW(ii,:))),56020,WN(ii).N,'Fontsize',18);
+    text((mean(IW(ii,:))),56020,WN(ii).N,'Fontsize',20);
 end
-text((mean(IW(4,:))),56020,WN(4).N,'Fontsize',18);
+text((mean(IW(4,:))),56020,WN(4).N,'Fontsize',20);
 ylim([0 55005]);
+text(1,52005,'Model estimate','Fontsize',18,'Color',FC(1,:));
+text(1,48411,'Reported','Fontsize',18,'Color','k');
 text(hy.Extent(1),56020,'A','Fontsize',32,'FontWeight','bold');
+
+print(gcf,['Figure2A.png'],'-dpng','-r600');
+
 figure('units','normalized','outerposition',[0 0 1 1]);
 
 subplot('Position',[0.065,0.62,0.46,0.35]);
@@ -64,7 +69,12 @@ ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
 xtickangle(90);
 hy=ylabel('Suspected cholera cases','Fontsize',18);
 ylim([0 8000]);
-text(1.5,7700,'Aden','Fontsize',18);
+text(1.5,7700,'\it{\bf{Aden}}','Fontsize',18);
+
+
+text(1,7042,'Model estimate','Fontsize',18,'Color',FC(1,:));
+text(1,6520,'Model validation','Fontsize',18,'Color',FC(2,:));
+text(1,5998,'Reported','Fontsize',18,'Color','k');
 
             xlabel('Week reported','Fontsize',18);
  
@@ -82,7 +92,7 @@ ax=gca; % finds the current axis
 ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
 xtickangle(90);
 ylim([0 8000]);
-text(1.5,7700,'Amanat Al Asimah','Fontsize',18);
+text(1.5,7700,'\it{\bf{Amanat Al Asimah}}','Fontsize',18);
 
             xlabel('Week reported','Fontsize',18);
 
@@ -168,8 +178,11 @@ for yy=1:1
         ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
         xtickangle(90);
         ylim([0 600]);
-        text(1.5,580,SD(fA(cc(xx))).ADM2_EN,'Fontsize',14);
-        
+        text(1.5,580,['\it{\bf{' SD(fA(cc(xx))).ADM2_EN '}}'],'Fontsize',14);
+        if(xx==1)
+            text(79,548,'Model validation','Fontsize',14,'Color',FC(2,:));
+            text(79,501,'Reported','Fontsize',14,'Color','k'); 
+        end
     end
 end
 
@@ -208,11 +221,12 @@ for yy=1:1
         ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
         xtickangle(90);
         ylim([0 1750]);
-        text(1.5,1650,SD(fS(cc(xx))).ADM2_EN,'Fontsize',14);
+        text(1.5,1650,['\it{\bf{' SD(fS(cc(xx))).ADM2_EN '}}'],'Fontsize',14);
         
     end
 end
 
+print(gcf,['Figure2B.png'],'-dpng','-r600');
 %% Hodeidah City
 figure('units','normalized','outerposition',[0 0 1 1]);
 dW=10;
@@ -229,7 +243,7 @@ ax=gca; % finds the current axis
 ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
 xtickangle(90);
 ylim([0 8000]);
-text(1.5,7700,'Hodeidah City','Fontsize',18);
+text(1.5,7700,['\it{\bf{Hodeidah City}}'],'Fontsize',18);
 xlabel('Week reported','Fontsize',18);
 
 
@@ -269,7 +283,8 @@ for yy=1:1
         ax.YAxis.Exponent = 0; % Sets the y-axis to not have 10^n
         xtickangle(90);
         ylim([0 2500]);
-        text(1.5,2400,SD(VGI(cc(xx))).ADM2_EN,'Fontsize',14);
+        text(1.5,2400,['\it{\bf{' SD(VGI(cc(xx))).ADM2_EN '}}'],'Fontsize',14);
         
     end
 end
+print(gcf,['Figure2C.png'],'-dpng','-r600');

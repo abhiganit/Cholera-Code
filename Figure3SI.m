@@ -95,6 +95,8 @@ Gintv=Gintv(:);
 
 CVName={'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall'};
 
+shd=[0 0 1 2 2 3 4];
+    labels = {'Targeted','Conflict','Shellings','Diesel','Wheat','Rainfall'};
 for Gint=1:length(GNZI)
     figure('units','normalized','outerposition',[0.05 0.05 0.8 0.65]);
 

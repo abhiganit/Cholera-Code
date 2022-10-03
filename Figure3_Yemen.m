@@ -100,6 +100,8 @@ end
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 
+shd=[0 0 1 2 2 3 4];
+    labels = {'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall'};
 for mm=1:1
     subplot('Position',[0.06,0.14+(3-1)*0.29,0.935,0.27]);
 
@@ -108,11 +110,15 @@ for mm=1:1
     for ii=1:length(ColorM(:,1))
         b(ii).FaceColor = 'flat';
         b(ii).CData = ColorM(ii,:);
+        if(ii==2 || ii==3 || ii==4 ||ii==6)
+          text(1,13000-1250.*shd(ii), labels{ii},'Fontsize',18,'Color',ColorM(ii,:));
+        end
     end
+    text(1,13000-1250.*shd(7), 'Incidence','Fontsize',18,'Color',[0.7 0.7 0.7]);
     yh=ylabel('Suspected cases','Fontsize',18);
     xlim([0.5 NW+0.5]);
      ylim([0 8500]./7000.*(1.4*10^4));
-        text(NW+0.5,(1.4*10^4),'Yemen','Fontsize',16,'HorizontalAlignment','right');
+        text(NW+0.5,(1.4*10^4),'\it{\bf{Yemen}}','Fontsize',18,'HorizontalAlignment','right');
      
     set(gca,'linewidth',2,'tickdir','out','XTick','','XTickLabel','','Fontsize',16,'XMinortick','off','YminorTick','on','YTick',[0:2000:(1.4*10^4)]);
     box off;

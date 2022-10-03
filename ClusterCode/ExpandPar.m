@@ -1,21 +1,4 @@
 function [par] = ExpandPar(part,XU,CF,maxtau,os)
-% ExpandPar(part,XU,CF,maxtau,os) expands the parameter set based on the
-% the truncated paramter set
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
-% Input
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
-% part - truncated parameter vector based on XU
-% XU - vector of covairiates to include
-% CF - conflict function being used
-% maxtau - the maximum lag considered in the model
-% os - optimization selection of ga or patternsearhc
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
-% Output
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
-% par - the full parameters set where the covariates not included have
-% small value
-
 if(os==1)
     par=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 log10(0.5) -32];
 else

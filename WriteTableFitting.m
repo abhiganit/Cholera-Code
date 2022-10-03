@@ -1,4 +1,6 @@
 %% AIC MSE CVE for the various models
+clear;
+clc;
 [WIF,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZIF,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=length(WIF(1,:));
 
@@ -8,7 +10,7 @@ NW=length(WIF(1,:));
 close all;
 C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
 INN=[1:64];
-nd=WI(GNZI,(maxtau+1):end);
+nd=WIF(GNZIF,(maxtau+1):end);
 nd=length(nd(:));
 CVES=10^6.*ones(length(INN),1);
 CVET=10^6.*ones(length(INN),1);
@@ -25,6 +27,7 @@ Diesel=zeros(length(INN),1);
 Wheat=zeros(length(INN),1);
 Rain=zeros(length(INN),1);
 k=zeros(length(INN),1);
+MN=zeros(length(INN),1);
 
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData; % Load the data used to construct the figure
 NW=length(WI(1,:));
@@ -79,6 +82,7 @@ for ii=1:length(INN)
         else
             Rain(ii)=0;
         end
+        MN(ii)=ii;
     end
 end
  AIC=AIC-min(AIC);
@@ -91,7 +95,7 @@ end
  NormCVS=CVES./MeanDataCVS;
  NormCVT=CVET./MeanDataCVT;
 
- T=table(Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,MeanDataFit,CVES,MeanDataCVS,CVET,MeanDataCVT,NormMSE,NormCVS,NormCVT,k,AIC,wAIC,BIC,wBIC);
+ T=table(MN,Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,MeanDataFit,CVES,MeanDataCVS,CVET,MeanDataCVT,NormMSE,NormCVS,NormCVT,k,AIC,wAIC,BIC,wBIC);
  
  writetable(T,'ModelFit.csv','Delimiter',',');
  

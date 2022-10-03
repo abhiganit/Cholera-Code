@@ -17,6 +17,21 @@ load('Yemen_Air_Shelling.mat');
 MtG=GLevelConflict(YASt,S,153); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
 
 
+
+load('Conflict_Yemen_Time_Location_Prior_to_Cholera_Epidemic.mat')% Load the conflict in the area for the projection
+
+BeforeCholeraStart=abs(min(ProCBefore(:,1)))+1;
+ProCBefore(:,1)=ProCBefore(:,1)+abs(min(ProCBefore(:,1)))+1;
+
+
+CtGBefore=GLevelConflict(ProCBefore,S,BeforeCholeraStart);
+load('Yemen_Air_Shelling_Before_Cholera.mat');
+
+BeforeCholeraStart=abs(min(YAStBefore(:,1)))+1;
+YAStBefore(:,1)=YAStBefore(:,1)+abs(min(YAStBefore(:,1)))+1;
+MtGBefore=GLevelConflict(YAStBefore,S,BeforeCholeraStart); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
+
+
 SD = shaperead([ pwd '\ShapeFile\yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 fS=zeros(length(SD),1);
@@ -47,6 +62,27 @@ temp=GLevelConflict(YASt,S([9 2]),153);
 MDt=[MDt; sum(MDt(1:3,:),1);temp];
 
 
+load('Conflict_Yemen_Time_Location_Prior_to_Cholera_Epidemic.mat')% Load the conflict in the area for the projection
+
+BeforeCholeraStart=abs(min(ProCBefore(:,1)))+1;
+ProCBefore(:,1)=ProCBefore(:,1)+abs(min(ProCBefore(:,1)))+1;
+
+
+CtDGBefore=GLevelConflict(ProCBefore,SD,BeforeCholeraStart);
+
+temp=GLevelConflict(ProCBefore,S([9 2]),BeforeCholeraStart);
+
+CtDGBefore=[CtDGBefore; sum(CtDGBefore(1:3,:),1);temp];
+
+load('Yemen_Air_Shelling_Before_Cholera.mat');
+
+BeforeCholeraStart=abs(min(YAStBefore(:,1)))+1;
+YAStBefore(:,1)=YAStBefore(:,1)+abs(min(YAStBefore(:,1)))+1;
+MDtGBefore=GLevelConflict(YAStBefore,SD,BeforeCholeraStart); % Send conflict data (time, latitude, longatude) and shapefile of area wanted to catagorize
+
+temp=GLevelConflict(YAStBefore,S([9 2]),BeforeCholeraStart);
+MDtGBefore=[MDtGBefore; sum(MDtGBefore(1:3,:),1);temp];
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% Sana'a City
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
@@ -55,6 +91,7 @@ fprintf('=======================================================================
 fprintf([Sm{9} '\n']);
 fprintf('================================================================================ \n \n')
 
+fprintf(['Shelling and air attack in ' Sm{9} ' from Janurart 1, 2015 to Oct 2 2016 = %d \n'],sum(MtGBefore(9,:)));
 
 WeekEnd=floor((datenum('April 9, 2017')-datenum('October 3, 2016'))./7)+1;
 WeekStart=floor((datenum('October 3, 2016')-datenum('October 3, 2016'))./7)+1;
@@ -127,7 +164,7 @@ fprintf(['Hodeidah City \n']);
 fprintf('================================================================================ \n \n')
 %Second wave: March 27, 2017 to April 1, 2018
 
-
+fprintf(['Shelling and air attack in Hodeidah City vs ' Sm{9} ' from Janurart 1, 2015 to Oct 2 2016 = %d vs %d \n'],[sum(MDtGBefore(end-2,:)) sum(MtGBefore(9,:)) ]);
 
 WeekEnd=floor((datenum('March 26, 2017')-datenum('October 3, 2016'))./7)+1;
 
@@ -202,6 +239,10 @@ end
 fprintf('\n================================================================================ \n')
 fprintf([Sm{2} '\n']);
 fprintf('================================================================================ \n \n')
+
+fprintf(['Shelling and air attack in ' Sm{2} ' from Janurart 1, 2015 to Oct 2 2016 = %d \n'],sum(MtGBefore(2,:)));
+
+fprintf(['Perecentage of Shelling and air attack in ' Sm{2} ' during March 23 and August 2 for period Janurart 1, 2015 to Oct 2 2016 = %4.3f \n'],sum(MtGBefore(2,13:31))./sum(MtGBefore(2,:)));
 
 WeekEnd=floor((datenum('March 26, 2017')-datenum('October 3, 2016'))./7)+1;
 WeekStart=floor((datenum('October 3, 2016')-datenum('October 3, 2016'))./7)+1;

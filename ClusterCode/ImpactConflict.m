@@ -22,7 +22,7 @@ function Y = ImpactConflict(Ct,K,CF)
 if(CF==0) % Conduct linear growth of the effect of conflict
     Y=Ct;
 else
-   Y=Ct-K; % Threshold for colnflict
+   Y=Ct-K; % The Hill function for the effects of conflict become saturated 
    Y(Y<0)=0;
 end
 end

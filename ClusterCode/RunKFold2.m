@@ -9,12 +9,12 @@ C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
     RF=2;    
     parf=[];
     [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
-    for yy=3:4
-        ss=yy;
+    for yy=3:3
+        ss=4;
             XU=zeros(1,28);
             XU([25:28])=1;
             XU([1:4]+4.*(ss-1))=1;            
-            XU([1:4]+4.*(yy-1))=1;
+            XU([1:4]+4.*(yy-1))=1;     
             [~,~,lbps,ubps,~,~] = BoundsFitting(XU,[-32.*ones(1,length(XU))  log10(0.25) -32 -1 -32 -1 -32 -32 -32 -32 log10(0.5) -32],CF,maxtau);
             % adjust bounds the searching bounds for the conflict function
 
