@@ -445,7 +445,7 @@ b=barh([1:length(GNZI)],WS,'stacked','LineStyle','none');
 for ii=1:6
    b(ii).FaceColor=ColorM(ii,:); 
    if(ii==2 || ii==3 || ii==4 ||ii==6)
-      text(0.355,8-shd(ii), labels{ii},'Fontsize',20,'Color',ColorM(ii,:));
+      text(0.355,8-0.85.*shd(ii), labels{ii},'Fontsize',20,'Color',ColorM(ii,:));
    end
 end
 XGL2=XGL;
@@ -504,4 +504,5 @@ fprintf('Pearson Correlation between average diesel and cumulative incidence: r=
 
 fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
-print(gcf,'Figure4.png','-dpng','-r600');
+print(gcf,'Figure4','-depsc','-r600');
+print(gcf,'Figure4','-dpng','-r600');

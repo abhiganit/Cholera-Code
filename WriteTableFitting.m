@@ -12,22 +12,28 @@ C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
 INN=[1:64];
 nd=WIF(GNZIF,(maxtau+1):end);
 nd=length(nd(:));
-CVES=10^6.*ones(length(INN),1);
-CVET=10^6.*ones(length(INN),1);
-BIC=10^6.*ones(length(INN),1);
-AIC=10^6.*ones(length(INN),1);
-MSE=10^6.*ones(length(INN),1);
-MeanDataFit=10^6.*ones(length(INN),1);
-MeanDataCVS=10^6.*ones(length(INN),1);
-MeanDataCVT=10^6.*ones(length(INN),1);
-Targeted=zeros(length(INN),1);
-Conflict=zeros(length(INN),1);
-Shellings=zeros(length(INN),1);
-Diesel=zeros(length(INN),1);
-Wheat=zeros(length(INN),1);
-Rain=zeros(length(INN),1);
-k=zeros(length(INN),1);
-MN=zeros(length(INN),1);
+CVES=10^6.*ones(length(INN)+1,1);
+CVET=10^6.*ones(length(INN)+1,1);
+BIC=10^6.*ones(length(INN)+1,1);
+AIC=10^6.*ones(length(INN)+1,1);
+MSE=10^6.*ones(length(INN)+1,1);
+MeanDataFit=10^6.*ones(length(INN)+1,1);
+MeanDataCVS=10^6.*ones(length(INN)+1,1);
+MeanDataCVT=10^6.*ones(length(INN)+1,1);
+Targeted=zeros(length(INN)+1,1);
+Conflict=zeros(length(INN)+1,1);
+Shellings=zeros(length(INN)+1,1);
+Diesel=zeros(length(INN)+1,1);
+Wheat=zeros(length(INN)+1,1);
+Rain=zeros(length(INN)+1,1);
+k=zeros(length(INN)+1,1);
+MN=zeros(length(INN)+1,1);
+
+MN(end)=NaN;
+MSE(end)=NaN;
+CVES(end)=NaN;
+CVET(end)=NaN;
+
 
 [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData; % Load the data used to construct the figure
 NW=length(WI(1,:));
@@ -49,7 +55,7 @@ for ii=1:length(INN)
         
         [k(ii)]=RetParameterPS(par,XU,CF,4);
         AIC(ii)=AICScore(k(ii),nd,RSSv);
-        BIC(ii)=BICScore(k(ii),nd,RSSv);
+%         BIC(ii)=BICScore(k(ii),nd,RSSv);
         CVES(ii)=OFuncDistrict(pars,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW));
         CVET(ii)=OFuncProGA_TempVal(pars,CF,WIVal(GNZIVal,1:end),tAVal(GNZIVal,1:end),CtvVal(GNZIVal,1:end),XU,maxtau,WPINVal(GNZIVal,1:end),FPINVal(GNZIVal,1:end),MtVal(GNZIVal,1:end),WheattVal(GNZIVal,1:end),DieseltVal(GNZIVal,1:end),V1Val(GNZIVal,1:end),V2Val(GNZIVal,1:end),RtvVal(GNZIVal,1:end),RF,PopSVal(GNZIVal,1:end),CIVal(GNZIVal,1:end));
         if(ismember(1,INC{INN(ii)}))
@@ -85,17 +91,24 @@ for ii=1:length(INN)
         MN(ii)=ii;
     end
 end
- AIC=AIC-min(AIC);
- wAIC=exp(-AIC./2)./sum(exp(-AIC./2));
+ AIC(1:end-1)=AIC(1:end-1)-min(AIC(1:end-1));
+ AIC(end)=NaN;
+ wAIC=exp(-AIC(1:end-1)./2)./sum(exp(-AIC(1:end-1)./2));
+ wAIC=[wAIC;1];
+%  BIC=BIC-min(BIC);
+%  wBIC=exp(-BIC./2)./sum(exp(-BIC./2));
  
- BIC=BIC-min(BIC);
- wBIC=exp(-BIC./2)./sum(exp(-BIC./2));
- 
- NormMSE=MSE./MeanDataFit;
+ NormMSE=MSE./MeanDataFit; 
  NormCVS=CVES./MeanDataCVS;
  NormCVT=CVET./MeanDataCVT;
+Targeted(end)=sum(Targeted(1:end-1).*wAIC(1:end-1));
+Conflict(end)=sum(Conflict(1:end-1).*wAIC(1:end-1));
+Shellings(end)=sum(Shellings(1:end-1).*wAIC(1:end-1));
+Diesel(end)=sum(Diesel(1:end-1).*wAIC(1:end-1));
+Wheat(end)=sum(Wheat(1:end-1).*wAIC(1:end-1));
+Rain(end)=sum(Rain(1:end-1).*wAIC(1:end-1));
 
- T=table(MN,Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,MeanDataFit,CVES,MeanDataCVS,CVET,MeanDataCVT,NormMSE,NormCVS,NormCVT,k,AIC,wAIC,BIC,wBIC);
+ T=table(MN,Targeted,Conflict,Shellings,Diesel,Wheat,Rain,MSE,CVES,CVET,NormMSE,NormCVS,NormCVT,k,AIC,wAIC);
  
  writetable(T,'ModelFit.csv','Delimiter',',');
  

@@ -37,26 +37,6 @@ Mt2=Mt2(GNZI,:);
 
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
-XS=linspace(41.7741,54.6472,101);
-YS=linspace(11.7,19.0978,101);
-[XSRCt,YSRCt]=meshgrid(XS,YS);
-XSRC=XSRCt(:);
-YSRC=YSRCt(:);
-
-XS=[(XS(2:end)+XS(1:end-1))./2];
-YS=[(YS(2:end)+YS(1:end-1))./2];
-[XSRCt,YSRCt]=meshgrid(XS,YS);
-XSRC=[XSRC; XSRCt(:)];
-YSRC=[YSRC; YSRCt(:)];
-in=zeros(size(XSRC));
-for ii=1:length(S)
-    if(RC(ii)==1)
-        in=in+inpolygon(XSRC,YSRC,S(ii).X,S(ii).Y);
-    end
-end
-XSRC=XSRC(in>0);        
-YSRC=YSRC(in>0);
-
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 load('PopulationSize_Yemen.mat');
@@ -87,7 +67,7 @@ xtickangle(45);
 xlabel('Week of report','Fontsize',18);
 box off;
 yh=ylabel({'Incidence per 10,000'},'Fontsize',18);
-legend('Rebel control','Government control')
+legend('Houthi control','Government control')
 legend boxoff;
 
 subplot('Position',[0.017268907563025,0.08,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
@@ -106,7 +86,29 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
+
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(0,max(max(MART),max(MARo)),100);
@@ -144,7 +146,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(0,max(max(MART),max(MARo)),100);
@@ -193,7 +216,7 @@ box off;
 ylabel('Rainfall (mm)','Fontsize',18);
 ylim([0 62])
 
-legend('Rebel control','Government control')
+legend('Houthi control','Government control')
 legend boxoff;
 
 subplot('Position',[0.017268907563025,0.08,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
@@ -212,7 +235,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo),min(MART)),max(max(MARo),max(MART)),100);
@@ -250,7 +294,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo),min(MART)),max(max(MARo),max(MART)),100);
@@ -302,7 +367,7 @@ xlabel('Week of report','Fontsize',18);
 box off;
 ylabel('Number of conflict events','Fontsize',18);
 
-legend('Rebel control','Government control')
+legend('Houthi control','Government control')
 legend boxoff;
 text(-13.9,0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
 
@@ -323,7 +388,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo),min(MART)),max(max(MARo),max(MART)),100);
@@ -361,7 +447,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo),min(MART)),max(max(MARo),max(MART)),100);
@@ -410,7 +517,7 @@ ylabel('Number of shellings and attacks','Fontsize',18);
 
 text(-13.9,0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
 
-legend('Rebel control','Government control')
+legend('Houthi control','Government control')
 legend boxoff;
 
 subplot('Position',[0.017268907563025,0.08,0.45,0.45]); % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
@@ -429,7 +536,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo),min(MART)),max(max(MARo),max(MART)),100);
@@ -466,7 +594,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo),min(MART)),max(max(MARo),max(MART)),100);
@@ -521,7 +670,7 @@ box off;
 ylabel('Diesel price','Fontsize',18);
 
 
-legend({'Rebel control','Government control'},'Location','NorthWest')
+legend({'Houthi control','Government control'},'Location','NorthWest')
 legend boxoff;
 
 text(-13.9,0.99*max(ylim),'C','Fontsize',32,'FontWeight','bold');
@@ -543,7 +692,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo(MARo>0)),min(MART)),max(max(MARo),max(MART)),100);
@@ -579,7 +749,28 @@ for ii=1:length(S)
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
     end
 end
-scatter(XSRC,YSRC,3,'k','filled');
+load('Houthi_Hatching.mat','Stp','XtV');
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
 box off;
 xlim([41.7741   54.6472]);
 dA=linspace(min(min(MARo(MARo>0)),min(MART)),max(max(MARo),max(MART)),100);
