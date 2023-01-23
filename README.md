@@ -17,7 +17,7 @@ The codes developed here are tested on Windows operating system (Windows 10 Home
 
 ## Installation guide
 ### MATLAB
-Installation instruction for MATLAB can be found at https://www.mathworks.com/help/install/install-products.html. Typical install time for MATLAB on a "normal" desktop is around 30-40 minutes. The current codes were developed and tested on MATLAB R2018b.
+Installation instruction for MATLAB can be found at https://www.mathworks.com/help/install/install-products.html. Typical install time for MATLAB on a "normal" desktop is around 30-40 minutes. The current codes were developed and tested on MATLAB R2019b.
 
 ## Demo
 Figure3 produces Figure3 in the main text showing the contribution of external factors for Houthi and Government controlled regions over the four epidemic waves
@@ -35,7 +35,7 @@ Figure3: the contribution of external factors for Houthi and Government controll
 
 Figure4: the contribution of external factors for Houthi and Government controlled regions and disctricts of two selected governroates
 
-### Supplementary Figure Scripts
+### Supplementary Scripts
 FigureS_Gov_VAL: Validation of incidence for governotes
 
 FigureS_District_VAL: Validation of incidence for districts
@@ -43,6 +43,8 @@ FigureS_District_VAL: Validation of incidence for districts
 FigureS_Contribution: Contribution of factors at the governorate level
 
 Figure1_Control_COVID19: The temporal trend and spatial differences of model input data prior and during COVID pandemic
+
+Table_Mediation_Analysis_Alt: Produces table for the mediation analysis 
 
 ### Analysis Scripts
 WriteTableFitting: Summarazing model fit and model selection
@@ -58,3 +60,15 @@ DataCorrFigure: Computes correlations
 COVID19_Covariate_Effect: Provides values for supplementary table on the effect of covariates during pandemic period
 
 Cholera_Incidence_Governorate_COVID19: Computes the incidence during pandemic
+
+CalibrateModel: Calibrates the saturation coefficient of the model
+
+Fit1, Fit2, Fit3, Fit4: Used to fit all the different models
+
+Houthi_Map_Legend: Used to produce the houthi control legend for the maps
+
+mediation_analysis_alt: Used to do the mediation analysis for diesel and conflict
+
+mediation_analysis_alt_wheat: Used to do the mediation analysis for wheat and conflict
+
+PrintSummaryTable: Produces LaTEX summary table of the governorate characteristics
