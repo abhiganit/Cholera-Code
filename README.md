@@ -25,6 +25,7 @@ Figure3 produces Figure3 in the main text showing the contribution of external f
 ## Instructions for use
 To generate the Figures and output of the calculations, select a script from Figures section to run in MATLAB and enter the name in the command line. All mat file are availble to generate figures and conduct the calculations. To run analysis on a different set of parameters, adjust the parameters in the script and enter the name of the script in the command line to run.
 
+## Computational Code
 ### Main Figure Script
 Figure1_Control: Temporal trends in stratified regions
 
@@ -42,3 +43,12 @@ FigureS_District_VAL: Validation of incidence for districts
 FigureS_Contribution: Contribution of factors at the governorate level
 
 Figure1_Control_COVID19: The temporal trend and spatial differences of model input data prior and during COVID pandemic
+
+### Analysis Scripts
+WriteTableFitting: Summarazing model fit and model selection
+WriteTableVal: Summarizes model validation 
+TimeLineStat and NarrativeStat: Summarizes statistics in the narrative
+ParameterTables: Produces the model estimated parameters
+DataCorrFigure: Computes correlations
+COVID19_Covariate_Effect: Provides values for supplementary table on the effect of covariates during pandemic period
+Cholera_Incidence_Governorate_COVID19: Computes the incidence during pandemic
