@@ -27,12 +27,18 @@ To generate the Figures and output of the calculations, select a script from Fig
 
 ### Main Figure Script
 Figure1_Control: Temporal trends in stratified regions
+
 Figure2_Control: Spatial heterogeneity among governorates
+
 Figure3: the contribution of external factors for Houthi and Government controlled regions over the four epidemic waves
+
 Figure4: the contribution of external factors for Houthi and Government controlled regions and disctricts of two selected governroates
 
 ### Supplementary Figure Scripts
 FigureS_Gov_VAL: Validation of incidence for governotes
+
 FigureS_District_VAL: Validation of incidence for districts
+
 FigureS_Contribution: Contribution of factors at the governorate level
+
 Figure1_Control_COVID19: The temporal trend and spatial differences of model input data prior and during COVID pandemic
