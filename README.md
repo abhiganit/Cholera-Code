@@ -46,9 +46,15 @@ Figure1_Control_COVID19: The temporal trend and spatial differences of model inp
 
 ### Analysis Scripts
 WriteTableFitting: Summarazing model fit and model selection
+
 WriteTableVal: Summarizes model validation 
+
 TimeLineStat and NarrativeStat: Summarizes statistics in the narrative
+
 ParameterTables: Produces the model estimated parameters
+
 DataCorrFigure: Computes correlations
+
 COVID19_Covariate_Effect: Provides values for supplementary table on the effect of covariates during pandemic period
+
 Cholera_Incidence_Governorate_COVID19: Computes the incidence during pandemic
