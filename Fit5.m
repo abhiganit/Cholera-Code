@@ -10,11 +10,11 @@ load('Combo.mat');
 load(['Fit-Vaccination-IncidenceperCapita.mat'],'par');
 par_base_t=par;
 
-for nn=17:26
+nn=32;
     % Construct the index used to determine the parameterizatrion
     indx=INC{nn};
     par_base=par_base_t;
-    for kk=2:16
+    for kk=2:31
         test_m=ismember(INC{kk},indx);
         if(sum(test_m)==length(INC{kk}))
             load(['Fit-Vaccination-IncidenceperCapita' C(INC{kk}).N '.mat'],'par');
@@ -63,5 +63,5 @@ for nn=17:26
 
     [par,RSSv] =ProFittingGA(XU,temppar);              
     save(['Fit-Vaccination-IncidenceperCapita' C(indx).N '.mat'],'par','RSSv','XU','X');
-end
+
 delete pobj;

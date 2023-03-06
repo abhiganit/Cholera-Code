@@ -1,12 +1,14 @@
-%% Inlcudes the effwects of conflict and shellngs on the diesel prices
 % Read table of past fitsclose all;
 close all;
-load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
+load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain.mat')
+
+Cov2Inc=[2 3 4 6];
+
 [WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
 % Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_W]=RetParameterGA(par,XU,maxtau);
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,DAR,w,sigma_w]=RetParameterGA(par,XU,maxtau);
 
 [Yt,X]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),Temptv(GNZI,:),r0,temp_0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
 dV1=ImpactAttack(V1(GNZI,:)-V2(GNZI,:),0,dV(1),2,maxtau); % Two week delay until acquire immunity
@@ -27,7 +29,8 @@ MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
     end
     CCR{mm}=tempmat;
  end
-%% Conflict indirect effect
+
+ %% Conflict indirect effect
 load('DieselrepresentedthroughConflictShellings.mat','bd','XC','XS');
 mmt=4;
 tempmat=zeros(size(squeeze(X(1,:,:))));
@@ -44,15 +47,12 @@ CCR{2}=CCR{2}+tempmat;
 CCR{3}=CCR{3}+tempmat2;
 CCR{4}=CCR{4}-tempmat-tempmat2;
 
+
 IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model
 WW=zeros(4,length(GNZI),6);
-WWRC=zeros(4,2,6);
 for ww=1:4
     for mm=1:6
        WW(ww,:,mm) = (sum((CCR{mm}(:,IndW(ww,1):IndW(ww,2))),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2));
-       
-       WWRC(ww,1,mm) = sum(sum((CCR{mm}(RC(GNZI)==1,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==1,IndW(ww,1):IndW(ww,2)),2));
-       WWRC(ww,2,mm) = sum(sum((CCR{mm}(RC(GNZI)==0,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==0,IndW(ww,1):IndW(ww,2)),2));
     end   
 end
 
@@ -90,93 +90,66 @@ IData=IData(:,GNZI)';
 NW=length(IData(1,:));
 dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-Gintv=[2 5 9 11 19 21];
+Gintv=[ 1 2 3; 4 5 6; 7 8 9; 10 11 12; 13 14 15; 16 17 18; 19 20 21];
+Gintv=Gintv(:);
 
-CCRC=cell(6,1);
-for ii=1:6
-    Temp=[CCR{ii}];
-    TempR=sum(Temp(RC(GNZI)==1,:),1);
-    TempG=sum(Temp(RC(GNZI)==0,:),1);
-    CCRC{ii}=[TempR;TempG];
-end
-
-
-figure('units','normalized','outerposition',[0 0 1 1]);
-yyl=[1.2*10^4 1250];
-
-yy0=[0.58 0.15];
-
+CVName={'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall'};
 
 shd=[0 0 1 2 2 3 4];
-    labels = {'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall'};
-    
-for mm=1:2
-    subplot('Position',[0.07,yy0(mm),0.915,0.41]);
+    labels = {'Targeted','Conflict','Shellings','Diesel','Wheat','Rainfall'};
+for Gint=1:length(GNZI)
+    figure('units','normalized','outerposition',[0.05 0.05 0.8 0.65]);
 
-    Gint=Gintv(mm);
-    b=bar([(1+maxtau):NW],[squeeze(CCRC{1}(mm,:)); squeeze(CCRC{2}(mm,:)); squeeze(CCRC{3}(mm,:)); squeeze(CCRC{4}(mm,:)); squeeze(CCRC{5}(mm,:)); squeeze(CCRC{6}(mm,:))]','Stacked','LineStyle','none');
+    subplot('Position',[0.07,0.225,0.92,0.755]);
+
+    b=bar([(1+maxtau):NW],[squeeze(CCR{1}(Gint,:)); squeeze(CCR{2}(Gint,:)); squeeze(CCR{3}(Gint,:)); squeeze(CCR{4}(Gint,:)); squeeze(CCR{5}(Gint,:)); squeeze(CCR{6}(Gint,:))]','Stacked','LineStyle','none');
     for ii=1:length(ColorM(:,1))
         b(ii).FaceColor = 'flat';
         b(ii).CData = ColorM(ii,:);
-        if(mm==1)
-            if(ii==2 || ii==3 || ii==4 ||ii==6)
-                text(1,11100-1050.*shd(ii), labels{ii},'Fontsize',18,'Color',ColorM(ii,:));
-            end
-        end
     end
-    yh=ylabel('Suspected cases','Fontsize',18);
+    myX=max(ylim).*1.1;
+    yh=ylabel('Suspected cholera cases','Fontsize',18);
     xlim([0.5 NW+0.5]);
-     ylim([0 8500]./7000.*(yyl(mm)));
-     if(mm==1)
-        text(NW+0.5,(yyl(mm)),'\it{\bf{Houthi}}','Fontsize',18,'HorizontalAlignment','right');
-     else
-         text(NW+0.5,(yyl(mm)),'\it{\bf{Government}}','Fontsize',18,'HorizontalAlignment','right');
-     end
-     if(mm==1)
-        set(gca,'linewidth',2,'tickdir','out','XTick','','XTickLabel','','Fontsize',18,'XMinortick','off','YminorTick','on','YTick',[0:2000:(yyl(mm))]);
-     else
-        set(gca,'linewidth',2,'tickdir','out','XTick','','XTickLabel','','Fontsize',18,'XMinortick','off','YminorTick','on','YTick',[0:250:(yyl(mm))]); 
-     end
+    ylim([0 8500]./7000*myX);
+    text(1.15,myX,['\bf{\it{' XGL(Gint) '}}'],'Fontsize',16,'HorizontalAlignment','left');
+    for ii=1:length(Cov2Inc)
+        text(1.15,myX.*(1-0.06.*ii),CVName{Cov2Inc(ii)},'Fontsize',16,'HorizontalAlignment','left','color',ColorM(Cov2Inc(ii),:));
+    end
+    ii=length(Cov2Inc)+1;
+    text(1.15,myX.*(1-0.06.*ii),'Incidence','Fontsize',16,'HorizontalAlignment','left','color',[0.7 0.7 0.7]);
+    set(gca,'linewidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'XMinortick','on');%,'YTick',[0:500:3500]);
+    xlabel('Week of report','Fontsize',18);
+    xtickangle(45);
     box off;
     hold on;
     for ii=1:3
-        plot((maxtau+mean([IndW(ii,2) IndW(ii+1,1)])).*ones(1001,1),linspace(0,(yyl(mm)),1001),'k-.','LineWidth',2);        
+        plot((maxtau+mean([IndW(ii,2) IndW(ii+1,1)])).*ones(1001,1),linspace(0,myX,1001),'k-.','LineWidth',2);        
     end
-    
-    
+%     text(yh.Extent(1),max(ylim)*0.975,char(64+Gint),'Fontsize',32,'fontweight','bold');
+
     for wv=1:4
-        for jj=1:length(squeeze(WWRC(1,1,:)))
+        for jj=1:length(squeeze(WW(1,1,:)))
             if(jj==1)
                 xstart=maxtau+IndW(wv,1);
-                xend=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*squeeze(WWRC(wv,mm,jj));
+                xend=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*squeeze(WW(wv,Gint,jj));
             else                
-                xstart=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*sum(squeeze(WWRC(wv,mm,1:(jj-1))));
-                xend=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*sum(squeeze(WWRC(wv,mm,1:jj)));                
+                xstart=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*sum(squeeze(WW(wv,Gint,1:(jj-1))));
+                xend=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*sum(squeeze(WW(wv,Gint,1:jj)));                
             end
-            patch([xstart xstart xend xend],[max(ylim) 7250./7000*(yyl(mm)) 7250./7000*(yyl(mm)) max(ylim)] ,ColorM(jj,:),'Edgealpha',0)
-            if(round(100.*squeeze(WWRC(wv,mm,jj)))>=5)
-            ht=text(mean([xstart xend]),mean([7250 8500]./7000*(yyl(mm))),[num2str(round(100.*squeeze(WWRC(wv,mm,jj)))) '%'],'Fontsize',18,'HorizontalAlignment','center','color','w','Fontweight','bold');
+            patch([xstart xstart xend xend],[max(ylim) 7250./7000*myX 7250./7000*myX max(ylim)] ,ColorM(jj,:),'Edgealpha',0)
+            if(round(100.*squeeze(WW(wv,Gint,jj)))>=5)
+            ht=text(mean([xstart xend]),mean([7250 8500]./7000*myX),[num2str(round(100.*squeeze(WW(wv,Gint,jj)))) '%'],'Fontsize',12,'HorizontalAlignment','center','color','w','Fontweight','bold');
             set(ht,'Rotation',90);
             end
         end
-         xstart=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*sum(squeeze(WWRC(wv,mm,1:(jj))));
+         xstart=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1)).*sum(squeeze(WW(wv,Gint,1:(jj))));
          xend=maxtau+IndW(wv,1)+(IndW(wv,2)-IndW(wv,1));   
-         patch([xstart xstart xend xend],[max(ylim) 7250./7000*(yyl(mm)) 7250./7000*(yyl(mm)) max(ylim)] ,[0.7 0.7 0.7],'Edgealpha',0)
-         if(round(100.*(1-sum(squeeze(WWRC(wv,mm,1:(jj))))))>=5)
-         ht=text(mean([xstart xend]),mean([7250 8500]./7000*(yyl(mm))),[num2str(round(100.*(1-sum(squeeze(WWRC(wv,mm,1:(jj))))))) '%'],'Fontsize',18,'HorizontalAlignment','center','color','w','Fontweight','bold');
+         patch([xstart xstart xend xend],[max(ylim) 7250./7000*myX 7250./7000*myX max(ylim)] ,[0.7 0.7 0.7],'Edgealpha',0)
+         if(round(100.*(1-sum(squeeze(WW(wv,Gint,1:(jj))))))>=5)
+         ht=text(mean([xstart xend]),mean([7250 8500]./7000*myX),[num2str(round(100.*(1-sum(squeeze(WW(wv,Gint,1:(jj))))))) '%'],'Fontsize',12,'HorizontalAlignment','center','color','w','Fontweight','bold');
          set(ht,'Rotation',90);
          end
     end
-     text(yh.Extent(1)*0.9,max(ylim)*0.975,char(64+mm),'Fontsize',32,'fontweight','bold');
+    
+    print(gcf,['Gov_Contribution_' XGL{Gint} '.png'],'-dpng','-r600');
 end
-
-if(mm==1)
-    set(gca,'linewidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',18,'XMinortick','on','YTick',[0:2000:(yyl(mm))]);
- else
-    set(gca,'linewidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',18,'XMinortick','on','YTick',[0:250:(yyl(mm))]); 
- end
-xlabel('Week of report','Fontsize',18);
-xtickangle(45);
-box off;
-print(gcf,['Figure3'],'-depsc','-r600');
-print(gcf,['Figure3'],'-dpng','-r600');

@@ -1,4 +1,4 @@
-function [Yt,X]= LogisticModel(beta,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,V1,V2,KV,dV,Rtv,RF,r0,WI,Pop,CI,DAR,w)
+function [Yt,X]= LogisticModel(beta,tA,DB,DA,Ctv,K,n,tau,maxtau,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,V1,V2,KV,dV,Rtv,Temptv,r0,temp_0,WI,Pop,CI,DAR,w)
 % Produces the predicted incicence in matrix form for the diffrent areas
 % and weeks
 %===============================
@@ -20,18 +20,10 @@ function [Yt,X]= LogisticModel(beta,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,
     % RIF=1 the increase in incidence when rainfall is high
     % RIF=2 the increase in incidence when rainfall is low and high
 % rl - THreshold for rainfall for the covariat of rainfall*incidence
-% RF - the indication of what function will be used
-    % RF=0 the increase in incidence when rainfall is low
-    % RF=1 the increase in incidence when rainfall is high
-    % RF=2 the increase in incidence when rainfall is low and high
 % rh - THreshold for rainfall for the covariat of rainfall
 % tau - the lag to use for the incidence and enviromental factors  
 % maxtau- the maximum lag allowed for all the models such that they return
 % the same amount of data
-% CF - what conflict function that is being used
-        % CF=0 linear effect; 
-        %CF=1 Hill function with n=1; 
-        %CF=2; Full hill function
  % P - population density for the different govenorates
  % RC - Rebel control
  % H - The number of health facilities for the different govenorates
@@ -68,7 +60,7 @@ function [Yt,X]= LogisticModel(beta,tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,
 
 %% Input for regression model
 
-[X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,RF,r0,WI,Pop,CI,DAR,w);
+[X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,Temptv,r0,temp_0,WI,Pop,CI,DAR,w);
 dV1=ImpactAttack(V1-V2,0,dV(1),2,maxtau); % Two week delay until acquire immunity
 dV2=ImpactAttack(V2,0,dV(2),2,maxtau);  % Two week delay until acquire immunity
 EOVC=EffectOCV(dV1,KV,dV2,KV);

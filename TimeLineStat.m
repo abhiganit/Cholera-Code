@@ -1,7 +1,7 @@
 clear;
 clc;
 
-[WIa,Ctva,tAa,Rtva,Mta,Pa,RCa,Ha,WPINma,IDPta,GNZIa,maxtaua] = LoadYemenDistrictData;
+[WIa,Ctva,tAa,Rtva,Temptva,Mta,Pa,RCa,Ha,WPINma,IDPta,GNZIa,maxtaua] = LoadYemenDistrictData;
 HCity=[29 31 71];
 %% Shellings from Janaury 1, 2015 to October 2, 2016
 

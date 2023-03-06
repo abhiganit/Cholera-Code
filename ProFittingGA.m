@@ -1,4 +1,4 @@
-function [par,fvalfit]=ProFittingGA(XU,CF,RF,pars)
+function [par,fvalfit]=ProFittingGA(XU,pars)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,21 +36,21 @@ close all;
 clc;
 
 %% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
 
 
 %% Run the fitting algorithm
 for mm=1:length(pars(:,1))
-[lb,ub,lbps,ubps,IntC,parst(mm,:)] = BoundsFitting(XU,pars(mm,:),CF,maxtau);
+[lb,ub,IntC,parst(mm,:)] = BoundsFitting(XU,pars(mm,:),maxtau);
 end
-optionsps = optimoptions('patternsearch','MaxFunEvals',10^5,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-12),'UseCompleteSearch',true,'Display','off','PlotFcn', @psplotbestf);
+optionsps = optimoptions('patternsearch','MaxFunEvals',10^5,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-12),'UseCompleteSearch',true,'Display','off','PlotFcn', []);
 
-options = optimoptions('ga','MaxGenerations',10^4,'FunctionTolerance',10^(-6),'InitialPopulationMatrix',parst,'Display','off','PlotFcn', @gaplotbestf,'HybridFcn',{@patternsearch,optionsps}); %
-    [par,fvalfit] =ga(@(x)OFuncProGA(x,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW)),length(parst(1,:)),[],[],[],[],lb,ub,[],IntC,options); 
+options = optimoptions('ga','MaxGenerations',10^4,'FunctionTolerance',10^(-6),'InitialPopulationMatrix',parst,'Display','off','PlotFcn', [],'HybridFcn',{@patternsearch,optionsps}); %
+    [par,fvalfit] =ga(@(x)OFuncProGA(x,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW)),length(parst(1,:)),[],[],[],[],lb,ub,[],IntC,options); 
     
-    [par] = ExpandPar(par,XU,CF,maxtau,1);
+    [par] = ExpandPar(par,XU,maxtau);
     
 par(XU==0)=-30; % for the recursive componetnt
 end

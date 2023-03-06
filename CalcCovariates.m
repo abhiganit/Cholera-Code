@@ -1,4 +1,4 @@
-function [X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,RF,r0,WI,Pop,CI,DAR,w)
+function [X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,Rtv,Temptv,r0,temp_0,WI,Pop,CI,DAR,w)
 %CALCCOVARIATES Claculates the covariates for the regression model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input
@@ -18,18 +18,10 @@ function [X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt
     % RIF=1 the increase in incidence when rainfall is high
     % RIF=2 the increase in incidence when rainfall is low and high
 % rl - THreshold for rainfall for the covariat of rainfall*incidence
-% RF - the indication of what function will be used
-    % RF=0 the increase in incidence when rainfall is low
-    % RF=1 the increase in incidence when rainfall is high
-    % RF=2 the increase in incidence when rainfall is low and high
 % rh - THreshold for rainfall for the covariat of rainfall
 % tau - the lag to use for the incidence and enviromental factors  
 % maxtau- the maximum lag allowed for all the models such that they return
 % the same amount of data
-% CF - what conflict function that is being used
-        % CF=0 linear effect; 
-        %CF=1 Hill function with n=1; 
-        %CF=2; Full hill function
  % P - population density for the different govenorates
  % RC - Rebel control
  % H - The number of health facilities for the different govenorates
@@ -66,12 +58,10 @@ function [X] = CalcCovariates(tA,DB,DA,Ctv,K,n,tau,maxtau,CF,WPIN,FPIN,Mt,Wheatt
 
 X=zeros(length(tau),length(WPIN(:,1)),length(WPIN(1,(1+maxtau-tau(1)):(end-tau(1)))));
 
-if(CF(1)==2)
-    Ctv(:,1:n(1))=0;
-end
-if(CF(2)==2)
-    Mt(:,1:n(2))=0;
-end
+%Temporal threshold for conflict
+Ctv(:,1:n(1))=0;
+Mt(:,1:n(2))=0;
+
 
 % Targeted Attacks
 for ii=1:maxtau
@@ -79,11 +69,11 @@ for ii=1:maxtau
 end
 % General conflict
 for ii=(maxtau+1):2*maxtau
-    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(ii)):(end-tau(ii))),K(1),CF(1))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactConflict(Ctv(:,(1+maxtau-tau(ii)):(end-tau(ii))),K(1))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
 end
 %Shelling and air attacks
 for ii=(2.*maxtau+1):3*maxtau
-    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactConflict(Mt(:,(1+maxtau-tau(ii)):(end-tau(ii))),K(2),CF(2))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactConflict(Mt(:,(1+maxtau-tau(ii)):(end-tau(ii))),K(2))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
 end
 % Diesel prices
 for ii=(3.*maxtau+1):4*maxtau
@@ -97,11 +87,16 @@ end
 
 %Rainfall
 for ii=(5.*maxtau+1):6*maxtau
-    X(ii,:,:)=WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii))).*(ImpactRainfall(Rtv(:,(1+maxtau-tau(ii)):(end-tau(ii))),RF,r0)).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+    X(ii,:,:)=WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii))).*(ImpactRainfall(Rtv(:,(1+maxtau-tau(ii)):(end-tau(ii))),r0)).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
+end
+
+%Temprature
+for ii=(6.*maxtau+1):7*maxtau
+    X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*(ImpactTemprature(Temptv(:,(1+maxtau-tau(ii)):(end-tau(ii))),temp_0)).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
 end
 
 %Incidence per capita
-for ii=(6.*maxtau+1):7*maxtau
+for ii=(7.*maxtau+1):8*maxtau
     X(ii,:,:)=(w.*WPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))+(1-w).*FPIN(:,(1+maxtau-tau(ii)):(end-tau(ii)))).*WI(:,(1+maxtau-tau(ii)):(end-tau(ii))).*Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))./(Pop(:,(1+maxtau-tau(ii)):(end-tau(ii)))+DAR.*CI(:,(1+maxtau-tau(ii)):(end-tau(ii))));
 end
 end

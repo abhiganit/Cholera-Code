@@ -1,5 +1,5 @@
 close all;
-[WI2,~,tA2,Rtv2,~,P2,RC,H2,WPINm2,FPINm2,~,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
+[WI2,~,tA2,Rtv2,Temptv2,~,P2,RC,H2,WPINm2,FPINm2,~,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
 % 
 load('PopulationSize_Yemen.mat');
 load('CholeraIncidence_COVID-19.mat');

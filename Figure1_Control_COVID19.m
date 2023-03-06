@@ -1,6 +1,6 @@
 close all;
 clear;
-[WI2,~,tA2,Rtv2,~,P2,RC2,H2,WPINm2,FPINm2,~,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
+[WI2,~,tA2,Rtv2,Temptv2,~,P2,RC2,H2,WPINm2,FPINm2,~,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
 WI2=WI2(GNZI,:);
 tA2=tA2(GNZI,:);
 Rtv2=Rtv2(GNZI,:);

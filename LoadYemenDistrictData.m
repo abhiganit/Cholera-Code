@@ -1,4 +1,4 @@
-function [WI,Ctv,tA,Rtv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData
+function [WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,VT1,VT2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData
 % Loads the Data needed to rum the regression model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -33,7 +33,7 @@ CI=cumsum(IData',2);
 CI=[zeros(size(CI(:,1))) CI(:,1:end-1)];
 CI(end-1,:)=CItemp(9,:);
 CI(end,:)=CItemp(2,:);
-S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+S = shaperead([ pwd '/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 % Record the names for the IDP calculation
 Sm=cell(length(S),1); % allocate space
@@ -41,7 +41,7 @@ for ii=1:length(Sm)
 Sm{ii}=S(ii).ADM1_EN; % record name
 end
 
-SD = shaperead([ pwd '\ShapeFile\yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
+SD = shaperead([ pwd '/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 fS=zeros(length(SD),1);
 for ii=1:length(fS)
@@ -93,7 +93,7 @@ Ginx(length(SDm)+1)=Ginx(1);
 Ginx(length(SDm)+2)=9;
 Ginx(length(SDm)+3)=2;
 Rtv=Rtv(Ginx,TruncV:153); % truncate the railfall data to the time period spceified
-% W = shaperead([ pwd '\ShapeFile\Wadies.shp']); % Shape file for Yemen water course
+% W = shaperead([ pwd '/ShapeFile/Wadies.shp']); % Shape file for Yemen water course
 % Mt=WaterCourseConnection(W,S); % Calculate the contact matrix for the water course
 % Load population density
 load('Area_Yemen.mat'); % loads the population size of the govenerorates (Socotra as the citation did not have their numbers)
@@ -113,7 +113,7 @@ load('RebelControl_Yemen.mat');
 RC=RC';
 RC=RC(Ginx);
 % Load Health facility density
-HS = shaperead([ pwd '\ShapeFile\healthsites.shp']); % Shape file for Yemen
+HS = shaperead([ pwd '/ShapeFile/healthsites.shp']); % Shape file for Yemen
 load('PopulationSize_DistrictYemen.mat');
 H= GLevelHealthSites(HS,SD);
 temp=GLevelHealthSites(HS,S([9 2]));
@@ -181,18 +181,25 @@ for yy=2016:2019
     end
 end
 
+
+% Temprature
+Temptv=zeros(size(WI));
+load('Temprature_Gov.mat','Temp_G');
 EndFirstEpiWeek= datenum('10-09-2016');% Start of second epiweek is oct 10, 2016
 for ii=1:length(IData(:,1))
     f=find(EndFirstEpiWeek+7*(ii-1)<=endData,1);% Need the first one to satisfy this condition as we increase over time and will elminate the other past months
     Wheatt(:,ii)=Wheat(:,f);
     Dieselt(:,ii)=Diesel(:,f);
+    Temptv(:,ii)=Temp_G(:,month(EndFirstEpiWeek+7*(ii-1)));
 end
 
 Wheattemp=Wheatt(:,TruncV:end);
 Dieseltemp=Dieselt(:,TruncV:end);
+Temptvtemp=Temptv(:,TruncV:end);
 
 Wheatt=Wheattemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
 Dieselt=Dieseltemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
+Temptv=Temptvtemp([5 5 5 9.*ones(1,length(fS)) 2.*ones(1,length(fA)) 5 9 2],:);
 %% Comput the attack rate per 10,000
 WI=10000.*WI./PopS;
 

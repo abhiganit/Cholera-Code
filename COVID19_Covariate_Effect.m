@@ -4,7 +4,7 @@ rng default;
 
 
 load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat');
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 
 peffect=zeros(4,1);
 ptime=zeros(4,1);
@@ -14,7 +14,7 @@ DateCOVID=cell(4,2);
 DatePreCOVID=cell(4,2);
 Cov=cell(4,1);
 % Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,~,w]=RetParameterPS(par,XU,CF,maxtau);
+[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_W]=RetParameterGA(par,XU,maxtau);
 % Conflict 
 
 
@@ -140,7 +140,7 @@ Rtv=RainCOVID19';
 Rtv=Rtv(GNZI,:);
 X4=zeros(4,length(Rtv(:,1)),length(Rtv(1,(1+maxtau-tau(1)):(end-tau(1)))));
 for ii=(5.*maxtau+1):6*maxtau
-    X4(ii-5.*maxtau,:,:)=beta(ii).*ImpactRainfall(Rtv(:,(1+maxtau-tau(ii)):(end-tau(ii))),RF,r0);
+    X4(ii-5.*maxtau,:,:)=beta(ii).*ImpactRainfall(Rtv(:,(1+maxtau-tau(ii)):(end-tau(ii))),r0);
 end
 
 X4t=squeeze(X4(1,:,:))+squeeze(X4(2,:,:))+squeeze(X4(3,:,:))+squeeze(X4(4,:,:));

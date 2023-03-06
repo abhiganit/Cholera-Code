@@ -19,7 +19,7 @@ function [V1,V2]= VaccinationTime(Scale,NW)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 startDateofSim = datenum('10-03-2016');% Start date
 if(Scale==1)
-    S = shaperead(['C:\Users\chadr\Desktop\Cholera-Methods\Cholera-Code\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
+    S = shaperead([pwd '/ShapeFile/yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
     S={S.ADM1_EN};
     V1=zeros(22,NW);   
     V2=zeros(22,NW);   
@@ -93,7 +93,7 @@ elseif(Scale==2)
     
     V1=zeros(24,NW);   
     V2=zeros(24,NW);   
-    SD = shaperead(['C:\Users\chadr\Desktop\Cholera-Methods\Cholera-Code\ShapeFile\yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
+    SD = shaperead([pwd '/ShapeFile/yem_admbnda_adm2_govyem_mola_20181102.shp']); % Shape file for Yemen
     
     
     fS=zeros(length(SD),1);

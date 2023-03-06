@@ -1,4 +1,4 @@
-function [par,DAR,fvalfit]=ProFitting(XU,CF,RF,par)
+function [par,DAR,fvalfit]=ProFitting(XU,par)
 % Runs the fitting for the specified criteria and saves files to folders
 % for what is specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,7 +36,7 @@ close all;
 clc;
 
 %% Load the data
-[WI,Ctv,tA,Rtv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
 NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
 
@@ -46,9 +46,9 @@ options = optimoptions('ga','MaxGenerations',10^4,'FunctionTolerance',10^(-10),'
 opts= optimset('MaxIter',10^5,'MaxFunEvals',10^5,'TolFun',10^(-16),'TolX',10^(-16),'Display','off'); 
 
 
-[d10] =ga(@(x)OFuncPro(x,par,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW)),1,[],[],[],[],-2,3,[],[],options); 
+[d10] =ga(@(x)OFuncPro(x,par,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW)),1,[],[],[],[],-2,3,[],[],options); 
 
-[d10,fvalfit]=fmincon(@(x)OFuncPro(x,par,CF,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),RF,PopS(GNZI,1:NW),CI(GNZI,1:NW)),d10,[],[],[],[],-2,3,[],opts);
+[d10,fvalfit]=fmincon(@(x)OFuncPro(x,par,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW)),d10,[],[],[],[],-2,3,[],opts);
 % compute cross validation error
 DAR=10^d10;
 end

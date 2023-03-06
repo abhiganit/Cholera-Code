@@ -1,21 +1,22 @@
-function Y = ImpactConflict(Ct,K)
+function Y = ImpactTemprature(Tt,temp_0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Y = ImpactConflict(Ct,K)
+%% Y = ImpactTemprature(Tt,temp_0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Computes the impact of conflict
+% Computes the impact of rainfall
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 % Input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
-% Ct - the conflict at time t
-% K- the saturation function
+% Tt - Temprature at time t
+% temp_0 - Threshold for the effect of temprature
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 % Output
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
-% Y- Reutnrs the impact for the number of conflict events
+% Y- Reutnrs the impact for the amount of temprature
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Y=Ct-K; % Threshold for colnflict
+Y=Tt-temp_0;
 Y(Y<0)=0;
+
 end

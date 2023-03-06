@@ -1,8 +1,8 @@
 close all;
 clear;
 clc;
-[WID,~,tAd,RtvD,~,PD,RCD,HD,WPINmD,FPINmD,DieseltD,WheattD,V1D,V2D,GNZID,GVD,~,~,CID] = LoadYemenDistrictData; % Load the data used to construct the figure
-[WI,~,tA,Rtv,~,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,V1,V2,GNZI,GV,~,~,CI] = LoadYemenData; % Load the data used to construct the figure
+[WID,~,tAd,RtvD,TemptvD,~,PD,RCD,HD,WPINmD,FPINmD,DieseltD,WheattD,V1D,V2D,GNZID,GVD,~,~,CID] = LoadYemenDistrictData; % Load the data used to construct the figure
+[WI,~,tA,Rtv,Temptv,~,P,RC,H,WPINm,FPINm,Dieselt,Wheatt,V1,V2,GNZI,GV,~,~,CI] = LoadYemenData; % Load the data used to construct the figure
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 
 % Record the names for the IDP calculation

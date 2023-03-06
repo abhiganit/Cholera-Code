@@ -1,6 +1,6 @@
 close all;
 clear;
-[WI2,~,tA2,Rtv2,~,P2,RC2,H2,WPINm2,FPINm2,Dieselt2,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
+[WI2,~,tA2,Rtv2,Temptv2,~,P2,RC2,H2,WPINm2,FPINm2,Dieselt2,Wheatt2,V1,V2,GNZI,GV,maxtau,~,CI] = LoadYemenData; % Load the data used to construct the figure
 RC=RC2;
 WI2=WI2(GNZI,:);
 tA2=tA2(GNZI,:);
@@ -57,7 +57,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
@@ -79,7 +79,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 box off;
 xlabel('Week of report','Fontsize',10);
@@ -107,7 +107,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
@@ -131,7 +131,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
@@ -157,7 +157,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
@@ -180,7 +180,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
@@ -207,7 +207,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
@@ -312,7 +312,7 @@ startDateofSim = datenum('10-03-2016');% Start date
 dW=8;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 xlim([0.5 length(WI2(1,:))+0.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','on','YMinortick','on');
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
 xlabel('Week of report','Fontsize',10);
 box off;
