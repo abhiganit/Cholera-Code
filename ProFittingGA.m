@@ -45,10 +45,16 @@ NW=153; % Allow the model to fit the entire outbreak and cross validate among th
 for mm=1:length(pars(:,1))
 [lb,ub,IntC,parst(mm,:)] = BoundsFitting(XU,pars(mm,:),maxtau);
 end
-optionsps = optimoptions('patternsearch','MaxFunEvals',10^5,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-12),'UseCompleteSearch',true,'Display','off','PlotFcn', []);
 
-options = optimoptions('ga','MaxGenerations',10^4,'FunctionTolerance',10^(-6),'InitialPopulationMatrix',parst,'Display','off','PlotFcn', [],'HybridFcn',{@patternsearch,optionsps}); %
-    [par,fvalfit] =ga(@(x)OFuncProGA(x,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW)),length(parst(1,:)),[],[],[],[],lb,ub,[],IntC,options); 
+part_IC=zeros(length(pars(:,1)),length(lb));
+parfor jj=1:length(pars(:,1))
+    options = optimoptions('surrogateopt','PlotFcn',[],'InitialPoints',parst(jj,:),'MaxFunctionEvaluations',2.5.*10^3,'UseParallel',false);
+    [part_IC(jj,:),~]  = surrogateopt(@(x)OFuncProGA(x,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW)),lb,ub,options);
+end
+
+optionsps = optimoptions('patternsearch','MaxFunEvals',10^5,'Cache','on','SearchFcn','searchlhs','FunctionTolerance',10^(-12),'UseCompleteSearch',true,'Display','off','PlotFcn', []);
+options = optimoptions('ga','MaxGenerations',10^4,'FunctionTolerance',10^(-6),'InitialPopulationMatrix',part_IC,'Display','off','PlotFcn', [],'HybridFcn',{@patternsearch,optionsps}); %
+[par,fvalfit] =ga(@(x)OFuncProGA(x,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW)),length(parst(1,:)),[],[],[],[],lb,ub,[],IntC,options); 
     
     [par] = ExpandPar(par,XU,maxtau);
     

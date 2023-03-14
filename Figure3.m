@@ -1,61 +1,63 @@
 %% Inlcudes the effwects of conflict and shellngs on the diesel prices
 % Read table of past fitsclose all;
 close all;
-load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
-[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
-NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+% load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat')
+% [WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
+% NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+% 
+% % Evaluate the number of paramters that are being used in the estimation 
+% [~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_W]=RetParameterGA(par,XU,maxtau);
+% 
+% [Yt,X]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),Temptv(GNZI,:),r0,temp_0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
+% dV1=ImpactAttack(V1(GNZI,:)-V2(GNZI,:),0,dV(1),2,maxtau); % Two week delay until acquire immunity
+% dV2=ImpactAttack(V2(GNZI,:),0,dV(2),2,maxtau);  % Two week delay until acquire immunity
+% EOVC=EffectOCV(dV1,KV,dV2,KV);
+% load('PopulationSize_Yemen.mat');
+% NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
+% NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
+% % External effect due to IDP
+% PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
+% 
+% MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
+%  CCR=cell(7,1);
+%  for mm=1:7
+%      tempmat=zeros(size(squeeze(X(1,:,:))));
+%     for ii=(maxtau*(mm-1)+1):(mm.*maxtau)
+%         tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000;
+%     end
+%     CCR{mm}=tempmat;
+%  end
+% %% Conflict indirect effect
+% load('DieselrepresentedthroughConflictShellings.mat','bd','XC','XS');
+% mmt=4;
+% tempmat=zeros(size(squeeze(X(1,:,:))));
+% tempmat2=zeros(size(squeeze(X(1,:,:))));
+% XC2=zeros(size(squeeze(X(1,:,:))));
+% for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
+%     for gg=1:21
+%         XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
+%     end
+%     tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+%     tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
+% end
+% CCR{2}=CCR{2}+tempmat;
+% CCR{3}=CCR{3}+tempmat2;
+% CCR{4}=CCR{4}-tempmat-tempmat2;
+% 
+% IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model
+% WW=zeros(4,length(GNZI),6);
+% WWRC=zeros(4,2,6);
+% for ww=1:4
+%     for mm=1:6
+%        WW(ww,:,mm) = (sum((CCR{mm}(:,IndW(ww,1):IndW(ww,2))),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2));
+%        
+%        WWRC(ww,1,mm) = sum(sum((CCR{mm}(RC(GNZI)==1,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==1,IndW(ww,1):IndW(ww,2)),2));
+%        WWRC(ww,2,mm) = sum(sum((CCR{mm}(RC(GNZI)==0,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==0,IndW(ww,1):IndW(ww,2)),2));
+%     end   
+% end
 
-% Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_W]=RetParameterGA(par,XU,maxtau);
 
-[Yt,X]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),Temptv(GNZI,:),r0,temp_0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
-dV1=ImpactAttack(V1(GNZI,:)-V2(GNZI,:),0,dV(1),2,maxtau); % Two week delay until acquire immunity
-dV2=ImpactAttack(V2(GNZI,:),0,dV(2),2,maxtau);  % Two week delay until acquire immunity
-EOVC=EffectOCV(dV1,KV,dV2,KV);
-load('PopulationSize_Yemen.mat');
-NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
-NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
-% External effect due to IDP
-PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
-
-MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
- CCR=cell(6,1);
- for mm=1:6
-     tempmat=zeros(size(squeeze(X(1,:,:))));
-    for ii=(maxtau*(mm-1)+1):(mm.*maxtau)
-        tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000;
-    end
-    CCR{mm}=tempmat;
- end
-%% Conflict indirect effect
-load('DieselrepresentedthroughConflictShellings.mat','bd','XC','XS');
-mmt=4;
-tempmat=zeros(size(squeeze(X(1,:,:))));
-tempmat2=zeros(size(squeeze(X(1,:,:))));
-XC2=zeros(size(squeeze(X(1,:,:))));
-for ii=(maxtau*(mmt-1)+1):(mmt.*maxtau)
-    for gg=1:21
-        XC2(gg,:)=pchip([1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))],squeeze(XC(ii-maxtau*(mmt-1),gg,:)),[1:length(squeeze(XC(ii-maxtau*(mmt-1),gg,:)))]-1);
-    end
-    tempmat=tempmat+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*(bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:)))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
-    tempmat2=tempmat2+(1-EOVC).*(beta(ii).*squeeze(X(ii,:,:))).*PopS(GNZI,maxtau+1:end)./10000.*bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:))./(bd(1)+bd(2).*squeeze(XC(ii-maxtau*(mmt-1),:,:))+bd(3).*squeeze(XS(ii-maxtau*(mmt-1),:,:)));
-end
-CCR{2}=CCR{2}+tempmat;
-CCR{3}=CCR{3}+tempmat2;
-CCR{4}=CCR{4}-tempmat-tempmat2;
-
-IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model
-WW=zeros(4,length(GNZI),6);
-WWRC=zeros(4,2,6);
-for ww=1:4
-    for mm=1:6
-       WW(ww,:,mm) = (sum((CCR{mm}(:,IndW(ww,1):IndW(ww,2))),2)./sum(MI(:,IndW(ww,1):IndW(ww,2)),2));
-       
-       WWRC(ww,1,mm) = sum(sum((CCR{mm}(RC(GNZI)==1,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==1,IndW(ww,1):IndW(ww,2)),2));
-       WWRC(ww,2,mm) = sum(sum((CCR{mm}(RC(GNZI)==0,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==0,IndW(ww,1):IndW(ww,2)),2));
-    end   
-end
-
+[IndW,WWRC,CCR] = Contribution_to_Cholera_Incidence;
 %% Plot the data
 
 ColorM=[[221,28,119]./255; % Targeted attacks
@@ -64,7 +66,7 @@ ColorM=[[221,28,119]./255; % Targeted attacks
         [153,52,4]./255; %Deisel
         hex2rgb('#FAAF08'); %Wheat
         [5,112,176]./255; %Rainfall
-        ]; 
+        hex2rgb('#50312F');]; 
 
 
 IW=7.*(([1; 22 ; 75 ; 122; 150]-1)+maxtau); % The 150 is the start of the week we do not have data for and we are subtracting a week for the index of the week as the index zero is Oct 3, 2016
@@ -92,8 +94,8 @@ dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
 Gintv=[2 5 9 11 19 21];
 
-CCRC=cell(6,1);
-for ii=1:6
+CCRC=cell(7,1);
+for ii=1:7
     Temp=[CCR{ii}];
     TempR=sum(Temp(RC(GNZI)==1,:),1);
     TempG=sum(Temp(RC(GNZI)==0,:),1);
@@ -107,21 +109,21 @@ yyl=[1.2*10^4 1250];
 yy0=[0.58 0.15];
 
 
-shd=[0 0 1 2 2 3 4];
-    labels = {'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall'};
+shd=[1:8];
+    labels = {'Target attacks','Weekly conflict','Shellings/attacks','Diesel','Wheat','Rainfall','Temprature'};
     
 for mm=1:2
     subplot('Position',[0.07,yy0(mm),0.915,0.41]);
 
     Gint=Gintv(mm);
-    b=bar([(1+maxtau):NW],[squeeze(CCRC{1}(mm,:)); squeeze(CCRC{2}(mm,:)); squeeze(CCRC{3}(mm,:)); squeeze(CCRC{4}(mm,:)); squeeze(CCRC{5}(mm,:)); squeeze(CCRC{6}(mm,:))]','Stacked','LineStyle','none');
+    b=bar([(1+maxtau):NW],[squeeze(CCRC{1}(mm,:)); squeeze(CCRC{2}(mm,:)); squeeze(CCRC{3}(mm,:)); squeeze(CCRC{4}(mm,:)); squeeze(CCRC{5}(mm,:)); squeeze(CCRC{6}(mm,:)) ; squeeze(CCRC{7}(mm,:))]','Stacked','LineStyle','none');
     for ii=1:length(ColorM(:,1))
         b(ii).FaceColor = 'flat';
         b(ii).CData = ColorM(ii,:);
         if(mm==1)
-            if(ii==2 || ii==3 || ii==4 ||ii==6)
+%             if(ii==2 || ii==3 || ii==4 ||ii==6)
                 text(1,11100-1050.*shd(ii), labels{ii},'Fontsize',18,'Color',ColorM(ii,:));
-            end
+%             end
         end
     end
     yh=ylabel('Suspected cases','Fontsize',18);

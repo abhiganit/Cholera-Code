@@ -10,11 +10,11 @@ load('Combo.mat');
 load(['Fit-Vaccination-IncidenceperCapita.mat'],'par');
 par_base_t=par;
 
-for nn=17:26
+for nn=2:32
     % Construct the index used to determine the parameterizatrion
     indx=INC{nn};
     par_base=par_base_t;
-    for kk=2:16
+    for kk=2:(nn-1)
         test_m=ismember(INC{kk},indx);
         if(sum(test_m)==length(INC{kk}))
             load(['Fit-Vaccination-IncidenceperCapita' C(INC{kk}).N '.mat'],'par');
@@ -36,25 +36,37 @@ for nn=17:26
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Search for the parameterization to improve the optimziation
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    SS=5.*10^5;
-    NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+    
+    SR=[];
+    for nss=1:100
+        SS=5.*10^3;
 
-    partest=zeros(SS,length([-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 -32 log10(0.5) -32 -3]));
+        NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 
-    lhs=lhsdesign(SS,length(lb)); % Use latin-hypercube sampling
-    partest2=[par_base_temp; repmat(lb,SS,1)+repmat(ub-lb,SS,1).*lhs];
+        partest=zeros(SS,length([-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 -32 log10(0.5) -32 -3]));
 
-    SS=SS+size(par_base,1);
-    parfor mm=1:SS
-    [partest(mm,:)] = ExpandPar(partest2(mm,:),XU,maxtau);
+        lhs=lhsdesign(SS,length(lb)); % Use latin-hypercube sampling
+        if(nss==1)
+            partest2=[par_base_temp; log10(repmat(10.^lb,SS,1)+repmat(10.^ub-10.^lb,SS,1).*lhs);repmat(lb,SS,1)+repmat(ub-lb,SS,1).*lhs];
+            SS=2.*SS+size(par_base,1);
+        else
+            partest2=[log10(repmat(10.^lb,SS,1)+repmat(10.^ub-10.^lb,SS,1).*lhs);repmat(lb,SS,1)+repmat(ub-lb,SS,1).*lhs];
+            SS=2.*SS;
+        end
+        
+        parfor mm=1:SS
+        [partest(mm,:)] = ExpandPar(partest2(mm,:),XU,maxtau);
+        end
+        TestError=zeros(SS,1);
+        parfor mm=1:SS
+          [~,~,~,part] = BoundsFitting(XU,partest(mm,:),maxtau);
+          TestError(mm)=(OFuncProGA(part,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW))); 
+        end
+
+        SRt=[sortrows([partest TestError],length(partest(1,:))+1)];
+        SR=[SR; SRt(1:10,:)];
     end
-    TestError=zeros(SS,1);
-    parfor mm=1:SS
-      [~,~,~,part] = BoundsFitting(XU,partest(mm,:),maxtau);
-      TestError(mm)=(OFuncProGA(part,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW))); 
-    end
-
-    SR=sortrows([partest TestError],length(partest(1,:))+1);
+    SR=sortrows(SR,length(partest(1,:))+1);
     temppar=SR(1:50,1:(end-1));
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5

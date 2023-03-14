@@ -183,7 +183,7 @@ end
 
 
 % Temprature
-Temptv=zeros(size(WI));
+Temptv=zeros(size(IData'));
 load('Temprature_Gov.mat','Temp_G');
 EndFirstEpiWeek= datenum('10-09-2016');% Start of second epiweek is oct 10, 2016
 for ii=1:length(IData(:,1))

@@ -4,7 +4,7 @@ clc;
 C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat'});
  
 load('Combo.mat');
-for nn=1:32             
+for nn=1:32            
     indx=INC{nn};
     load(['Fit-Vaccination-IncidenceperCapita' C(indx).N '.mat'])
     RSSvt=RSSv;
