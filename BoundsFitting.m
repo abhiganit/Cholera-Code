@@ -19,8 +19,8 @@ function [lbga,ubga,IntC,part] = BoundsFitting(XU,parf,maxtau)
 %IntC - Integer contraints
 %part - truncated paramters based on XU
 
-flb=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 -32 log10(0.5) -32 -3];
-fub=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152.49) log10(13.5) log10(152.49) log10(783) log10(400) log10(95.5) log10(40) 5 log10(exp(log(26/56)/(3*52))) 0 2];
+flb=[-32.*ones(1,length(XU))  log10(0.25) -32 log10(0.5) -32 log10(0.5) -32 -32 -32 -32 -32 log10(0.5) -32 -6];
+fub=[ 8.*ones(1,length(XU)) 0 log10(13.5) log10(152.49) log10(13.5) log10(152.49) log10(783) log10(400) log10(95.5) log10(40) 5 log10(exp(log(26/56)/(3*52))) 0 0];
 
 Indx=zeros(size(fub));
 Indx(1:length(XU))=XU;

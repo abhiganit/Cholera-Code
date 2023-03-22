@@ -21,7 +21,15 @@ end
 % Search for the parameterization to improve the optimziation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-SR=[];
+load(['Fit-Vaccination-Null.mat'],'par','RSSv');
+par_base_t=par;
+[~,~,~,par_base_temp] = BoundsFitting(XU,par_base_t,maxtau);
+[par_base_temp] = ExpandPar(par_base_temp,XU,maxtau);
+
+load(['LSE-Fit-Vaccination-IncidenceperCapita-Calibrated_sigma.mat'],'par','fval_c');        
+SR=[par_base_temp RSSv; par fval_c];
+load(['OLD-Fit-Vaccination-IncidenceperCapita-Rain-Calibrated_sigma.mat'],'par','fval_c');  
+SR=[SR; par fval_c];
 for nn=1:100
     SS=5.*10^3;
 
@@ -33,7 +41,7 @@ for nn=1:100
     partest2=[log10(repmat(10.^lb,SS,1)+repmat(10.^ub-10.^lb,SS,1).*lhs);repmat(lb,SS,1)+repmat(ub-lb,SS,1).*lhs];
     SS=2.*SS;
     parfor mm=1:SS
-    [partest(mm,:)] = ExpandPar(partest2(mm,:),XU,maxtau);
+        [partest(mm,:)] = ExpandPar(partest2(mm,:),XU,maxtau);
     end
     TestError=zeros(SS,1);
     parfor mm=1:SS

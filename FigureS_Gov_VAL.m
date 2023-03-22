@@ -2,14 +2,12 @@ close all;
 clear;
 FC=[hex2rgb('#F5BE41');
     hex2rgb('#a6bddb');];
-load('Fit-Vaccination-IncidenceperCapita-CalibratedDAR.mat');
+load('Fit-Vaccination-IncidenceperCapita-Diesel.mat');
+DAR=10;
 [WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDataVal;
-NW=166; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+% NW=166; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
 NW1=153;
 % Evaluate the number of paramters that are being used in the estimation 
-
-      [~,~,~,part] = BoundsFitting(XU,par,maxtau);
-test_R=OFuncProGA(part,WI,tA,Ctv,XU,maxtau,WPIN,FPIN,Mt,Wheatt,Dieselt,V1,V2,Rtv,Temptv,PopS,CI);
 [~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_w]=RetParameterGA(par,XU,maxtau);
 
 
