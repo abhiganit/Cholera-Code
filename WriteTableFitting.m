@@ -9,7 +9,7 @@ NW=length(WIF(1,:));
 % model, we do not include them in the calcualtion of the cross validation
 close all;
 C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat','-Rain'});
-INN=[1:64];
+INN=[1:32];
 nd=WIF(GNZIF,(maxtau+1):end);
 nd=length(nd(:));
 CVES=10^6.*ones(length(INN)+1,1);
@@ -54,7 +54,7 @@ for ii=1:length(INN)
         MeanDataCVT(ii)=mean(tempD(:));
         
         [k(ii)]=RetParameterGA(par,XU,4);
-        AIC(ii)=AICScore(k(ii),nd,RSSv);
+        AIC(ii)=aicbic(-RSSv,k(ii));
 %         BIC(ii)=BICScore(k(ii),nd,RSSv);
         CVES(ii)=OFuncDistrict(pars,WI(GNZI,1:NW),tA(GNZI,1:NW),Ctv(GNZI,1:NW),XU,maxtau,WPIN(GNZI,1:NW),FPIN(GNZI,1:NW),Mt(GNZI,1:NW),Wheatt(GNZI,1:NW),Dieselt(GNZI,1:NW),V1(GNZI,1:NW),V2(GNZI,1:NW),Rtv(GNZI,1:NW),Temptv(GNZI,1:NW),PopS(GNZI,1:NW),CI(GNZI,1:NW));
         CVET(ii)=OFuncProGA_TempVal(pars,WIVal(GNZIVal,1:end),tAVal(GNZIVal,1:end),CtvVal(GNZIVal,1:end),XU,maxtau,WPINVal(GNZIVal,1:end),FPINVal(GNZIVal,1:end),MtVal(GNZIVal,1:end),WheattVal(GNZIVal,1:end),DieseltVal(GNZIVal,1:end),V1Val(GNZIVal,1:end),V2Val(GNZIVal,1:end),RtvVal(GNZIVal,1:end),TemptvVal(GNZIVal,1:end),PopSVal(GNZIVal,1:end),CIVal(GNZIVal,1:end));
