@@ -14,7 +14,7 @@ for nn=1:32
         load(['OLD-Fit-Vaccination-IncidenceperCapita' C(indx).N '-Rain-Calibrated_sigma.mat'])
         [~,~,~,part] = BoundsFitting(XU,par,4);
         L(1,nn)=-fval_c;
-        load(['LSE-Fit-Vaccination-IncidenceperCapita' C(indx).N '-Calibrated_sigma.mat']);
+        load(['Fit-Vaccination-IncidenceperCapita' C(indx).N '.mat']);
         [~,~,~,part2] = BoundsFitting(XU,par,4);
         L(2,nn)=-fval_c;        
         Par_C{1,nn}=[part;part2];
