@@ -127,36 +127,36 @@ for mm=1:length(ModelConflict)
     betaCorr=beta_j;
     
     
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-%     % Bootstrap
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-%     
-%     betaCv=zeros(1000,8);
-%     betaC2v=zeros(1000,8);
-%     parfor ii=1:1000
-%         
-%         % conflict only
-%         GNZIt=GNZI(randi(length(GNZI),size(GNZI)));
-%         indx=ModelConflict{mm};
-%         % Test Dependence between Wheat and conflict
-%         [betap,fval,residual]=lsqnonlin(@(x)FitID(x,indx,betaCIC,tA(GNZIt,:),DB,DA,Ctv(GNZIt,:),K,n,tau,maxtau,WPIN(GNZIt,:),FPIN(GNZIt,:),Mt(GNZIt,:),Wheatt(GNZIt,:),Dieselt(GNZIt,:),KP,V1(GNZIt,:),V2(GNZIt,:),KV,dV,Rtv(GNZIt,:),Temptv(GNZIt,:),r0,temp_0,WI(GNZIt,:),PopS(GNZIt,:),CI(GNZIt,:),DAR,w),log10(betaCIC(indx)),-32.*ones(size(indx)),3.*ones(size(indx)));
-%         betap=10.^betap;
-%         beta=zeros(1,28);
-%         beta(indx)=betap;
-%     
-%         betaCv(ii,:)=beta(5:12); 
-%         
-%         
-%         indx=ModelConflictWheat{mm};
-%         % Test Dependence between Wheat and conflict
-%         [betap,fval,residual]=lsqnonlin(@(x)FitID(x,indx,betaMIC,tA(GNZIt,:),DB,DA,Ctv(GNZIt,:),K,n,tau,maxtau,WPIN(GNZIt,:),FPIN(GNZIt,:),Mt(GNZIt,:),Wheatt(GNZIt,:),Dieselt(GNZIt,:),KP,V1(GNZIt,:),V2(GNZIt,:),KV,dV,Rtv(GNZIt,:),Temptv(GNZIt,:),r0,temp_0,WI(GNZIt,:),PopS(GNZIt,:),CI(GNZIt,:),DAR,w),log10(betaMIC(indx)),-32.*ones(size(indx)),3.*ones(size(indx)));
-%         betap=10.^betap;
-%         beta=zeros(1,28);
-%         beta(indx)=betap;
-%     
-%         betaC2v(ii,:)=beta(5:12); 
-%     end
-%     Boot_betaC=betaCv;
-%     Boot_betaC2=betaC2v;
-    save(['Mediation_Analysis' CName{ModelUW{mm}}  '.mat'],'betaC','pValue_beta_Conflict','pValue_beta_Mediation','betaC2','betaCorr','pValue_Corr','C_MA'); %,'Boot_betaC','Boot_betaC2'
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+    % Bootstrap
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+    
+    betaCv=zeros(1000,8);
+    betaC2v=zeros(1000,8);
+    parfor ii=1:1000
+        
+        % conflict only
+        GNZIt=GNZI(randi(length(GNZI),size(GNZI)));
+        indx=ModelConflict{mm};
+        % Test Dependence between Wheat and conflict
+        [betap,fval,residual]=lsqnonlin(@(x)FitID(x,indx,betaCIC,tA(GNZIt,:),DB,DA,Ctv(GNZIt,:),K,n,tau,maxtau,WPIN(GNZIt,:),FPIN(GNZIt,:),Mt(GNZIt,:),Wheatt(GNZIt,:),Dieselt(GNZIt,:),KP,V1(GNZIt,:),V2(GNZIt,:),KV,dV,Rtv(GNZIt,:),Temptv(GNZIt,:),r0,temp_0,WI(GNZIt,:),PopS(GNZIt,:),CI(GNZIt,:),DAR,w),log10(betaCIC(indx)),-32.*ones(size(indx)),3.*ones(size(indx)));
+        betap=10.^betap;
+        beta=zeros(1,32);
+        beta(indx)=betap;
+    
+        betaCv(ii,:)=beta(5:12); 
+        
+        
+        indx=ModelConflictWheat{mm};
+        % Test Dependence between Wheat and conflict
+        [betap,fval,residual]=lsqnonlin(@(x)FitID(x,indx,betaMIC,tA(GNZIt,:),DB,DA,Ctv(GNZIt,:),K,n,tau,maxtau,WPIN(GNZIt,:),FPIN(GNZIt,:),Mt(GNZIt,:),Wheatt(GNZIt,:),Dieselt(GNZIt,:),KP,V1(GNZIt,:),V2(GNZIt,:),KV,dV,Rtv(GNZIt,:),Temptv(GNZIt,:),r0,temp_0,WI(GNZIt,:),PopS(GNZIt,:),CI(GNZIt,:),DAR,w),log10(betaMIC(indx)),-32.*ones(size(indx)),3.*ones(size(indx)));
+        betap=10.^betap;
+        beta=zeros(1,32);
+        beta(indx)=betap;
+    
+        betaC2v(ii,:)=beta(5:12); 
+    end
+    Boot_betaC=betaCv;
+    Boot_betaC2=betaC2v;
+    save(['Mediation_Analysis' CName{ModelUW{mm}}  '.mat'],'betaC','pValue_beta_Conflict','pValue_beta_Mediation','betaC2','betaCorr','pValue_Corr','C_MA','Boot_betaC','Boot_betaC2');
 end

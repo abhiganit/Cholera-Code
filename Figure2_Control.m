@@ -12,6 +12,7 @@ WPINm2=WPINm2(GNZI,:);
 FPINm2=FPINm2(GNZI,:);
 Dieselt2=Dieselt2(GNZI,:);
 Wheatt2=Wheatt2(GNZI,:);
+Temptv2=Temptv2(GNZI,:);
 % Need to increase the diesel price as we transformed it by subtracting the
 % minimum
 load('Diesel_Gov_Yemen.mat')
@@ -51,17 +52,18 @@ TestG=10000.*sum(IData(RC2==0,:),1)./PopG;
 
 
 
-ph=0.21;
+ph=0.21.*0.8./0.9;
 pw=0.573;
 xx0=-0.1213;
 xx1=0.2125;
 xx2=0.548;
 
-yy1=0.792;
-yy2=0.53;
-yy3=0.27;
-yy4=0.0;
-figure('units','normalized','outerposition',[0.1 0 0.5 0.8]);
+ds=0.0233;
+yy1=0.8153;
+yy2=0.57;
+yy3=0.32;
+yy4=0.055;
+figure('units','normalized','outerposition',[0.1 0.05 0.5 0.9]);
 subplot('Position',[xx0,yy1,pw,ph]);  % Creates a sub-panel to plot the figure in the x position is 0.0708 the y position is 0.163120567375887, 0.897162184873949 is the width and 0.793313069908819 is the heigt
 
 % Dot Hatching
@@ -550,9 +552,9 @@ MAR=(MAR-min(MAR))./(max(MAR)-min(MAR));
 for ii=1:length(S)
     if(ii~=21)        
         if(ii<21)
-            mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',MAR(ii)); hold on
+            mapshow(S(ii),'FaceColor',[152,78,163]./255,'Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',MAR(ii)); hold on
         else
-            mapshow(S(ii),'FaceColor',[221,28,119]./255,'Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',MAR(ii-1)); hold on
+            mapshow(S(ii),'FaceColor',[152,78,163]./255,'Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',MAR(ii-1)); hold on
         end
     else
         mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
@@ -589,7 +591,7 @@ plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); 
 
 % scatter(XSRC,YSRC,5.25,'k','filled');
 for ii=2:length(dA)
-    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[221,28,119]./255,'Facealpha',(ii-1)./length(dA),'Edgealpha',0);    
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[152,78,163]./255,'Facealpha',(ii-1)./length(dA),'Edgealpha',0);    
     if(rem(dA(ii),5)==0)
         h=text(dX(ii), 11.675,[num2str((dA(ii)))],'Rotation',270,'Fontsize',8);
     end
@@ -747,8 +749,73 @@ sbp.Position=[xx2 yy3 temp_pos(3:end)];
 
 text(0,0.93,'I','Fontsize',18,'FontWeight','bold','Units','Normalized');
 axis off;
-%% Vaccination
+%% Temprature
 sbp=subplot('Position',[xx0,-0.1,pw,ph]); 
+MAR=mean(Temptv2,2);
+MART=MAR;
+MAR=(MAR-min(MAR(MAR>0)))./(max(MAR)-min(MAR(MAR>0)));
+for ii=1:length(S)
+    if(ii~=21)
+        if(ii<21)
+            mapshow(S(ii),'FaceColor',[247,129,191]./255,'Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',MAR(ii)); hold on
+        else
+            mapshow(S(ii),'FaceColor',[247,129,191]./255,'Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',MAR(ii-1)); hold on
+        end
+    else
+        mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+    end
+end
+box off;
+xlim([41.7741   54.6472]);
+dA=linspace(min(MART),max(MART),100);
+dX=linspace(min(xlim),max(xlim),100);
+ii=1;
+h=text(dX(ii), 11.675,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',8);
+
+
+for jj=1:length(XtV(:,1))
+    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
+end
+
+for ii=1:length(S)
+     if(RC(ii)==1)
+        if(ii~=21)
+            if(ii<21)
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            else
+                mapshow(S(ii),'FaceColor','w','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5,'FaceAlpha',0); hold on    
+            end
+        else
+            mapshow(S(ii),'FaceColor',[0.7 0.7 0.7],'Edgecolor',[0.7 0.7 0.7],'LineWidth',2); hold on
+        end
+     end
+end
+
+
+plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
+
+
+% scatter(XSRC,YSRC,5.25,'k','filled');
+for ii=2:100
+    fill([dX(ii-1) dX(ii-1) dX(ii) dX(ii)],[11.7 12 12 11.7],[247,129,191]./255,'Facealpha',(ii-1)./99,'Edgealpha',0);    
+    if(rem(ii,10)==0)
+        h=text(dX(ii), 11.675,[num2str(round(dA(ii),2))],'Rotation',270,'Fontsize',8);
+    end
+end
+text(0.5,-0.2,'Temprature (C)','Fontsize',10,'HorizontalAlignment','center','Units','normalized');
+ylim([11.7   19.0978]);
+
+Houthi_Map_Legend
+
+text(0,0.93,'J','Fontsize',18,'FontWeight','bold','Units','Normalized');
+
+temp_pos=sbp.Position;
+sbp.Position=[xx0 yy4 temp_pos(3:end)];
+
+axis off;
+
+%% Map/ Vaccination
+sbp=subplot('Position',[0.7,-0.1,pw,ph]); 
 
 [V1,V2]= VaccinationTime(1,153);
 V1=V1(GNZI,:); % Received at least one dose
@@ -761,30 +828,6 @@ for ii=1:length(S)
     end
 end
 
-for jj=1:length(XtV(:,1))
-    plot(linspace(XtV(jj,1),XtV(jj,2),101),XtV(jj,3)+XtV(jj,4).*linspace(XtV(jj,1),XtV(jj,2),101),'k:','LineWidth',1.1); hold on
-end
-
-plot(Stp,'FaceColor','none','Edgecolor',[0 0 0],'LineWidth',2.5,'FaceAlpha',0); hold on   
-
-
-box off;
-xlim([41.7741   54.6472]);
-
-ylim([11.7   19.0978]);
-
-Houthi_Map_Legend
-text(0,0.93,'J','Fontsize',18,'FontWeight','bold','Units','Normalized');
-
-temp_pos=sbp.Position;
-sbp.Position=[xx0 yy4 temp_pos(3:end)];
-
-axis off;
-
-%% Map
-sbp=subplot('Position',[0.7,-0.1,pw,ph]); 
-
-
 for ii=1:length(S)
         mapshow(S(ii),'FaceColor','none','Edgecolor',[0.6 0.6 0.6],'LineWidth',1.5); hold on
         polyin = polyshape(S(ii).X,S(ii).Y);
@@ -793,10 +836,10 @@ for ii=1:length(S)
            text(44.453655324154,15.2224960733724, num2str(ii),'HorizontalAlignment','center','Fontsize',7);
         elseif(ii==9)
             text(45.48567644535073,17.95860286252535, num2str(ii),'HorizontalAlignment','center','Fontsize',7);
-            annotation(gcf,'arrow',[0.432203389830508 0.407838983050847],[0.171206225680934 0.11284046692607]);
+            annotation(gcf,'arrow',[0.430084745762712 0.409957627118644],[0.208191126279863 0.15358361774744]);
         elseif(ii==2)
              text(46.6732165503886,12.1097293568011, num2str(ii),'HorizontalAlignment','center','Fontsize',7);
-             annotation(gcf,'arrow',[0.458686440677966 0.419491525423729],[0.012970168612192 0.0311284046692607]);
+             annotation(gcf,'arrow',[0.457627118644068 0.42478813559322],[0.0637087599544937 0.078909974635131]);
         else            
             text(x,y, num2str(ii),'HorizontalAlignment','center','Fontsize',7);
         end

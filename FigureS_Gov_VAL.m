@@ -2,44 +2,24 @@ close all;
 clear;
 FC=[hex2rgb('#F5BE41');
     hex2rgb('#a6bddb');];
-load('Fit-Vaccination-IncidenceperCapita-Diesel.mat');
-DAR=10;
-[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDataVal;
-% NW=166; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
-NW1=153;
-% Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_w]=RetParameterGA(par,XU,maxtau);
-
-
-[Yt,~]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),Temptv(GNZI,:),r0,temp_0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
-load('Yemen_Gov_Incidence_Val.mat')
-IData=IData';
-IData=IData(GNZI,:);
-load('PopulationSize_Yemen.mat');
-NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
-NW2019=166-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
-% External effect due to IDP
-PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
-
-MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
+[Y_Avg,NW,NW1,IData_VAL,maxtau,GNZI]  = Weighted_Model_Incidence('Governorate');
 
 figure('units','normalized','outerposition',[0.05 0.05 0.8 0.65]);
 
 subplot('Position',[0.073684210526316,0.225,0.916315789473684,0.745443349753695]);
-NW=length(WI(1,:));
-b=bar([(1+maxtau):NW],sum(MI),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
+b=bar([(1+maxtau):NW],sum(Y_Avg),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
 
 b.FaceColor = 'flat';
 for mm=((NW1-maxtau)+1:162)
     b.CData(mm,:) = FC(2,:);
 end
 
-scatter([1:NW],sum(IData),40,'k','filled'); 
+scatter([1:NW],sum(IData_VAL),40,'k','filled'); 
 box off;
 startDateofSim = datenum('10-03-2016');% Start date
 dW=5;
 XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-xlim([0.5 length(WI(1,:))+0.5]);
+xlim([0.5 NW+0.5]);
 set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on','YTick',[0:5000:55000],'YMinortick','on');
 % Sets the y-axis to not have 10^n
 ax=gca; % finds the current axis
@@ -69,16 +49,15 @@ for ii=1:length(GNZI)
     subplot('Position',[0.07,0.225,0.92,0.755]);
     dW=10;
     XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-    NW=length(WI(1,:));
-    b=bar([(1+maxtau):NW],MI(ii,:),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
+    b=bar([(1+maxtau):NW],Y_Avg(ii,:),'Facecolor',FC(1,:),'LineStyle','none','Facealpha',1); hold on
 
     b.FaceColor = 'flat';
     for mm=((NW1-maxtau)+1:162)
         b.CData(mm,:) = FC(2,:);
     end
-    scatter([1:NW],IData(ii,:),20,'k','filled'); 
+    scatter([1:NW],IData_VAL(ii,:),20,'k','filled'); 
     box off;
-    xlim([0.5 length(WI(1,:))+0.5]);
+    xlim([0.5 NW+0.5]);
     
     set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','off','YMinortick','on');
     xlabel('Week reported','Fontsize',18);

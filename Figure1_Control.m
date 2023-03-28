@@ -12,6 +12,7 @@ WPINm2=WPINm2(GNZI,:);
 FPINm2=FPINm2(GNZI,:);
 Dieselt2=Dieselt2(GNZI,:);
 Wheatt2=Wheatt2(GNZI,:);
+Temptv2=Temptv2(GNZI,:);
 % Need to increase the diesel price as we transformed it by subtracting the
 % minimum
 load('Diesel_Gov_Yemen.mat')
@@ -192,7 +193,6 @@ text(-0.125,0.99,'F','Fontsize',18,'FontWeight','bold','Units','Normalized');
 
 %% target attacks
 
-
 load('PopulationSize_Yemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
@@ -213,10 +213,10 @@ xlabel('Week of report','Fontsize',10);
 box off;
 ylabel({'Number of attacks','on water systems'},'Fontsize',10);
 
-ColorM=[[221,28,119]./255; [1 1 1]];
+ColorM=[[152,78,163]./255; [1 1 1]];
 for ii=1:2
    b(ii).FaceColor=ColorM(ii,:); 
-   b(ii).EdgeColor=[221,28,119]./255;
+   b(ii).EdgeColor=[152,78,163]./255;
    b(ii).LineWidth=2;
 end
 
@@ -226,41 +226,31 @@ legend('Houthi control','Government control');
 legend boxoff;
 
 text(-0.125,0.99,'G','Fontsize',18,'FontWeight','bold','Units','Normalized');
-%% WaSH
-load('PopulationSize_Yemen.mat');
-NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
-NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
-% External effect due to IDP
+%% Temprature
+
+TestH=mean(Temptv2(RC2==1,:),1);
+TestG=mean(Temptv2(RC2==0,:),1);
 
 subplot('Position',[0.56,0.27,0.43,0.13]); 
-load('WASH_PIN_Yemen.mat')
-WPIN=WPIN(GNZI,:);
-AP=AP(GNZI,:);
-TestH=sum(WPIN(RC2==1,:),1)./sum(AP(RC2==1,:));
-TestG=sum(WPIN(RC2==0,:),1)./sum(AP(RC2==0,:));
-b=bar([2016 2017 2018 2019],[TestH;TestG]');
 
-xlim([2015.5 2019.5]);
-set(gca,'LineWidth',2,'tickdir','out','XTick',[2016:2019],'Fontsize',8,'YMinortick','on');
+plot([1:153],TestH,'color',[247,129,191]./255,'LineWidth',2,'LineStyle','-'); hold on; %,'Marker','s','MarkerFaceColor',[5,112,176]./255,'MarkerEdgeColor',[5,112,176]./255, 'MarkerIndices', 1:2:153); hold on;
+plot([1:153],TestG,'color',[247,129,191]./255,'LineWidth',1.75,'LineStyle',':'); %,'Marker','o','MarkerEdgeColor',[5,112,176]./255, 'MarkerIndices', 1:2:153);
+
+startDateofSim = datenum('10-03-2016');% Start date
+dW=8;
+XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
+xlim([0.5 length(WI2(1,:))+0.5]);
+set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',8,'Xminortick','off','YMinortick','on');
 xtickangle(45);
-xlabel('Year','Fontsize',10);
 box off;
-ylabel({'Proportion in','need of WaSH'},'Fontsize',10);
+xlabel('Week of report','Fontsize',10);
+ylabel('Temprature (C)','Fontsize',10);
 
-ColorM=[[0 0.6 0.6]; [1 1 1]];
-for ii=1:2
-   b(ii).FaceColor=ColorM(ii,:); 
-   b(ii).EdgeColor=[0 0.6 0.6];
-   b(ii).LineWidth=2;
-end
-
-b(1).LineStyle='none'; 
-b(2).LineStyle=':';
-ylim([0 0.8]);
-
-legend({'Houthi control','Government control'},'Fontsize',8,'Location','NorthWest')
+legend({'Houthi control','Government control'},'Fontsize',8)
 legend boxoff;
+ylim([15 40]);
 text(-0.125,0.99,'H','Fontsize',18,'FontWeight','bold','Units','Normalized');
+
 
 load('PopulationSize_Yemen.mat');
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
@@ -273,14 +263,27 @@ FPIN=FPIN(GNZI,:);
 AP=AP(GNZI,:);
 TestH=sum(FPIN(RC2==1,:),1)./sum(AP(RC2==1,:));
 TestG=sum(FPIN(RC2==0,:),1)./sum(AP(RC2==0,:));
-b=bar([2016 2017 2018 2019],[TestH;TestG]');
+
+%% WaSH
+load('PopulationSize_Yemen.mat');
+NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
+NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
+% External effect due to IDP
+
+load('WASH_PIN_Yemen.mat')
+WPIN=WPIN(GNZI,:);
+AP=AP(GNZI,:);
+TestH2=sum(WPIN(RC2==1,:),1)./sum(AP(RC2==1,:));
+TestG2=sum(WPIN(RC2==0,:),1)./sum(AP(RC2==0,:));
+
+b=bar([2016 2017 2018 2019],[TestH;TestG;TestH2;TestG2]');
 
 xlim([2015.5 2019.5]);
 set(gca,'LineWidth',2,'tickdir','out','XTick',[2016:2019],'Fontsize',8,'YMinortick','on');
 xtickangle(45);
 xlabel('Year','Fontsize',10);
 box off;
-ylabel({'Proportion in need','of food security'},'Fontsize',10);
+ylabel({'Proportion in need'},'Fontsize',10);
 
 ColorM=[hex2rgb('#2E4600'); [1 1 1]];
 for ii=1:2
@@ -292,8 +295,19 @@ end
 b(1).LineStyle='none'; 
 b(2).LineStyle=':';
 
+ColorM=[[0 0.6 0.6]; [1 1 1]];
+for ii=3:4
+   b(ii).FaceColor=ColorM(ii-2,:); 
+   b(ii).EdgeColor=[0 0.6 0.6];
+   b(ii).LineWidth=2;
+end
 
-legend({'Houthi control','Government control'},'Fontsize',8,'Location','NorthWest')
+b(3).LineStyle='none'; 
+b(4).LineStyle=':';
+
+ylim([0 1])
+
+legend({'Food security: Houthi control','Food security: Government control','WaSH: Houthi control','WaSH: Government control'},'Fontsize',8,'Location','NorthWest','NumColumns',2)
 legend boxoff;
 text(-0.125,0.99,'I','Fontsize',18,'FontWeight','bold','Units','Normalized');
 %% Vaccination

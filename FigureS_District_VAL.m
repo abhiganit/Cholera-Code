@@ -1,9 +1,8 @@
 close all;
 clear;
 FC=hex2rgb('#a6bddb');
-load('Fit-Vaccination-IncidenceperCapita-Conflict-Shellings-Diesel-Rain-CalibratedDAR.mat');
-% [WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDataVal;
-NW=153; % Allow the model to fit the entire outbreak and cross validate among the govnerorates floor(153*PDS);
+
+[Y_Avg,NW,NW1,IData_VAL,maxtau,GNZI]  = Weighted_Model_Incidence('District');
 
 %% District
 
@@ -22,23 +21,8 @@ end
 
 fA=find(fA==1);
 
-[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData; % Load the data used to construct the figure
-load('Yemen_District_Incidence.mat');
-IData=IData';
-% Evaluate the number of paramters that are being used in the estimation 
-[~,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,~,w,sigma_w]=RetParameterGA(par,XU,maxtau);
+SD=SD([29 31 71 fS' fA']); 
 
-startDateofSim = datenum('10-03-2016');% Start date
-endDateofSim = datenum('5-01-2017');% End date
-TruncV=ceil((1+endDateofSim-startDateofSim)./7)-1;
-
-n=n-TruncV;
-n(n<1)=1;
-[Yt,~]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),Temptv(GNZI,:),r0,temp_0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
-
-MI=(Yt./(10000)).*PopS(GNZI,maxtau+1:end);
-
-SD=SD([29 31 71 fS' fA']);
 for ii=1:(length(SD)) % Do not want to examine the last three as these are the larger areas and not the districts
     startDateofSim = datenum('5-01-2016');% Start date
     figure('units','normalized','outerposition',[0.05 0.05 0.8 0.65]);
@@ -46,11 +30,11 @@ for ii=1:(length(SD)) % Do not want to examine the last three as these are the l
     subplot('Position',[0.07,0.225,0.92,0.755]);
     dW=10;
     XTL=datestr([startDateofSim+7.*[0:dW:(NW-1)]],'mm/dd/yy');
-    NW=length(WI(1,:));
-    bar([(1+maxtau):NW],MI(ii,:),'Facecolor',FC,'LineStyle','none','Facealpha',0.6); hold on
-    scatter([1:NW],IData(ii,:),20,'k','filled'); 
+    
+    bar([(1+maxtau):NW],Y_Avg(ii,:),'Facecolor',FC,'LineStyle','none','Facealpha',0.6); hold on
+    scatter([1:NW],IData_VAL(ii,:),20,'k','filled'); 
     box off;
-    xlim([0.5 length(WI(1,:))+0.5]);
+    xlim([0.5 NW+0.5]);
     set(gca,'LineWidth',2,'tickdir','out','XTick',[1:dW:NW],'XTickLabel',XTL,'Fontsize',16,'Xminortick','on');%,'YTick',[0:1000:8000],'YMinortick','on');
     ylim([0 max(ylim).*1.1])
     % Sets the y-axis to not have 10^n

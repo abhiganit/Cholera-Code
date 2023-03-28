@@ -1,22 +1,28 @@
-function [IndW,Wave_T,CCRT,maxtau,GNZI,RC,Wave_T_All,MI] = Contribution_to_Cholera_Incidence()
+function [CCRT,maxtau,GNZI,RC,MI] = Contribution_to_Cholera_Incidence_District()
 
 C=struct('N',{'-Targeted','-Conflict','-Shellings','-Diesel','-Wheat'});
+
+
+startDateofSim = datenum('10-03-2016');% Start date
+endDateofSim = datenum('5-01-2017');% End date
+TruncV=ceil((1+endDateofSim-startDateofSim)./7);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenData;
+[WI,Ctv,tA,Rtv,Temptv,Mt,P,RC,H,WPIN,FPIN,Dieselt,Wheatt,V1,V2,GNZI,GV,maxtau,PopS,CI] = LoadYemenDistrictData;
 % Loads the combinations of the different models
 load('Combo.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load population size
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-load('PopulationSize_Yemen.mat');
+load('PopulationSize_DistrictYemen.mat'); % Populatino szie for 2016, 2017, 2018 and 2019 for the govneroates
 NW2016=ceil((datenum('12-31-2016')-datenum('10-03-2016'))./7); % Number of weeks to rpelicate populatino density for 2016
 NW2019=153-52-52-NW2016; % Numebr of weeks to reproduce population density for 2019
 % External effect due to IDP
 PopS=[ repmat(AP(:,1),1,NW2016) repmat(AP(:,2),1,52)  repmat(AP(:,3),1,52)  repmat(AP(:,4),1,NW2019)]; % population size to feed into the IDPt calculation
+PopS=PopS(:,TruncV:end); % Incidence data for the districts starts at may 1 2017
 
 AICs=zeros(32,1);
 Model_Inc=cell(32,1);
@@ -26,8 +32,12 @@ MI_v=cell(32,1);
 for kk=1:32
     load(['Fit-Vaccination-IncidenceperCapita' C(INC{kk}).N '-CalibratedDAR.mat'],'par','RSSv','XU');
     Model_Inc{kk}=[C(INC{kk}).N];
-
+    
     [k,beta,tau,DB,DA,K,n,KP,KV,dV,r0,temp_0,DAR,w,sigma_w]=RetParameterGA(par,XU,maxtau);
+    
+    n=n-TruncV;
+    n(n<1)=1;
+    
     [Yt,X]= LogisticModel(beta,tA(GNZI,:),DB,DA,Ctv(GNZI,:),K,n,tau,maxtau,WPIN(GNZI,:),FPIN(GNZI,:),Mt(GNZI,:),Wheatt(GNZI,:),Dieselt(GNZI,:),KP,V1(GNZI,:),V2(GNZI,:),KV,dV,Rtv(GNZI,:),Temptv(GNZI,:),r0,temp_0,WI(GNZI,:),PopS(GNZI,:),CI(GNZI,:),DAR,w);
     dV1=ImpactAttack(V1(GNZI,:)-V2(GNZI,:),0,dV(1),2,maxtau); % Two week delay until acquire immunity
     dV2=ImpactAttack(V2(GNZI,:),0,dV(2),2,maxtau);  % Two week delay until acquire immunity
@@ -47,7 +57,8 @@ for kk=1:32
 
     if(ismember(4,INC{kk}) && sum(ismember([2 3],INC{kk}))>0) 
     %% Conflict indirect effect
-        load(['Mediation_Analysis' C(INC{kk}).N '.mat'],'betaCorr','C_MA');
+        load(['Mediation_Analysis' C(INC{kk}).N '.mat'],'betaCorr');
+        load(['Mediation_Analysis' C(INC{kk}).N '_District_Level.mat'],'C_MA');
         mmt=4;
         tempmat1=zeros(size(squeeze(X(1,:,:))));
         tempmat2=zeros(size(squeeze(X(1,:,:))));
@@ -77,7 +88,8 @@ for kk=1:32
     
     if(ismember(5,INC{kk}) && sum(ismember([2 3],INC{kk}))>0) 
     %% Conflict indirect effect
-        load(['Mediation_Analysis' C(INC{kk}).N '.mat'],'betaCorr','C_MA');
+        load(['Mediation_Analysis' C(INC{kk}).N '.mat'],'betaCorr');
+        load(['Mediation_Analysis' C(INC{kk}).N '_District_Level.mat'],'C_MA');
         mmt=5;
         tempmat1=zeros(size(squeeze(X(1,:,:))));
         tempmat2=zeros(size(squeeze(X(1,:,:))));
@@ -124,20 +136,6 @@ end
 
 for mm=1:32
    MI=MI+MI_v{mm}.*w_AIC(mm);
-end
-
-% Contribution during each wave
-IndW=[1 21; 22 74; 75 121; 122 149]; % Index of wave for the data used in the regression model
-Wave_T=zeros(4,2,7);
-Wave_T_All=zeros(4,length(GNZI),7);
-for ww=1:4
-    for mm=1:7
-       Wave_T(ww,1,mm) = sum(sum((CCRT{mm}(RC(GNZI)==1,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==1,IndW(ww,1):IndW(ww,2)),2));
-       Wave_T(ww,2,mm) = sum(sum((CCRT{mm}(RC(GNZI)==0,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(RC(GNZI)==0,IndW(ww,1):IndW(ww,2)),2));
-       for gg=1:length(GNZI)
-            Wave_T_All(ww,gg,mm) = sum(sum((CCRT{mm}(gg,IndW(ww,1):IndW(ww,2))),2))./sum(sum(MI(gg,IndW(ww,1):IndW(ww,2)),2));
-       end
-    end   
 end
 
 end
