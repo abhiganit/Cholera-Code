@@ -4,14 +4,13 @@ Cov2Inc=[2 3 4 6];
 
 [IndW,~,CCR,maxtau,GNZI,RC,WWRC] = Contribution_to_Cholera_Incidence;
 %% Plot the data
-
-ColorM=[[221,28,119]./255; % Targeted attacks
+ColorM=[[152,78,163]./255; % Targeted attacks
         hex2rgb('#DE7A22'); %Conflict
         hex2rgb('#4C3F54'); %Shellings
         [153,52,4]./255; %Deisel
         hex2rgb('#FAAF08'); %Wheat
         [5,112,176]./255; %Rainfall
-        hex2rgb('#50312F');]; 
+        [247,129,191]./255;];   % Temprature
 
 
 IW=7.*(([1; 22 ; 75 ; 122; 150]-1)+maxtau); % The 150 is the start of the week we do not have data for and we are subtracting a week for the index of the week as the index zero is Oct 3, 2016

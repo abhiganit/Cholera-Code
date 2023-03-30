@@ -383,6 +383,96 @@ end
 print(gcf,['COVID-19_Diesel_2.png'],'-dpng','-r600');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%Wheat
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+Wheatt=WheatCOVID19;
+load('Wheat_Gov_Yemen_COVID-19.mat');
+Wheatt=Wheatt+min(Wheat(Wheat>0));
+
+XTL={datestr(datenum('April 6, 2020')+7.*[165:6:238]-7.*184,'mmm dd, yyyy')};
+
+for ii=1:22
+    dx1=linspace(0,max(Wheatt(ii,165:238)),41);
+    dx2=dx1+(dx1(2)-dx1(1))./2;
+    dx2=dx2(1:end-1);
+    if(ii==1)||(ii==13)
+        if(ii==13)
+            print(gcf,['COVID-19_Wheat_1.png'],'-dpng','-r600');
+        end
+        figure('units','normalized','outerposition',[0 0 1 1]);
+    end
+    if(ii>=13)
+        iin=ii-12;
+    else
+        iin=ii;
+    end
+    if(ii<21)
+        subplot('Position',[xp(iin) yp(iin) w h])
+        b=bar([165:238],Wheatt(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#FAAF08')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=165:238
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Wheatt(ii,mm)))),dx1(dx1<Wheatt(ii,mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Wheatt(ii,mm)))),dx2(dx2<Wheatt(ii,mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(166,max(1+Wheatt(ii,165:238))*1.05,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','left');
+        if(ii<19)
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',{},'Xminortick','on');
+        else
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        end
+        xlim([164.5 238.5]);
+        ylim([0 1.3.*max(1+Wheatt(ii,165:238))]);
+        box off;
+    elseif(ii==22)        
+        subplot('Position',[xp(9) yp(9) w h])
+        b=bar([165:238],Wheatt(ii,165:238),'LineStyle','none','FaceColor',hex2rgb('#FAAF08')); hold on;      
+        
+        b.FaceColor = 'flat';
+        for mm=1:19
+            b.CData(mm,:) = [0.7 0.7 0.7];
+        end
+        if(RC(ii)==1)
+            for mm=165:238
+                 for jj=1:3
+                    if((jj==1)||(jj==3))
+                       scatter((0.3.*(jj-2)+ mm).*ones(size(dx1(dx1<Wheatt(ii,mm)))),dx1(dx1<Wheatt(ii,mm)),2,'k','filled');
+                    else
+                        scatter((0.3.*(jj-2)+ mm).*ones(size(dx2(dx2<Wheatt(ii,mm)))),dx2(dx2<Wheatt(ii,mm)),2,'k','filled');
+                    end
+                 end
+            end
+        end
+        text(166,max(1+Wheatt(ii,165:238))*1.05,S(ii).ADM1_EN,'Fontsize',18,'HorizontalAlignment','left');
+        
+            set(gca,'LineWidth',2,'tickdir','out','fontsize',20,'XTick',[165:6:238],'XTickLabel',XTL,'Xminortick','on');
+            xtickangle(90);
+            xlabel('Week of report','Fontsize',20);
+        
+        xlim([164.5 238.5]);
+        ylim([0 1.3.*max(1+Wheatt(ii,165:238))]);
+        box off;
+    end
+    if(ii==10)       
+        ylabel('Price of Wheat','Fontsize',20); 
+    end
+end
+print(gcf,['COVID-19_Wheat_2.png'],'-dpng','-r600');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %Rainfall
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 load('Rainfall_COVID-19.mat');

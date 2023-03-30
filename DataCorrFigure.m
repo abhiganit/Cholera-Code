@@ -3,7 +3,7 @@
 close all;
 clc;
 
-[~,~,tA,~,~,~,RC,~,WPINm,FPINm,Dieselt,Wheatt,~,~,GNZI,~,~,~,~] = LoadYemenData;
+[~,~,tA,~,~,~,~,RC,~,WPINm,FPINm,Dieselt,Wheatt,~,~,GNZI,~,~,~,~] = LoadYemenData;
 
 S = shaperead([ pwd '\ShapeFile\yem_admbnda_adm1_govyem_mola_20181102.shp']); % Shape file for Yemen
 

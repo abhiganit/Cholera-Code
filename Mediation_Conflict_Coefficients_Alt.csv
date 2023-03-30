@@ -1,37 +1,25 @@
 ModelNum,CovariateConflict,betacone,betactwo,betacthree,betacfour,betasone,betastwo,betasthree,betasfour
-3,Conflict-Incidence,0.0427 \mbox{***},0.02581 \mbox{*},2.078e-15,0.007638,0,0,0,0
-4,Shellings-Incidence,0,0,0,0,0.03175 \mbox{***},0.02071 \mbox{*},3.261e-24,0.01735 \mbox{*}
-8,Targeted-Conflict-Incidence,0.04423 \mbox{***},0.02397 \mbox{*},1.119e-16,0.004641,0,0,0,0
-9,Targeted-Shellings-Incidence,0,0,0,0,0.03095 \mbox{***},0.02062 \mbox{*},1.306e-13,0.0173 \mbox{*}
-13,Conflict-Shellings-Incidence,0.04239 \mbox{***},0.0253 \mbox{**},1.154e-19,0.001985,1.757e-19,2.125e-21,0.04543 \mbox{*},0.03001
-14,Conflict-Diesel-Incidence,0.05696 \mbox{*},2.321e-17,5.903e-19,4.79e-24,0,0,0,0
-15,Conflict-Wheat-Incidence,2.242e-15,3.569e-17,0.05708 \mbox{*},2.778e-15,0,0,0,0
-16,Conflict-Rain-Incidence,0.03879 \mbox{***},0.03152 \mbox{***},7.247e-17,0.007598,0,0,0,0
-17,Shellings-Diesel-Incidence,0,0,0,0,0.1645 \mbox{***},0.002598,1.065e-16,9.103e-32
-18,Shellings-Wheat-Incidence,0,0,0,0,0.1828 \mbox{***},0.03216,3.842e-15,0.01418
-19,Shellings-Rain-Incidence,0,0,0,0,0.03692 \mbox{***},0.02185 \mbox{*},1.407e-30,0.01494
-24,Shellings-Wheat-Rain-Incidence,0,0,0,0,0.1743 \mbox{***},0.03128,5.112e-17,0.01909
-25,Shellings-Diesel-Rain-Incidence,0,0,0,0,2.139e-18,3.689e-20,0.04243 \mbox{*},0.007907
-27,Conflict-Wheat-Rain-Incidence,1.963e-31,0.006397,1.306e-22,1.15e-32,0,0,0,0
-28,Conflict-Diesel-Rain-Incidence,0.03791,1.684e-17,1.159e-23,5.308e-20,0,0,0,0
-30,Conflict-Shellings-Rain-Incidence,0.03412 \mbox{***},0.03419 \mbox{***},3.483e-23,0.006661,0.145 \mbox{**},5.071e-14,1.453e-29,2.291e-20
-31,Conflict-Shellings-Wheat-Incidence,8.04e-19,1.299e-17,2.542e-19,0.04904 \mbox{**},0.1881 \mbox{***},0.03906,3.792e-22,0.01068
-32,Conflict-Shellings-Diesel-Incidence,0.05831 \mbox{*},3.313e-30,3.368e-17,5.127e-16,0.173 \mbox{***},0.009481,1.327e-26,8.967e-29
-36,Targeted-Shellings-Rain-Incidence,0,0,0,0,0.03657 \mbox{***},0.02083 \mbox{*},2.579e-14,0.01538
-37,Targeted-Shellings-Wheat-Incidence,0,0,0,0,0.1869 \mbox{***},0.03583,2.817e-30,0.01597
-38,Targeted-Shellings-Diesel-Incidence,0,0,0,0,0.1655 \mbox{***},0.003089,6.395e-31,1.955e-29
-39,Targeted-Conflict-Rain-Incidence,0.03803 \mbox{***},0.03161 \mbox{***},1.603e-15,0.0077,0,0,0,0
-40,Targeted-Conflict-Wheat-Incidence,0.05284 \mbox{*},2.468e-31,1.746e-30,1.605e-21,0,0,0,0
-41,Targeted-Conflict-Diesel-Incidence,4.356e-16,1.723e-20,1.291e-31,0.0527 \mbox{**},0,0,0,0
-42,Targeted-Conflict-Shellings-Incidence,0.04104 \mbox{***},0.02516 \mbox{**},6.707e-22,0.003566,0.06191 \mbox{*},7.648e-30,9.08e-31,7.671e-16
-45,Conflict-Shellings-Wheat-Rain-Incidence,4.689,9.788 \mbox{*},14.65 \mbox{**},12.66 \mbox{*},0.175 \mbox{***},0.02715,1.229e-30,1.543e-21
-46,Conflict-Shellings-Diesel-Rain-Incidence,0.1273 \mbox{**},2.811e-14,7.178e-16,5.942e-16,7.818e-19,5.594e-19,2.403e-16,0.04685 \mbox{*}
-49,Targeted-Shellings-Wheat-Rain-Incidence,0,0,0,0,0.1787 \mbox{***},0.03478,7.028e-30,0.02251
-50,Targeted-Shellings-Diesel-Rain-Incidence,0,0,0,0,0.4948 \mbox{**},0.2617,0.08662,0.1738
-52,Targeted-Conflict-Wheat-Rain-Incidence,0.1385 \mbox{**},1.565e-21,1.5e-19,0.07141,0,0,0,0
-53,Targeted-Conflict-Diesel-Rain-Incidence,0.03808,1.055e-18,1.515e-22,5.552e-19,0,0,0,0
-55,Targeted-Conflict-Shellings-Rain-Incidence,0.03368 \mbox{***},0.03407 \mbox{***},1.365e-17,0.006742,0.1501 \mbox{**},8.636e-27,4.234e-28,7.319e-31
-56,Targeted-Conflict-Shellings-Wheat-Incidence,2.706e-18,1.225e-17,2.523e-28,0.04874 \mbox{**},0.1886 \mbox{***},0.0391,5.782e-22,0.01167
-57,Targeted-Conflict-Shellings-Diesel-Incidence,0.05858 \mbox{*},1.734e-31,5.99e-18,5.127e-20,0.1744 \mbox{***},0.01038,1.328e-26,8.977e-29
-59,Targeted-Conflict-Shellings-Diesel-Rain-Incidence,0.1333 \mbox{**},2.603e-15,2.861e-19,5.942e-30,1.08e-18,6.408e-19,9.446e-25,0.04677 \mbox{*}
-60,Targeted-Conflict-Shellings-Wheat-Rain-Incidence,4.966,10.01 \mbox{*},15.04 \mbox{**},13.06 \mbox{*},0.1839 \mbox{***},0.03316,2.616e-30,0.002813
+3,Conflict-Incidence,0.03881 \mbox{***},0.03151 \mbox{***},7.245e-17,0.007597,0,0,0,0
+4,Shellings-Incidence,0,0,0,0,0.03709 \mbox{***},0.02133 \mbox{*},5.352e-18,0.01537
+15,Shellings-Wheat-Incidence,0,0,0,0,0.1785 \mbox{***},0.03536,5.173e-17,0.02179
+13,Conflict-Wheat-Incidence,1.241e-30,0.006492,1e-30,1.005e-30,0,0,0,0
+11,Conflict-Shellings-Incidence,0.03414 \mbox{***},0.03421 \mbox{***},3.547e-23,0.006627,0.145 \mbox{**},5.086e-17,1.453e-29,2.291e-20
+8,Targeted-Shellings-Incidence,0,0,0,0,0.03671 \mbox{***},0.02072 \mbox{*},2.771e-30,0.01536
+7,Targeted-Conflict-Incidence,0.0383 \mbox{***},0.03141 \mbox{***},2.075e-21,0.007684,0,0,0,0
+19,Conflict-Shellings-Wheat-Incidence,4.689,9.749 \mbox{*},14.62 \mbox{**},12.63 \mbox{*},0.1758 \mbox{***},0.02718,1.229e-30,2.464e-20
+22,Targeted-Shellings-Wheat-Incidence,0,0,0,0,0.1789 \mbox{***},0.03524,5.173e-17,0.02238
+24,Targeted-Conflict-Wheat-Incidence,0.1387 \mbox{**},1.565e-21,1.503e-19,0.07164,0,0,0,0
+26,Targeted-Conflict-Shellings-Incidence,0.03384 \mbox{***},0.03359 \mbox{***},9.527e-17,0.007009,0.15 \mbox{**},8.636e-27,4.234e-28,7.32e-31
+30,Targeted-Conflict-Shellings-Wheat-Incidence,4.995,10.03 \mbox{*},15.04 \mbox{**},13.05 \mbox{*},0.1839 \mbox{***},0.03287,2.616e-30,0.00309
+3,Conflict-Incidence,0.03881 \mbox{***},0.03151 \mbox{***},7.245e-17,0.007597,0,0,0,0
+4,Shellings-Incidence,0,0,0,0,0.03709 \mbox{***},0.02133 \mbox{*},5.352e-18,0.01537
+14,Shellings-Diesel-Incidence,0,0,0,0,0.1785 \mbox{***},0.03536,5.173e-17,0.02179
+12,Conflict-Diesel-Incidence,1.241e-30,0.006492,1e-30,1.005e-30,0,0,0,0
+11,Conflict-Shellings-Incidence,0.03414 \mbox{***},0.03421 \mbox{***},3.547e-23,0.006627,0.145 \mbox{**},5.086e-17,1.453e-29,2.291e-20
+8,Targeted-Shellings-Incidence,0,0,0,0,0.03671 \mbox{***},0.02072 \mbox{*},2.771e-30,0.01536
+7,Targeted-Conflict-Incidence,0.0383 \mbox{***},0.03141 \mbox{***},2.075e-21,0.007684,0,0,0,0
+20,Conflict-Shellings-Diesel-Incidence,4.689,9.749 \mbox{*},14.62 \mbox{**},12.63 \mbox{*},0.1758 \mbox{***},0.02718,1.229e-30,2.464e-20
+23,Targeted-Shellings-Diesel-Incidence,0,0,0,0,0.1789 \mbox{***},0.03524,5.173e-17,0.02238
+25,Targeted-Conflict-Diesel-Incidence,0.1387 \mbox{**},1.565e-21,1.503e-19,0.07164,0,0,0,0
+26,Targeted-Conflict-Shellings-Incidence,0.03384 \mbox{***},0.03359 \mbox{***},9.527e-17,0.007009,0.15 \mbox{**},8.636e-27,4.234e-28,7.32e-31
+31,Targeted-Conflict-Shellings-Diesel-Incidence,4.995,10.03 \mbox{*},15.04 \mbox{**},13.05 \mbox{*},0.1839 \mbox{***},0.03287,2.616e-30,0.00309

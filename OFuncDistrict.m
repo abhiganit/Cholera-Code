@@ -57,6 +57,6 @@ n(n<1)=1;
 [Yt,~]= LogisticModel(beta,tA,DB,DA,Ctv,K,n,tau,maxtau,WPIN,FPIN,Mt,Wheatt,Dieselt,KP,V1,V2,KV,dV,Rtv,Temptv,r0,temp_0,WI,Pop,CI,DAR,w);
 FF=log_likelihood_function(maxtau,WI,Yt,sigma_w);
 % FF=(WI(:,(maxtau+1):end))-(Yt); % Compute the difference for the times and the locations that is tau weeks ahead
-F=-sum(FF(:)); % convert the matrix into a vector for the use of lsqnonlin
+F=-sum(FF,2); % convert the matrix into a vector for the use of lsqnonlin
 end
 
