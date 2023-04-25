@@ -289,9 +289,8 @@ for ii=1:70
 end
 ff=find(pt<0.05);
 if(~isempty(ff))    
-   temp_r=rt(ff);   
-   rr=temp_r(abs(temp_r)==max(abs(temp_r)));
-   gg=find(rr==temp_r);
+   rr=max(rt(ff));
+   gg=find(rr==rt(ff));
    pp=min(pt(ff(gg)));
 else
    ff=find(pt==min(pt));
@@ -312,9 +311,8 @@ for ii=1:70
 end
 ff=find(pt<0.05);
 if(~isempty(ff))    
-   temp_r=rt(ff);   
-   rr=temp_r(abs(temp_r)==max(abs(temp_r)));
-   gg=find(rr==temp_r);
+   rr=max(rt(ff));
+   gg=find(rr==rt(ff));
    pp=min(pt(ff(gg)));
 else
    ff=find(pt==min(pt));

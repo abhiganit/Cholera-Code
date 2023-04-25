@@ -88,24 +88,24 @@ set(ax2,'LineWidth',2,'tickdir','out','XScale','log','YTick',[1:21],'YTickLabel'
 ax2.XColor=[0.5 0.5 0.5];
 xlabel('Cumulative incidence per 10,000','Fontsize',18,'Color',[0.5 0.5 0.5]);
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,1:3),2));
+[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,1:3),2),'Type','Kendall');
 
-fprintf('Pearson Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
-
-
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4));
-
-fprintf('Pearson Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('Kendall Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,5));
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4),'Type','Kendall');
 
-fprintf('Pearson Correlation between average wheat and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('Kendall Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6));
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,5),'Type','Kendall');
 
-fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('Kendall Correlation between average wheat and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6),'Type','Kendall');
+
+fprintf('Kendall Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 %% District
 clear;
@@ -214,21 +214,21 @@ ax2.XColor=[0.5 0.5 0.5];
 xlabel('Cumulative incidence per 10,000','Fontsize',18,'Color',[0.5 0.5 0.5]);
 
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2));
+[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2),'Type','Kendall');
 
 
-fprintf('(Amanat Al Asimah) Pearson Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('(Amanat Al Asimah) Kendall Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4));
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4),'Type','Kendall');
 
-fprintf('Pearson Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('Kendall Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6));
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6),'Type','Kendall');
 
-fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('Kendall Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 %% District (Aden)
 clear;
@@ -339,20 +339,20 @@ set(ax2,'LineWidth',2,'tickdir','out','XScale','log','YTick',[1:length(GNZI)],'Y
 ax2.XColor=[0.5 0.5 0.5];
 xlabel('Cumulative incidence per 10,000','Fontsize',18,'Color',[0.5 0.5 0.5]);
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2));
+[r,p]=corr(log(CI(GNZI(indexs),end)),sum(WS(:,2:3),2),'Type','Kendall');
 
-fprintf('(Aden) Pearson Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
-
-
-
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4));
-
-fprintf('Pearson Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+fprintf('(Aden) Kendall Correlation between average conflict and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 
-[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6));
 
-fprintf('Pearson Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,4),'Type','Kendall');
+
+fprintf('Kendall Correlation between average diesel and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
+
+
+[r,p]=corr(log(CI(GNZI(indexs),end)),WS(:,6),'Type','Kendall');
+
+fprintf('Kendall Correlation between average rainfall and cumulative incidence: r= %4.3f and p=%3.2E \n',[r p]);
 
 print(gcf,'Figure4','-depsc','-r600');
 print(gcf,'Figure4','-dpng','-r600');
